@@ -318,128 +318,131 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                           //       ),
                           //     )) else
                         for(int i = 0; i < career.length; i++)
-                         Container(
-                           width: double.infinity,
-                           height: 200,
-                           decoration: BoxDecoration(
-                               color: Theme.of(context).cardColor,
-                               borderRadius: BorderRadius.circular(12),
-                               boxShadow: [
-                                 BoxShadow(
-                                   color: Colors.grey.withOpacity(0.5),
-                                   spreadRadius: 1,
-                                   blurRadius: 5,
-                                   offset: const Offset(
-                                       0, 3), // changes position of shadow
-                                 ),
-                               ]),
-                           child: Padding(
-                             padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
-                             child: Column(
-                               children: [
-                                 EditDetailsTextField(
-                                   title: 'Position',
-                                   controller: positionController,
-                                   readOnly: true,
-                                   onTap: () {
-                                     Get.bottomSheet(
-                                       SingleChildScrollView(
-                                         child: Container(
-                                           color: Theme.of(context).cardColor,
-                                           padding: const EdgeInsets.all(
-                                               Dimensions.paddingSizeDefault),
-                                           child: Column(
-                                             children: [
-                                               Text(
-                                                 'Profession',
-                                                 style: kManrope25Black.copyWith(
-                                                     fontSize: 16),
-                                               ),
-                                               sizedBox12(),
-                                               CustomDropdownButtonFormField<String>(
-                                                 value: authControl.professionList!
-                                                     .firstWhere((religion) =>
-                                                 religion.id ==
-                                                     authControl.professionIndex)
-                                                     .name,
-                                                 // Assuming you have a selectedPosition variable
-                                                 items: authControl.professionList!
-                                                     .map((position) => position.name!)
-                                                     .toList(),
-                                                 hintText: "Select Position",
-                                                 onChanged: (String? value) {
-                                                   if (value != null) {
-                                                     var selected = authControl
-                                                         .professionList!
-                                                         .firstWhere((position) =>
-                                                     position.name == value);
-                                                     authControl.setProfessionIndex(
-                                                         selected.id, true);
-                                                     positionController.text =
-                                                         selected.name.toString();
+                         Padding(
+                           padding: const EdgeInsets.only(bottom: 8.0),
+                           child: Container(
+                             width: double.infinity,
+                             height: 200,
+                             decoration: BoxDecoration(
+                                 color: Theme.of(context).cardColor,
+                                 borderRadius: BorderRadius.circular(12),
+                                 boxShadow: [
+                                   BoxShadow(
+                                     color: Colors.grey.withOpacity(0.5),
+                                     spreadRadius: 1,
+                                     blurRadius: 5,
+                                     offset: const Offset(
+                                         0, 3), // changes position of shadow
+                                   ),
+                                 ]),
+                             child: Padding(
+                               padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
+                               child: Column(
+                                 children: [
+                                   EditDetailsTextField(
+                                     title: 'Position',
+                                     controller: positionController,
+                                     readOnly: true,
+                                     onTap: () {
+                                       Get.bottomSheet(
+                                         SingleChildScrollView(
+                                           child: Container(
+                                             color: Theme.of(context).cardColor,
+                                             padding: const EdgeInsets.all(
+                                                 Dimensions.paddingSizeDefault),
+                                             child: Column(
+                                               children: [
+                                                 Text(
+                                                   'Profession',
+                                                   style: kManrope25Black.copyWith(
+                                                       fontSize: 16),
+                                                 ),
+                                                 sizedBox12(),
+                                                 CustomDropdownButtonFormField<String>(
+                                                   value: authControl.professionList!
+                                                       .firstWhere((religion) =>
+                                                   religion.id ==
+                                                       authControl.professionIndex)
+                                                       .name,
+                                                   // Assuming you have a selectedPosition variable
+                                                   items: authControl.professionList!
+                                                       .map((position) => position.name!)
+                                                       .toList(),
+                                                   hintText: "Select Position",
+                                                   onChanged: (String? value) {
+                                                     if (value != null) {
+                                                       var selected = authControl
+                                                           .professionList!
+                                                           .firstWhere((position) =>
+                                                       position.name == value);
+                                                       authControl.setProfessionIndex(
+                                                           selected.id, true);
+                                                       positionController.text =
+                                                           selected.name.toString();
+                                                       print(
+                                                           authControl.professionIndex);
+                                                     }
+                                                   },
+                                                 ),
+                                               ],
+                                             ),
+                                           ),
+                                         ),
+                                       );
+                                     },
+                                   ),
+                                   sizedBox6(),
+                                   EditDetailsTextField(
+                                     title: 'State of Posting',
+                                     controller: stateController,
+                                     readOnly: true,
+                                     onTap: () {
+                                       Get.bottomSheet(
+                                         SingleChildScrollView(
+                                           child: Container(
+                                             color: Theme.of(context).cardColor,
+                                             padding: const EdgeInsets.all(
+                                                 Dimensions.paddingSizeDefault),
+                                             child: Column(
+                                               children: [
+                                                 Text(
+                                                   'State of Posting',
+                                                   style: kManrope25Black.copyWith(
+                                                       fontSize: 16),
+                                                 ),
+                                                 sizedBox12(),
+                                                 CustomDropdownButtonFormField<String>(
+                                                   value: authControl.posselectedState,
+                                                   items: authControl.posstates,
+                                                   hintText: "Select Posting State",
+                                                   onChanged: (value) {
+                                                     authControl.possetState(value ??
+                                                         authControl.posstates.first);
                                                      print(
-                                                         authControl.professionIndex);
-                                                   }
-                                                 },
-                                               ),
-                                             ],
+                                                         'cadre =========== >${authControl.posselectedState}');
+                                                     stateController.text = authControl
+                                                         .posselectedState
+                                                         .toString();
+                                                   },
+                                                   validator: (value) {
+                                                     if (value == null ||
+                                                         value.isEmpty ||
+                                                         value ==
+                                                             'Please Posting State') {
+                                                       return 'Please Posting State';
+                                                     }
+                                                     return null;
+                                                   },
+                                                 ),
+                                               ],
+                                             ),
                                            ),
                                          ),
-                                       ),
-                                     );
-                                   },
-                                 ),
-                                 sizedBox6(),
-                                 EditDetailsTextField(
-                                   title: 'State of Posting',
-                                   controller: stateController,
-                                   readOnly: true,
-                                   onTap: () {
-                                     Get.bottomSheet(
-                                       SingleChildScrollView(
-                                         child: Container(
-                                           color: Theme.of(context).cardColor,
-                                           padding: const EdgeInsets.all(
-                                               Dimensions.paddingSizeDefault),
-                                           child: Column(
-                                             children: [
-                                               Text(
-                                                 'State of Posting',
-                                                 style: kManrope25Black.copyWith(
-                                                     fontSize: 16),
-                                               ),
-                                               sizedBox12(),
-                                               CustomDropdownButtonFormField<String>(
-                                                 value: authControl.posselectedState,
-                                                 items: authControl.posstates,
-                                                 hintText: "Select Posting State",
-                                                 onChanged: (value) {
-                                                   authControl.possetState(value ??
-                                                       authControl.posstates.first);
-                                                   print(
-                                                       'cadre =========== >${authControl.posselectedState}');
-                                                   stateController.text = authControl
-                                                       .posselectedState
-                                                       .toString();
-                                                 },
-                                                 validator: (value) {
-                                                   if (value == null ||
-                                                       value.isEmpty ||
-                                                       value ==
-                                                           'Please Posting State') {
-                                                     return 'Please Posting State';
-                                                   }
-                                                   return null;
-                                                 },
-                                               ),
-                                             ],
-                                           ),
-                                         ),
-                                       ),
-                                     );
-                                   },
-                                 ),
-                               ],
+                                       );
+                                     },
+                                   ),
+                                 ],
+                               ),
                              ),
                            ),
                          )

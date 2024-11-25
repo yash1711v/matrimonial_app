@@ -26,6 +26,8 @@ Future<dynamic> updateBasicInfo({
   required String lastName,
   // required String email,
   required String aboutUs,
+  required String diet,
+  required String disability,
 
 
 }) async {
@@ -56,6 +58,8 @@ Future<dynamic> updateBasicInfo({
     'lastname': lastName,
     'firstname': firstName,
     "about_us" : aboutUs,
+    "diet":diet,
+    "disability":disability,
     // 'email' :email
     // "height" : "5.45",
     "user_type" : "1"

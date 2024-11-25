@@ -140,7 +140,7 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
     birthDateController.text = basicInfo?.birthDate?.toString() ?? '';
     communityController.text = basicInfo?.communityName.toString() ?? '';
     motherTongueController.text = basicInfo?.motherTongueName.toString() ?? '';
-    marriedStatusController.text = basicInfo?.maritalStatus?.toString() ?? '';
+    marriedStatusController.text = (basicInfo?.maritalStatus == "1"?"Married":"Single")?.toString() ?? '';
     stateController.text = basicInfo?.presentAddress?.state?.toString() ?? '';
     zipController.text = basicInfo?.presentAddress?.zip?.toString() ?? '';
     countryController.text = basicInfo?.presentAddress?.country?.toString() ?? '';
@@ -153,6 +153,8 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
     _motherTongueIdController.text = basicInfo.motherTongue ?? '';
     _smokingIdController.text = basicInfo.smokingStatus.toString() ?? '';
     _drinkingIdController.text = basicInfo.drinkingStatus.toString() ?? '';
+    dietTypeController.text = basicInfo.diet.toString() ?? '';
+    disablityController.text = basicInfo.disability.toString() ?? '';
    Get.find<AuthController>().getCasteList(Get.find<ProfileController>().profile?.religion);
 
 
@@ -570,6 +572,7 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
                                 onChanged: (value) {
                                   authControl.setDiet(value!);
                                   print(authControl.diet);
+                                  dietTypeController.text = authControl.diet!;
                                 },
 
                               ),
@@ -1647,6 +1650,8 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
                           financialCondition: financialCondition.text,
                           firstName: firstNameController.text,
                           lastName: lastNameController.text,
+                         diet: dietTypeController.text,
+                      disability: disablityController.text,
                       aboutUs: aboutUs.text)
                       .then((value) {
                     setState(() {});

@@ -438,66 +438,94 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
                                         child: DottedPlaceHolder(
                                             text: "Add Education Info"),
                                       )))
-                              : EditDetailsTextField(
-                                  title: 'University / institute',
-                                  controller: universityController),
-                          sizedBox6(),
-                          EditDetailsTextField(
-                            title: 'Highest Degree',
-                            controller: degreeController,
-                            readOnly: true,
-                            onTap: () {
-                              Get.bottomSheet(
-                                SingleChildScrollView(
-                                  child: Container(
-                                    color: Theme.of(context).cardColor,
-                                    padding: const EdgeInsets.all(
-                                        Dimensions.paddingSizeDefault),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          'Highest Degree',
-                                          style: kManrope25Black.copyWith(
-                                              fontSize: 16),
-                                        ),
-                                        sizedBox12(),
-                                        CustomDropdownButtonFormField<String>(
-                                          value: authControl.highestDegree,
-                                          items: authControl.highestDegreeList,
-                                          hintText: "Select Highest Degree",
-                                          onChanged: (String? value) {
-                                            authControl
-                                                .setHighestDegree(value!);
-                                            degreeController.text = value;
-                                            print(authControl.highestDegree);
-                                          },
-                                        ),
-                                      ],
+                              : Column(
+                            children: [
+                              for(int i = 0; i < educationDetails.length; i++)
+                            Container(
+                              width: double.infinity,
+                              height: 230,
+                              decoration: BoxDecoration(
+                                  color: Theme.of(context).cardColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 1,
+                                      blurRadius: 5,
+                                      offset: const Offset(
+                                          0, 3), // changes position of shadow
                                     ),
-                                  ),
+                                  ]),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
+                                child: Column(
+                                  children: [
+                                    EditDetailsTextField(
+                                        title: 'University / institute',
+                                        controller: universityController),
+                                    sizedBox6(),
+                                    EditDetailsTextField(
+                                      title: 'Highest Degree',
+                                      controller: degreeController,
+                                      readOnly: true,
+                                      onTap: () {
+                                        Get.bottomSheet(
+                                          SingleChildScrollView(
+                                            child: Container(
+                                              color: Theme.of(context).cardColor,
+                                              padding: const EdgeInsets.all(
+                                                  Dimensions.paddingSizeDefault),
+                                              child: Column(
+                                                children: [
+                                                  Text(
+                                                    'Highest Degree',
+                                                    style: kManrope25Black.copyWith(
+                                                        fontSize: 16),
+                                                  ),
+                                                  sizedBox12(),
+                                                  CustomDropdownButtonFormField<String>(
+                                                    value: authControl.highestDegree,
+                                                    items: authControl.highestDegreeList,
+                                                    hintText: "Select Highest Degree",
+                                                    onChanged: (String? value) {
+                                                      authControl
+                                                          .setHighestDegree(value!);
+                                                      degreeController.text = value;
+                                                      print(authControl.highestDegree);
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    sizedBox6(),
+                                    EditDetailsTextField(
+                                        title: 'Field of Study',
+                                        controller: fieldOfStudyController),
+                                    sizedBox6(),
+                                    Visibility(
+                                      visible: fieldNames.isNotEmpty && fieldNames.length > 0,
+                                      child: ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount: fieldNames.length,
+                                          itemBuilder: (_, i){
+
+                                            return EditDetailsTextField(
+                                              title: fieldNames[i],
+                                              controller: controllers[fieldNames[i]] ?? TextEditingController(),
+                                            );
+
+                                          }),
+                                    )
+                                  ],
                                 ),
-                              );
-                            },
-                          ),
-                          sizedBox6(),
-                          EditDetailsTextField(
-                              title: 'Field of Study',
-                              controller: fieldOfStudyController),
-                          sizedBox6(),
-                          Visibility(
-                            visible: fieldNames.isNotEmpty && fieldNames.length > 0,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                                itemCount: fieldNames.length,
-                                itemBuilder: (_, i){
+                              ),
+                            )
+                          ],)
 
-                                  return EditDetailsTextField(
-                                    title: fieldNames[i],
-                                    controller: controllers[fieldNames[i]] ?? TextEditingController(),
-                                  );
-
-                            }),
-                          )
 
                           // ListView.builder(
                           //     physics: const NeverScrollableScrollPhysics(),

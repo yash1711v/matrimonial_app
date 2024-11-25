@@ -260,6 +260,8 @@ class BasicInfo {
   String? professionName;
   String? motherTongueName;
   String? smokingName;
+  String? diet;
+  String? disability;
   String? drinkingName;
   MaritialStatus? maritialStatus;
 
@@ -293,7 +295,10 @@ class BasicInfo {
         this.motherTongueName,
         this.smokingName,
         this.drinkingName,
-        this.maritialStatus});
+        this.maritialStatus,
+        this.diet,
+        this.disability
+      });
 
   BasicInfo.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -332,6 +337,8 @@ class BasicInfo {
     maritialStatus = json['maritial_status'] != null
         ? new MaritialStatus.fromJson(json['maritial_status'])
         : null;
+    diet = json['diet'];
+    disability = json['disability'];
   }
 
   Map<String, dynamic> toJson() {
@@ -369,6 +376,8 @@ class BasicInfo {
     data['mother_tongue_name'] = this.motherTongueName;
     data['smoking_name'] = this.smokingName;
     data['drinking_name'] = this.drinkingName;
+    data['diet'] = this.diet;
+    data['disability'] = this.disability;
     if (this.maritialStatus != null) {
       data['maritial_status'] = this.maritialStatus!.toJson();
     }
