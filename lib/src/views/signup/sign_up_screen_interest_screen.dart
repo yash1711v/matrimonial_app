@@ -122,7 +122,7 @@ class _SignUpScreenInterestState extends State<SignUpScreenInterest> {
                   sizedBox20(),
                   Center(
                     child: Text(
-                      'Now Lets Add Your\n Interest',
+                      'Add Your\n Interest',
                       textAlign: TextAlign.center,
                       style: kManrope25Black,
                     ),

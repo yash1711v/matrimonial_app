@@ -2567,7 +2567,7 @@ class AuthController extends GetxController implements GetxService {
   // }
 
   var startValue = 20.0.obs; // Use observable to update UI
-  var endValue = 50.0.obs;
+  var endValue = 60.0.obs;
 
   void setAgeValue(RangeValues newValues) {
     startValue.value = newValues.start; // Update the observable values
@@ -2579,7 +2579,7 @@ class AuthController extends GetxController implements GetxService {
     update(); // Notify listeners to update the UI
   }
 
-  var startHeightValue = 5.0.obs;
+  var startHeightValue = 4.0.obs;
   var endHeightValue = 7.0.obs;
 
   void setHeightValue(RangeValues newValues) {
@@ -3054,6 +3054,7 @@ class AuthController extends GetxController implements GetxService {
     'Aadhar Card',
     'Driving License',
     'Passport',
+    "Pan Card",
     'Govt Authorized Card'
   ];
 
@@ -3602,7 +3603,7 @@ class AuthController extends GetxController implements GetxService {
     update();
   }
 
-  var attributeHeightValue = 5.0.obs;
+  var attributeHeightValue = 4.0.obs;
 
   void setAttributeHeightValue(double newValue) {
     attributeHeightValue.value = newValue;
@@ -3610,7 +3611,7 @@ class AuthController extends GetxController implements GetxService {
     update();
   }
 
-  var attributeWeightValue = 45.obs;
+  var attributeWeightValue = 35.obs;
 
   void setAttributeWeightValue(int newValue) {
     attributeWeightValue.value = newValue;
@@ -3620,6 +3621,7 @@ class AuthController extends GetxController implements GetxService {
   final List<String> dietList = [
     'Veg',
     'Non-Veg',
+    "Both"
   ].toSet().toList();
 
   String? _diet;

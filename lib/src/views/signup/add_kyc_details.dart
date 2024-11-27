@@ -36,7 +36,7 @@ class _AddKycDetailsScreenState extends State<AddKycDetailsScreen> {
   final identityProof = TextEditingController();
   final joiningDateController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  AuthController authControl = Get.find();
 
   late DateTime _selectedDate;
   bool loading = false;
@@ -49,6 +49,57 @@ class _AddKycDetailsScreenState extends State<AddKycDetailsScreen> {
 
   File pickedImage = File("");
   final ImagePicker _imgPicker = ImagePicker();
+
+
+  String? validateDocument(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Document number cannot be empty';
+    }
+
+    switch (authControl.document) {
+      case 'PAN Card':
+      // PAN Card validation: should be 10 characters and alphanumeric
+        final panRegex = RegExp(r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$');
+        if (!panRegex.hasMatch(value)) {
+          return 'Enter a valid PAN number (e.g., ABCDE1234F)';
+        }
+        break;
+
+      case 'Aadhar Card':
+      // Aadhar validation: should be 12 digits
+        if (value.length != 12 || int.tryParse(value) == null) {
+          return 'Enter a valid Aadhar number (12 digits)';
+        }
+        break;
+
+      case 'Driving License':
+      // Driving License validation: should match specific patterns
+        final dlRegex = RegExp(r'^[A-Z]{2}[0-9]{2}[0-9A-Z]{1,15}$');
+        if (!dlRegex.hasMatch(value)) {
+          return 'Enter a valid Driving License number';
+        }
+        break;
+
+      case 'Passport':
+      // Passport validation: should be 8 characters (1 letter + 7 digits)
+        final passportRegex = RegExp(r'^[A-Z][0-9]{7}$');
+        if (!passportRegex.hasMatch(value)) {
+          return 'Enter a valid Passport number (e.g., A1234567)';
+        }
+        break;
+
+      case 'Govt Authorized ID':
+      // Govt Authorized ID: Allow alphanumeric with minimum 5 characters
+        if (value.length < 5) {
+          return 'Enter a valid Govt Authorized ID (min 5 characters)';
+        }
+        break;
+
+      default:
+        return 'Please select a document type';
+    }
+    return null;
+  }
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -76,7 +127,8 @@ class _AddKycDetailsScreenState extends State<AddKycDetailsScreen> {
             child: SingleChildScrollView(
               child:   loading ?
               loadingButton(context: context) :
-              button(context: context, onTap: () {
+              button(context: context,
+                  onTap: () {
                 if(pickedImage.path.isNotEmpty ) {
                   if(_formKey.currentState!.validate()) {
                     setState(() {
@@ -86,7 +138,7 @@ class _AddKycDetailsScreenState extends State<AddKycDetailsScreen> {
                       //       Navigator.push(context, MaterialPageRoute(builder: (builder) =>
                       //       const KycWaitScreen()));
                     kycDetailsApi(
-                      designation: 'Nil',
+                      designation: _documentNoController.text,
                       identityProof:authControl.document.toString(),
                       // joiningDate: joiningDateController.text,
                       photo: pickedImage.path,
@@ -155,7 +207,7 @@ class _AddKycDetailsScreenState extends State<AddKycDetailsScreen> {
 
                           Center(
                             child: Text(
-                              'Please Add Your Document For Verification \n You Will be Notified When Your Profile Is Approved ',
+                              'Please Add Your Document For Verification. \n You Will be Notified When Your Profile Is Approved.',
                               textAlign: TextAlign.center,
                               style: kManrope14Medium626262.copyWith(color: Colors.black),
                             ),
@@ -264,12 +316,7 @@ class _AddKycDetailsScreenState extends State<AddKycDetailsScreen> {
                               authControl.setDocumentNo(_documentNoController.text);
                               print(authControl.documentNo);
                             },
-                            validation: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please Document Number';
-                              }
-                              return null;
-                            },
+                            validation: validateDocument,
                           ),
 
                           // const SizedBox(height: 20,),

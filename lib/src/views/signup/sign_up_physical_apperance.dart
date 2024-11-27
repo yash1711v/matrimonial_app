@@ -248,7 +248,7 @@ class _SignUpScreenPhysicalAppearanceScreenState extends State<SignUpScreenPhysi
                     SizedBox(
                       width: double.infinity,
                       child: Obx(() => Slider(
-                        min: 5.0,
+                        min: 4.0,
                         max: 7.0,
                         divisions: 20, // Number of divisions for finer granularity
                         label: authControl.attributeHeightValue.value.toStringAsFixed(1), // Format to 1 decimal place
@@ -281,8 +281,8 @@ class _SignUpScreenPhysicalAppearanceScreenState extends State<SignUpScreenPhysi
                     SizedBox(
                       width: double.infinity,
                       child: Obx(() => Slider(
-                        min: 45.0,
-                        max: 120.0,
+                        min: 35.0,
+                        max: 150.0,
                         divisions: 75, // Number of divisions for finer granularity
                         label: authControl.attributeWeightValue.value.toString(),
                         value: authControl.attributeWeightValue.value.toDouble(),

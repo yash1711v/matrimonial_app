@@ -113,7 +113,7 @@ class _SignUpScreenEducationState extends State<SignUpScreenEducation> {
                     ),  sizedBox20(),
                     Center(
                       child: Text(
-                        'Few More Steps Please Add \nYour Education Details',
+                        'Add Your Education Details',
                         textAlign: TextAlign.center,
                         style: kManrope14Medium626262.copyWith(color: Colors.black),
                       ),

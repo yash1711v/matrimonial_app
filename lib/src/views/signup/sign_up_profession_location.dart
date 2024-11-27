@@ -101,7 +101,7 @@ class _SignUpScreenProfessionLocationScreenState extends State<SignUpScreenProfe
                     ),
                     sizedBox20(),
                     Center(
-                      child: Text("Now Let's Add Professional Posting Details",
+                      child: Text("Add Posting Details",
                         textAlign: TextAlign.center,
                         style: kManrope14Medium626262.copyWith(color: Colors.black),
                       ),
