@@ -59,15 +59,11 @@ class _SingUpScreenThreeState extends State<SingUpScreenThree> {
     return image.path;
   }
 
-  final usernameController =  TextEditingController();
-  final passwordController =  TextEditingController();
   final _emailController = TextEditingController();
   final _phNoController = TextEditingController();
 
 
   void fields() {
-    usernameController.text = Get.find<AuthController>().userName ?? '';
-    passwordController.text = Get.find<AuthController>().password ?? '';
     _emailController.text = Get.find<AuthController>().email ?? '';
     _phNoController.text = Get.find<AuthController>().phone ?? '';
 
@@ -174,84 +170,6 @@ class _SingUpScreenThreeState extends State<SingUpScreenThree> {
                     ],
                   ),
                   // authControl.registerByPhone ?
-                 Column(crossAxisAlignment: CrossAxisAlignment.start,
-                   children: [
-                     Text(
-                       'Phone Number',
-                       textAlign: TextAlign.center,
-                       style: kManrope25Black.copyWith(fontSize: 16),
-                     ),
-                     sizedBox12(),
-                     CustomTextField(
-                       inputType: TextInputType.number,
-                       isNumber: true,
-                       controller: _phNoController,
-                       hintText: 'Phone',
-                       validation: (value) {
-                         if (value == null || value.isEmpty) {
-                           return 'Please Enter your Phone No';
-                         }
-                         return null;
-                       },
-                       onChanged: (value) {
-                         authControl.setPhone(_phNoController.text);
-                       },
-                     ) ,
-                     sizedBox16(),
-
-                   ],
-                 ) /*: const SizedBox()*/,
-                  Text(
-                    'Choose Username',
-                    textAlign: TextAlign.center,
-                    style: kManrope25Black.copyWith(fontSize: 16),
-                  ),
-                  sizedBox12(),
-                  CustomTextField(
-                    controller: usernameController,
-                    hintText: 'Username',
-                    validation: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter username';
-                      } else if (value.length < 6) {
-                        return 'Username must be at least 6 characters long';
-                      } else if (!RegExp(r'^[a-z0-9]+$').hasMatch(value)) {
-                        return 'Username must not contain special characters, spaces, or capital letters';
-                      }
-                      return null;
-                    },
-                    onChanged: (value) {
-                      authControl.setUserName(usernameController.text);
-                    },
-                  ),
-                  sizedBox6(),
-                  Text(
-                    'Please Choose Unique Username min 6 characters',
-                    textAlign: TextAlign.center,
-                    style: kManrope14Medium626262.copyWith(color: Colors.black,fontSize: 10)
-                  ),
-                  sizedBox16(),
-                  Text(
-                    'Choose Password',
-                    textAlign: TextAlign.center,
-                    style: kManrope25Black.copyWith(fontSize: 16),
-                  ),
-                  sizedBox12(),
-                  CustomTextField(
-                    showTitle: true,
-                    isPassword: true,
-                    controller: passwordController,
-                    validation: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please Enter your Password';
-                      }
-                      return null;
-                    },
-                    onChanged: (value) {
-                      authControl.setPassword(passwordController.text);
-                    },
-                    hintText: 'Password',
-                  ),
 
 
                 ],
