@@ -125,8 +125,9 @@ class _AddKycDetailsScreenState extends State<AddKycDetailsScreen> {
           bottomNavigationBar: Padding(
             padding: const EdgeInsets.all(16.0),
             child: SingleChildScrollView(
-              child:   loading ?
-              loadingButton(context: context) :
+              child:
+              // loading ?
+              // loadingButton(context: context) :
               button(context: context,
                   onTap: () {
                 if(pickedImage.path.isNotEmpty ) {
@@ -137,6 +138,7 @@ class _AddKycDetailsScreenState extends State<AddKycDetailsScreen> {
                       // ToastUtil.showToast("Registered Successfully");
                       //       Navigator.push(context, MaterialPageRoute(builder: (builder) =>
                       //       const KycWaitScreen()));
+
                     kycDetailsApi(
                       designation: _documentNoController.text,
                       identityProof:authControl.document.toString(),

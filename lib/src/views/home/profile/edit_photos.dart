@@ -16,7 +16,6 @@ import 'dart:io';
 import 'package:photo_view/photo_view.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-
 class EditPhotosScreen extends StatefulWidget {
   const EditPhotosScreen({super.key});
 
@@ -44,7 +43,7 @@ class _EditPhotosScreenState extends State<EditPhotosScreen> {
 
 
   final _picker = ImagePicker();
-  final CarouselController _controller = CarouselController();
+  final CarouselSliderController _controller = CarouselSliderController();
   List<File> _pickedImages = [];
   int _index = 0;
 

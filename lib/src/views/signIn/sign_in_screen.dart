@@ -1,10 +1,12 @@
+import 'package:bureau_couple/getx/controllers/auth_controller.dart';
 import 'package:bureau_couple/getx/features/widgets/custom_button%20_widget.dart';
 import 'package:bureau_couple/getx/features/widgets/custom_textfield_widget.dart';
-import 'package:bureau_couple/src/views/signIn/signin_option_screen.dart';
+import 'package:bureau_couple/getx/repository/api/api_client.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 import '../../apis/login/login_api.dart';
 import '../../constants/assets.dart';
@@ -21,6 +23,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../home/home_dashboard.dart';
 import '../signup/forgot_password.dart';
 import '../signup/forgot_password_Screen.dart';
+import '../signup/signup_dashboard.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -30,15 +33,15 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final mobileController = TextEditingController();
+  final otpController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _passwordVisible = true;
+
 
   @override
   void initState() {
     super.initState();
-    _loadSavedLoginDetails();
+    // _loadSavedLoginDetails();
   }
 
   bool loading = false;
@@ -46,8 +49,8 @@ class _SignInScreenState extends State<SignInScreen> {
 
   _loadSavedLoginDetails() async {
     final loginDetails = await SharedPreferencesHelper.getLoginDetails();
-    emailController.text = loginDetails['username'] ?? '';
-    passwordController.text = loginDetails['password'] ?? '';
+    mobileController.text = loginDetails['username'] ?? '';
+    otpController.text = loginDetails['password'] ?? '';
   }
 
   _onLoginButtonPressed() async {
@@ -56,8 +59,8 @@ class _SignInScreenState extends State<SignInScreen> {
     // Save login details if checkbox is selected
     if (saveLoginDetails) {
       SharedPreferencesHelper.saveLoginDetails(
-        emailController.text,
-        passwordController.text,
+        mobileController.text,
+        otpController.text,
       );
     }
   }
@@ -71,41 +74,37 @@ class _SignInScreenState extends State<SignInScreen> {
       extendBody: true,
       bottomNavigationBar: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 40.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: Text(
-                  'New To Bureau Couple ?',
-                  textAlign: TextAlign.center,
-                  style: kManrope16SemiBold828282.copyWith(color: Colors.black),
-                ),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (builder) => const SignInOptionScreen()));
-                },
-                child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Text(
-                      "Sign Up",
-                      style: kManrope16SemiBold828282.copyWith(
-                          color: Theme.of(context).cardColor, fontSize: 14),
-                    )),
-              )
-            ],
-          ),
+          padding: const EdgeInsets.only(bottom: 40.0,left: 16,right: 16),
+          child: loading ? const Center(child: CircularProgressIndicator()) :
+          CustomButtonWidget(
+              fontColor: Theme.of(context).cardColor,
+              color: Theme.of(context).primaryColor,
+              onPressed: () {
+
+                // Navigator.push(context, MaterialPageRoute(builder: (builder) => SignUpOnboardScreen()));
+
+                if (mobileController.text.isNotEmpty) {
+                  TextInput.finishAutofillContext();
+                  if (_formKey.currentState!.validate()) {
+                    setState(() {
+                      loading = true;
+                    });
+                    Get.find<AuthController>().loginApi(
+                      number: mobileController.text,
+                    );
+
+                  }
+                } else {
+                  setState(() {
+                    loading = false;
+                  });
+                  ToastUtil.showToast(
+                      "Please Enter Number");
+                }
+
+              },
+              isBold: false,
+              buttonText: 'Sign In'),
         ),
       ),
       body: Container(
@@ -134,8 +133,10 @@ class _SignInScreenState extends State<SignInScreen> {
                   children: [
                     CustomTextField(
                       showTitle: true,
-                      controller: emailController,
-                      hintText: 'Username',
+                      inputType: TextInputType.number,
+                      maximumInput: 10,
+                      controller: mobileController,
+                      hintText: 'Mobile Number',
                       fillColor: Colors.transparent,
                       hintColor: Colors.black.withOpacity(0.70),
                     ),
@@ -143,7 +144,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     CustomTextField(
                       showTitle: true,
                       isPassword: true,
-                      controller: passwordController,
+                      controller: otpController,
                       hintText: 'Password',
                       fillColor: Colors.transparent,
                       hintColor: Colors.black.withOpacity(0.70),
@@ -155,7 +156,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     //     string:  [AutofillHints.username],
                     //     context: context,
                     //     label: '',
-                    //     controller: emailController,
+                    //     controller: mobileController,
                     //     hint: 'Password',
                     //     length: null,
                     //     validator: (value) {
@@ -178,7 +179,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     //     string:  [AutofillHints.password],
                     //     context: context,
                     //     label: '',
-                    //     controller: passwordController,
+                    //     controller: otpController,
                     //     hint: 'Password',
                     //     length: null,
                     //     suffixIcon: _passwordVisible
@@ -190,188 +191,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     const SizedBox(
                       height: 21,
                     ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: GestureDetector(
-                        onTap: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            builder: (BuildContext context) {
-                              return ForgotPassEmailSheet();
-                            },
-                          );
-                          // Navigator.push(context, MaterialPageRoute(builder: (builder) => ForgotPasswordScreen()));
-                        },
-                        child: Text(
-                          "Forgot Password",
-                          textAlign: TextAlign.right,
-                          style: kManrope16Medium.copyWith(color: Colors.black),
-                        ),
-                      ),
-                    ),
-                    sizedBox16(),
-                    loading ? const Center(child: CircularProgressIndicator()) :
-                    CustomButtonWidget(
-                      fontColor: Theme.of(context).cardColor,
-                      color: Theme.of(context).primaryColor,
-                        onPressed: () {
-                                    if (emailController.text.isNotEmpty || passwordController.text.isNotEmpty) {
-                                      TextInput.finishAutofillContext();
-                                      if (_formKey.currentState!.validate()) {
-                                        setState(() {
-                                          loading = true;
-                                        });
-                                        loginApi(
-                                          password: passwordController.text,
-                                          userName: emailController.text,
-                                        ).then((value) {
-                                          response = value;
 
-                                          if (response?.status ==
-                                              'success' /*value['status'] == 'success'*/) {
-                                            setState(() {
-                                              loading = false;
-                                            });
-                                            print("cehc");
-                                            print(response);
-                                            SharedPrefs().setLoginToken(response!
-                                                .data!.accessToken
-                                                .toString());
-                                            SharedPrefs().setUserName(response!
-                                                .data!.user!.username
-                                                .toString());
-                                            SharedPrefs().setName(response!
-                                                .data!.user!.firstname
-                                                .toString());
-                                            SharedPrefs().setEmail((response!
-                                                .data!.user!.email
-                                                .toString()));
-                                            SharedPrefs().setPhone(response!
-                                                .data!.user!.mobile
-                                                .toString());
-                                            SharedPrefs().setProfileId(response!
-                                                .data!.user!.profileId as int);
-                                            SharedPrefs().setLoginTrue();
-                                            SharedPrefs().setProfilePhoto(response!
-                                                .data!.user!.image
-                                                .toString());
-                                            SharedPrefs().setLoginGender(response!
-                                                .data!.user!.gender
-                                                .toString());
-                                            SharedPrefs()
-                                                .setLoginEmail(emailController.text);
-                                            SharedPrefs().setLoginPassword(
-                                                passwordController.text);
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (builder) =>
-                                                        HomeDashboardScreen(
-                                                          response: response!,
-                                                        )));
-                                            ToastUtil.showToast("Login Successful");
-                                          } else {
-                                            setState(() {
-                                              loading = false;
-                                            });
-                                            ToastUtil.showToast("Not Authorized");
-                                            // Fluttertoast.showToast(msg: "Not Authorized");
-                                          }
-                                        });
-                                      }
-                                    } else {
-                                      setState(() {
-                                        loading = false;
-                                      });
-                                      ToastUtil.showToast(
-                                          "Please Enter Username and password");
-                                    }
 
-                        },
-                        isBold: false,
-                        buttonText: 'Sign In')
-                    // loading
-                    //     ? loadingButton(context: context)
-                    //     : button(
-                    //          color: Theme.of(context).cardColor,
-                    //         onTap: () {
-                    //           if (emailController.text.isNotEmpty ||
-                    //               passwordController.text.isNotEmpty) {
-                    //             TextInput.finishAutofillContext();
-                    //             if (_formKey.currentState!.validate()) {
-                    //               setState(() {
-                    //                 loading = true;
-                    //               });
-                    //               loginApi(
-                    //                 password: passwordController.text,
-                    //                 userName: emailController.text,
-                    //               ).then((value) {
-                    //                 response = value;
-                    //
-                    //                 if (response?.status ==
-                    //                     'success' /*value['status'] == 'success'*/) {
-                    //                   setState(() {
-                    //                     loading = false;
-                    //                   });
-                    //                   print("cehc");
-                    //                   print(response);
-                    //                   SharedPrefs().setLoginToken(response!
-                    //                       .data!.accessToken
-                    //                       .toString());
-                    //                   SharedPrefs().setUserName(response!
-                    //                       .data!.user!.username
-                    //                       .toString());
-                    //                   SharedPrefs().setName(response!
-                    //                       .data!.user!.firstname
-                    //                       .toString());
-                    //                   SharedPrefs().setEmail((response!
-                    //                       .data!.user!.email
-                    //                       .toString()));
-                    //                   SharedPrefs().setPhone(response!
-                    //                       .data!.user!.mobile
-                    //                       .toString());
-                    //                   SharedPrefs().setProfileId(response!
-                    //                       .data!.user!.profileId as int);
-                    //                   SharedPrefs().setLoginTrue();
-                    //                   SharedPrefs().setProfilePhoto(response!
-                    //                       .data!.user!.image
-                    //                       .toString());
-                    //                   SharedPrefs().setLoginGender(response!
-                    //                       .data!.user!.gender
-                    //                       .toString());
-                    //                   SharedPrefs()
-                    //                       .setLoginEmail(emailController.text);
-                    //                   SharedPrefs().setLoginPassword(
-                    //                       passwordController.text);
-                    //                   Navigator.push(
-                    //                       context,
-                    //                       MaterialPageRoute(
-                    //                           builder: (builder) =>
-                    //                               HomeDashboardScreen(
-                    //                                 response: response!,
-                    //                               )));
-                    //                   ToastUtil.showToast("Login Successful");
-                    //                 } else {
-                    //                   setState(() {
-                    //                     loading = false;
-                    //                   });
-                    //                   ToastUtil.showToast("Not Authorized");
-                    //                   // Fluttertoast.showToast(msg: "Not Authorized");
-                    //                 }
-                    //               });
-                    //             }
-                    //           } else {
-                    //             setState(() {
-                    //               loading = false;
-                    //             });
-                    //             ToastUtil.showToast(
-                    //                 "Please Enter Username and password");
-                    //           }
-                    //         },
-                    //         context: context,
-                    //
-                    //         title: 'Sign In'),
                   ],
                 ))
               ],
@@ -427,7 +248,7 @@ class _SignInScreenState extends State<SignInScreen> {
       //                                   string:  [AutofillHints.username],
       //                                   context: context,
       //                                   label: '',
-      //                                   controller: emailController,
+      //                                   controller: mobileController,
       //                                   hint: '',
       //                                   length: null,
       //                                   validator: (value) {
@@ -450,7 +271,7 @@ class _SignInScreenState extends State<SignInScreen> {
       //                                   string:  [AutofillHints.password],
       //                                   context: context,
       //                                   label: '',
-      //                                   controller: passwordController,
+      //                                   controller: otpController,
       //                                   hint: '',
       //                                   length: null,
       //                                   suffixIcon: _passwordVisible
@@ -484,16 +305,16 @@ class _SignInScreenState extends State<SignInScreen> {
       //                               loadingButton(context: context) :
       //                               button(
       //                                   onTap: () {
-      //                                     if(emailController.text.isNotEmpty ||
-      //                                         passwordController.text.isNotEmpty) {
+      //                                     if(mobileController.text.isNotEmpty ||
+      //                                         otpController.text.isNotEmpty) {
       //                                       TextInput.finishAutofillContext();
       //                                       if(_formKey.currentState!.validate()) {
       //                                         setState(() {
       //                                           loading = true;
       //                                         });
       //                                         loginApi(
-      //                                           password: passwordController.text,
-      //                                           userName: emailController.text,
+      //                                           password: otpController.text,
+      //                                           userName: mobileController.text,
       //                                         ).then((value) {
       //                                           response = value;
       //
@@ -513,8 +334,8 @@ class _SignInScreenState extends State<SignInScreen> {
       //                                             SharedPrefs().setLoginTrue();
       //                                             SharedPrefs().setProfilePhoto(response!.data!.user!.image.toString());
       //                                             SharedPrefs().setLoginGender(response!.data!.user!.gender.toString());
-      //                                             SharedPrefs().setLoginEmail(emailController.text);
-      //                                             SharedPrefs().setLoginPassword(passwordController.text);
+      //                                             SharedPrefs().setLoginEmail(mobileController.text);
+      //                                             SharedPrefs().setLoginPassword(otpController.text);
       //                                             Navigator.push(context, MaterialPageRoute(builder: (builder) =>
       //                                              HomeDashboardScreen(response: response!,)));
       //                                             ToastUtil.showToast("Login Successful");

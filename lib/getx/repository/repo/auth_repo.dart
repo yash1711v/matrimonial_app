@@ -1,11 +1,13 @@
 
 import 'dart:async';
+import 'dart:developer';
 import 'package:bureau_couple/getx/repository/api/api_client.dart';
 import 'package:bureau_couple/getx/utils/app_constants.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthRepo {
   final ApiClient apiClient;
@@ -14,11 +16,29 @@ class AuthRepo {
 
 
 
-  Future<Response> login(String? username, String? password,) async {
-    return await apiClient.postData(AppConstants.loginUri, {
-      "username": username,
-      "password": password,
-    });
+  Future<dynamic>? login({required String number}){
+    FirebaseAuth auth = FirebaseAuth.instance;
+    auth.verifyPhoneNumber(
+        phoneNumber: "+91${number}",
+        verificationCompleted: (
+            PhoneAuthCredential cred) {
+        },
+        verificationFailed: (e) {
+          log(e.toString(),name: "error at login screen");
+        },
+        codeSent: (vrificationId, code) {
+          // _repo.login(number: (state.number ?? "").trim()).then((value) {
+          //   if (value['status']) {
+          //     _vrificationId = vrificationId;
+          //     context.read<OtpCubit>().setPhoneNumber(state.number ?? "", _vrificationId);
+          //     Navigator.pushReplacementNamed(context, OtpScreen.id);
+          //   } else {
+          //     emit(LoginState(error: "Something went wrong", number: state.number));
+          //   }
+          // });
+        },
+        codeAutoRetrievalTimeout: (val) {});
+    return null;
   }
 
 

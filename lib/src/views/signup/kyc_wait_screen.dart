@@ -48,13 +48,13 @@ class KycWaitScreen extends StatelessWidget {
                     width: 180,),
                   sizedBox16(),
                   Text(
-                    'Thank You For Registering with us',
+                    'Thank You For Registering With Us.',
                     style: kManrope25Black.copyWith(fontSize: 16),
                   ),
                   sizedBox8(),
                   Center(
                     child: Text(
-                      'You Will be Notified When Your Profile\n Gets approved',
+                      'You Will Be Notified When Your Profile\n Gets Approved.',
                       textAlign: TextAlign.center,
                       style: kManrope14Medium626262.copyWith(color: Colors.black),
                     ),

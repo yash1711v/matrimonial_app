@@ -112,23 +112,14 @@ class AuthController extends GetxController implements GetxService {
 
   List<dynamic>? get additionalList => _additionalList;
 
-  // Future<void> loginApi(username, password,) async {
-  //   _isLoading = true;
-  //   update();
-  //   Response response = await authRepo.login(username, password);
-  //   var responseData = response.body;
-  //   if(responseData['status'] == "success") {
-  //     _isLoading = false;
-  //     update();
-  //     showCustomSnackBar("Login Success",isError: false);
-  //     authRepo.saveUserToken(responseData['data']['access_token']);
-  //     Get.offAllNamed(RouteHelper.getDashboardRoute());
-  //   } else {
-  //     showCustomSnackBar("Login Failed Please Check Credentials",isError: false);
-  //   }
-  //   _isLoading = false;
-  //   update();
-  // }
+  Future<void> loginApi({required String number}) async {
+    _isLoading = true;
+    update();
+    Response response = await authRepo.login(number: number);
+
+    _isLoading = false;
+    update();
+  }
   String? _from;
   String? _to;
 

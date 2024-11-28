@@ -10,9 +10,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'getx/utils/theme.dart';
 import 'helper/get_di.dart' as di;
+import 'package:firebase_core/firebase_core.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   HttpOverrides.global = MyHttpOverrides();
   await SystemChrome.setPreferredOrientations(
     [DeviceOrientation.portraitUp],
