@@ -55,6 +55,19 @@ class ApiClient extends GetxService {
       return const Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
+  Future<Response> getDataApi(String uri, {Map<String, dynamic>? query, Map<String, String>? headers}) async {
+    try {
+      debugPrint('====> API Call: $uri\nHeader: $_mainHeaders');
+      http.Response response = await http.get(
+        Uri.parse(appBaseUrl+uri),
+        headers: headers ?? _mainHeaders,
+      ).timeout(Duration(seconds: timeoutInSeconds));
+      print('====> API Response: ${response.body}');
+      return handleResponse(response, uri);
+    } catch (e) {
+      return const Response(statusCode: 1, statusText: noInternetMessage);
+    }
+  }
 
   Future<Response> postData(String uri, dynamic body, {Map<String, String>? headers}) async {
     try {

@@ -44,7 +44,7 @@ class _EditPhotosScreenState extends State<EditPhotosScreen> {
 
 
   final _picker = ImagePicker();
-  final CarouselController _controller = CarouselController();
+  final CarouselSliderController _controller = CarouselSliderController();
   List<File> _pickedImages = [];
   int _index = 0;
 

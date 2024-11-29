@@ -485,7 +485,7 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
                                                   sizedBox12(),
                                                   CustomDropdownButtonFormField<String>(
                                                     value: authControl.highestDegree,
-                                                    items: authControl.highestDegreeList,
+                                                    items: authControl.highesdegree,
                                                     hintText: "Select Highest Degree",
                                                     onChanged: (String? value) {
                                                       authControl

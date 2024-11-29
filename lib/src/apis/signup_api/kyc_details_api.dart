@@ -44,18 +44,18 @@ Future<dynamic> kycDetailsApi({
   }
 
   debugPrint(request.fields.toString());
-  // request.headers.addAll(headers);
-  // print(request.fields);
-  // print(headers);
-  // http.StreamedResponse response = await request.send();
-  // var resp = jsonDecode(await response.stream.bytesToString());
-  // print(resp);
-  // if (response.statusCode == 200) {
-  //   return resp;
-  // } else {
-  //   print(resp);
-  //   print(response.reasonPhrase);
-  //   print(response.statusCode);
-  //   return resp;
-  // }
+  request.headers.addAll(headers);
+  print(request.fields);
+  print(headers);
+  http.StreamedResponse response = await request.send();
+  var resp = jsonDecode(await response.stream.bytesToString());
+  print(resp);
+  if (response.statusCode == 200) {
+    return resp;
+  } else {
+    print(resp);
+    print(response.reasonPhrase);
+    print(response.statusCode);
+    return resp;
+  }
 }

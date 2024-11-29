@@ -2786,112 +2786,58 @@ class AuthController extends GetxController implements GetxService {
     update();
   }
 
-  final List<String> highestDegreeList = [
-    'AA',
-    'AAS',
-    'ABA',
-    'ADBus',
-    'ADIT',
-    'ADN',
-    'AE',
-    'AET',
-    'AS',
-    'AFA',
-    'B.Arch',
-    'B.Arch (Hons)',
-    'B.Com',
-    'B.Com (Hons)',
-    'B.Des',
-    'B.Ed',
-    'BFA',
-    'BHM',
-    'B.IT',
-    'BA (Hons)',
-    'BA Computer Science',
-    'B.A',
-    'B.Arch',
-    'B.Sc',
-    'B.Sc (Hons)',
-    'Btech',
-    'BCA',
-    'BDS',
-    'BEng (Hons)',
-    'BMM',
-    'BMS',
-    'B.Pharma',
-    'BPT',
-    'BVSc',
-    'CA / CPA',
-    'CFA',
-    'CS',
-    'D.Arch',
-    'D.Ed',
-    'DFA',
-    'Diploma',
-    'Doctorate',
-    'Engineering Diploma',
-    'High School',
-    'Honours',
-    'IT Diploma',
-    'LLB (Hons)',
-    'ML / LLM',
-    'M.Arch',
-    'M.Com',
-    'M.Des',
-    'M.Ed',
-    'MFA',
-    'M.Med',
-    'M.Pharma',
-    'M.S Engineering',
-    'M.Sc',
-    'M.Sc / MFin / MS',
-    'M.A',
-    'M.Arch',
-    'M.Com',
-    'MDS',
-    'M.D',
-    'M.Med',
-    'M.Phil',
-    'MPT',
-    'M.Sc',
-    'M.S Medicine',
-    'MBA',
-    'MBBS',
-    'MDS',
-    'MFin',
-    'MSc / MFin / MS',
-    'MMed',
-    'MVSc',
-    'PGDM',
-    'PGD Finance',
-    'PGDCA',
-    'Ph.D',
-    'Less Than High School',
-    'Bachelor',
-    'Master',
-    'MSW',
-    'MJMC',
-    'M.Arch',
-    'M.Des',
-    'MFA',
-    'M.Ed',
-    'M.A',
-    'MSW',
-    'MPT',
-    'Ph.D',
-    'Doctorate',
-    'Associate'
-  ].toSet().toList();
+  List<String> _highestDegreeList = [];
 
   String? _highestDegree;
 
   String? get highestDegree => _highestDegree;
 
-  List<String> get highesdegree => highestDegreeList;
+  List<String> get highesdegree => _highestDegreeList;
 
   void setHighestDegree(String state) {
     _highestDegree = state;
     update();
+  }
+
+  void setHighestDegreeList(List<String> degrees) {
+    _highestDegreeList = degrees;
+    update();
+  }
+
+  Future<dynamic>? getHighestDegreeList() async {
+    _isLoading = true;
+    update();
+    try {
+      Response response = await authRepo.getDegree();
+      debugPrint('Degree Response: ${response.body['data']}');
+      if (response.statusCode == 200) {
+        List<dynamic> responseData = response.body['data'];
+        debugPrint('Degree Response: $responseData');
+        List<String> degree =
+            responseData.map((json) => json['name'].toString()).toList();
+
+         setHighestDegreeList(degree);
+
+        if (highesdegree.isNotEmpty) {
+          return true;
+        } else {
+          return false;
+        }
+        _isLoading = false;
+        update();
+      } else {
+        // Handle API error
+        // ApiChecker.checkApi(response);
+      }
+    } catch (error) {
+      // Handle errors, such as network failures
+      print("Error while fetching list: $error");
+      _isLoading = false;
+      update();
+    } finally {
+      _isLoading = false;
+      update();
+    }
   }
 
   final List<String> annualIncomeList = [
@@ -3618,11 +3564,7 @@ class AuthController extends GetxController implements GetxService {
     update();
   }
 
-  final List<String> dietList = [
-    'Veg',
-    'Non-Veg',
-    "Both"
-  ].toSet().toList();
+  final List<String> dietList = ['Veg', 'Non-Veg', "Both"].toSet().toList();
 
   String? _diet;
 
@@ -3631,7 +3573,7 @@ class AuthController extends GetxController implements GetxService {
 
   String? get partnerDiet => _partnerDiet;
 
-  List<String> get getDiet => highestDegreeList;
+  // List<String> get getDiet => highestDegreeList;
 
   void setDiet(String? val) {
     _diet = val?.isNotEmpty == true ? val : dietList.first;

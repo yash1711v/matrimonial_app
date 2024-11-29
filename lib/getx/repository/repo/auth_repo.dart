@@ -128,6 +128,9 @@ class AuthRepo {
   Future<Response> getAttributesUrl() {
     return apiClient.getData(AppConstants.attributesUrl);
   }
+  Future<Response> getDegree() {
+    return apiClient.getDataApi(AppConstants.degree);
+  }
 
 
   Future<Response> getCommunityUrl(id) {
