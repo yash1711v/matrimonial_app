@@ -18,21 +18,30 @@ import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../../../getx/data/response/profile_model.dart';
+import '../../../../getx/utils/app_constants.dart';
 import '../../../apis/profile_apis/basic_info_api.dart';
 import '../../../apis/profile_apis/get_profile_api.dart';
+import '../../../apis/profile_apis/images_apis.dart';
 import '../../../constants/assets.dart';
 import '../../../constants/string.dart';
 import '../../../constants/textstyles.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import '../../../models/images_model.dart';
 import '../../../models/info_model.dart';
 import '../../../utils/widgets/common_widgets.dart';
 import '../../../utils/widgets/name_edit_dialog.dart';
 import '../../../utils/widgets/textfield_decoration.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shimmer/shimmer.dart';
+import 'edit_photos.dart';
 import 'edit_preferred_matches.dart';
+import 'our_images_screen.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 class EditBasicInfoScreen extends StatefulWidget {
-  const EditBasicInfoScreen({super.key});
+ final  List<PhotosModel> photos;
+   const EditBasicInfoScreen({super.key, required this.photos});
 
   @override
   State<EditBasicInfoScreen> createState() => _EditBasicInfoScreenState();
@@ -85,6 +94,7 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
       Get.find<AuthController>().getDrinkingList();
       Get.find<AuthController>().getProfessionList();
       Get.find<AuthController>().getMotherTongueList();
+      getImage();
     });
     super.initState();
   }
@@ -94,7 +104,7 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
 
   BasicInfo basicInfo = BasicInfo();
   InfoModel mainInfo = InfoModel();
-
+  String profilePic = "";
   careerInfo() {
     isLoading = true;
     var resp = getProfileApi();
@@ -103,6 +113,7 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
       if (value['status'] == true) {
         setState(() {
           var physicalAttributesData = value['data']['user']['basic_info'];
+          profilePic = value['data']['user']['profile_image_url'];
           if (physicalAttributesData != null) {
             setState(() {
               basicInfo = BasicInfo.fromJson(physicalAttributesData);
@@ -125,7 +136,11 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
       }
     });
   }
-
+ bool? picAsProfile = false;
+  Map<String,dynamic> ImageAsPic = {
+    "index":0,
+    "image":false
+  };
   void fields() {
     firstNameController.text = mainInfo?.firstname.toString() ?? '';
     middleNameController.text = mainInfo?.middlename.toString() ?? '';
@@ -157,7 +172,32 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
     disablityController.text = basicInfo.disability.toString() ?? '';
    Get.find<AuthController>().getCasteList(Get.find<ProfileController>().profile?.religion);
 
+  }
 
+  List<PhotosModel> photos = [];
+
+  void getImage() {
+    setState(() {
+      isLoading = true;
+    });
+
+    var resp = getImagesApi();
+    resp.then((value) {
+      if (!mounted) return; // Check if the widget is still in the tree
+      setState(() {
+        isLoading = false;
+        photos.clear();
+        if (value['status'] == true) {
+          List<dynamic> data = value['data'];
+          for (var obj in data) {
+            List<dynamic> galleries = obj['galleries'];
+            for (var gallery in galleries) {
+              photos.add(PhotosModel.fromJson(gallery));
+            }
+          }
+        }
+      });
+    });
   }
 
   @override
@@ -198,8 +238,8 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
                       shape: BoxShape.circle,
                     ),
                     child: pickedImage.path.isEmpty
-                        ? Image.asset(
-                      icProfilePlaceHolder,
+                        ? Image.network(
+                      profilePic,
                     )
                         : Image.file(
                       pickedImage,
@@ -256,6 +296,254 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
                     },
                     title: "Add"),
 
+                SizedBox(height: 25,),
+                Container(
+                  width: double.infinity,
+                  height: photos.length>3?325:200,
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 5,
+                          offset: const Offset(
+                              0, 3), // changes position of shadow
+                        ),
+                      ]),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Photos',
+                              style: kManrope25Black.copyWith(
+                                  fontSize: Dimensions.fontSize18,
+                                  color: Theme.of(context)
+                                      .primaryColorDark
+                                      .withOpacity(0.65)),
+                            ),
+                            customContainer(
+                                vertical: 5,
+                                horizontal: 10,
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(ic4Dots),
+                                    const SizedBox(
+                                      width: 6,
+                                    ),
+                                    const Text("See All")
+                                  ],
+                                ),
+                                radius: 8,
+                                color: Colors.white,
+                                click: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (builder) =>
+                                          const OurImagesScreen()));
+                                }),
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (builder) =>
+                                        const EditPhotosScreen()));
+                              },
+                              child: Icon(
+                                Icons.edit,
+                                color: Theme.of(context)
+                                    .primaryColorDark
+                                    .withOpacity(0.65),
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   children: [
+                        //     Text(
+                        //       'Photos',
+                        //       style: kManrope25Black.copyWith(fontSize: Dimensions.fontSize18,color: Theme.of(context).primaryColorDark.withOpacity(0.65)),
+                        //     ),
+                        //     IconButton(onPressed: () {
+                        //         Navigator.push(context, MaterialPageRoute(
+                        //             builder: (builder) => const EditPhotosScreen()));
+                        //     }, icon: Icon(Icons.edit,
+                        //     color: Theme.of(context).primaryColorDark.withOpacity(0.65),))
+                        //   ],
+                        // ),
+
+                        // GestureDetector(onTap: () {
+                        //   Navigator.push(context, MaterialPageRoute(
+                        //       builder: (builder) => const EditPhotosScreen()));
+                        //
+                        // },
+                        //   child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //     children: [
+                        //       Text("photos",style:styleSatoshiMedium(size: 16, color: primaryColor)),
+                        //       Image.asset(icEdit,height: 20,width: 20,),
+                        //     ],
+                        //   ),
+                        // ),
+                        sizedBox16(),
+                        photos.isEmpty || photos == null
+                            ? Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (builder) =>
+                                        const EditPhotosScreen()));
+                              },
+                              child: const DottedPlaceHolder(
+                                text: 'Add Photos',
+                              ),
+                            ))
+                            : Stack(
+                          children: [
+                            GridView.builder(
+                              shrinkWrap: true,
+                              itemCount: photos.length,
+                              gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                mainAxisSpacing: 8,
+                                crossAxisSpacing: 8,
+                                childAspectRatio: 1,
+                              ),
+                              itemBuilder: (_, i) {
+                                return GestureDetector(
+                                  onLongPress: () {
+                                    setState(() {
+                                      picAsProfile = true;
+                                      ImageAsPic['index'] = i;
+                                      ImageAsPic['image'] = true;
+                                    });
+                                  },
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            PhotoViewScreen(
+                                              imageProvider: NetworkImage(
+                                                photos[i].image != null
+                                                    ? '$baseGalleryImage${photos[i].image}'
+                                                    : '',
+                                              ),
+                                            ),
+                                      ),
+                                    );
+                                  },
+                                  behavior:
+                                  HitTestBehavior.translucent,
+                                  child: Container(
+                                    height: 220,
+                                    width: 130,
+                                    clipBehavior: Clip.hardEdge,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.grey,
+                                        width: 1,
+                                      ),
+                                      borderRadius:
+                                      const BorderRadius.all(
+                                          Radius.circular(10)),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        CachedNetworkImage(
+                                          width: 130,
+                                          height: 220,
+                                          imageUrl: photos[i].image !=
+                                              null
+                                              ? '$baseGalleryImage${photos[i].image}'
+                                              : '',
+                                          fit: BoxFit.cover,
+                                          errorWidget:
+                                              (context, url, error) =>
+                                              Padding(
+                                                padding:
+                                                const EdgeInsets.all(8.0),
+                                                child: Image.asset(
+                                                  icLogo,
+                                                  height: 40,
+                                                  width: 40,
+                                                ),
+                                              ),
+                                          progressIndicatorBuilder:
+                                              (a, b, c) => customShimmer(
+                                            height: 0, /*width: 0,*/
+                                          ),
+                                        ),
+                                        Visibility(
+                                          visible: ImageAsPic['image'] &&
+                                              ImageAsPic['index'] == i,
+                                          child: Container(
+                                            height: 220,
+                                            width: 130,
+                                            color: Colors.black
+                                                .withOpacity(0.5),
+                                            child: Center(
+                                              child: Text(
+                                                "Selected",
+                                                style: styleSatoshiRegular(
+                                                    size: 14,
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            Visibility(
+                              visible: picAsProfile!,
+                              child: Positioned(
+                                top: MediaQuery.of(context).size.height *
+                                    0.2,
+                                bottom: 10,
+                                right: 10,
+                                child: Row(
+                                  children: [
+                                    elevatedButton(
+                                        color: Colors.green,
+                                        height: 60,
+                                        style: styleSatoshiLight(
+                                            size: 14, color: Colors.white),
+                                        width: 100,
+                                        context: context,
+                                        onTap: () {
+                                          debugPrint("Make it Profile:'$baseGalleryImage${photos[ImageAsPic['index']].image!}'");
+                                          setState(() {
+                                            profilePic = '$baseGalleryImage${photos[ImageAsPic['index']].image!}';
+                                            ImageAsPic['image'] = false;
+                                            picAsProfile = false;
+                                          });
+                                        },
+                                        title: "Make it Profile"),
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 25,),
                 GestureDetector(
                   onTap: () {
                     showDialog(
@@ -322,9 +610,6 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
                     ],
                   ),
                 ),
-                sizedBox16(),
-
-                const Divider(),
                 sizedBox6(),
                 EditDetailsTextField(title: 'First Name', controller: firstNameController,),
                 sizedBox6(),

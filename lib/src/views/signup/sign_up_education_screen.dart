@@ -45,15 +45,16 @@ class _SignUpScreenEducationState extends State<SignUpScreenEducation> {
   final _yearController = TextEditingController();
   @override
   void initState() {
-    fields();
+
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   Get.find<AuthController>().getReligionsList();
-    //   Get.find<AuthController>().getCommunityList();
-    //   print("checlk sttaus");
-    //   Get.find<AuthController>().getMarriedStatusList();
-    //   print( Get.find<AuthController>().marriedStatusList!.length);
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Get.find<AuthController>().getHighestDegreeList()?.then((value) {
+        if(value??false){
+          fields();
+        }
+      });
+    });
+
   }
 
 
@@ -127,7 +128,7 @@ class _SignUpScreenEducationState extends State<SignUpScreenEducation> {
                     sizedBox12(),
                     CustomDropdownButtonFormField<String>(
                       value: authControl.highestDegree ,
-                      items: authControl.highestDegreeList,
+                      items: authControl.highesdegree,
                       hintText: "Select Highest Degree",
                       onChanged: (value) {
                         authControl.setHighestDegree(value!);

@@ -54,7 +54,7 @@ class KycWaitScreen extends StatelessWidget {
                   sizedBox8(),
                   Center(
                     child: Text(
-                      'You Will Be Notified When Your Profile\n Gets Approved.',
+                      'You Will Be Notified When Your Profile\n Gets approved',
                       textAlign: TextAlign.center,
                       style: kManrope14Medium626262.copyWith(color: Colors.black),
                     ),

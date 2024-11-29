@@ -70,8 +70,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   File pickedImage = File("");
   final ImagePicker _imgPicker = ImagePicker();
-  ProfileModel profile = ProfileModel();
   bool isLoading = false;
+  ProfileModel profile = ProfileModel();
 
   profileDetail() {
     setState(() {
@@ -347,7 +347,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             sizedBox10(),
                             Container(
                               width: double.infinity,
-                              height: 270,
+                              height: 300,
                               decoration: BoxDecoration(
                                   color: Theme.of(context).cardColor,
                                   borderRadius: BorderRadius.circular(12),
@@ -383,7 +383,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (builder) =>
-                                                        const EditBasicInfoScreen()));
+                                                         EditBasicInfoScreen(photos: photos,)));
                                           },
                                           child: Icon(
                                             Icons.edit,
@@ -986,203 +986,203 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                ),
                              ),
                            ),
-                            sizedBox10(),
-                            Container(
-                              width: double.infinity,
-                              height: photos.length>3?325:200,
-                              decoration: BoxDecoration(
-                                  color: Theme.of(context).cardColor,
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.5),
-                                      spreadRadius: 1,
-                                      blurRadius: 5,
-                                      offset: const Offset(
-                                          0, 3), // changes position of shadow
-                                    ),
-                                  ]),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Photos',
-                                          style: kManrope25Black.copyWith(
-                                              fontSize: Dimensions.fontSize18,
-                                              color: Theme.of(context)
-                                                  .primaryColorDark
-                                                  .withOpacity(0.65)),
-                                        ),
-                                        Visibility(
-                                            visible: photos.length>3,
-                                            child: customContainer(
-                                                vertical: 5,
-                                                horizontal: 10,
-                                                child: Row(
-                                                  children: [
-                                                    SvgPicture.asset(ic4Dots),
-                                                    const SizedBox(
-                                                      width: 6,
-                                                    ),
-                                                    const Text("See All")
-                                                  ],
-                                                ),
-                                                radius: 8,
-                                                color: Colors.white,
-                                                click: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (builder) =>
-                                                          const OurImagesScreen()));
-                                                })),
-                                      ],
-                                    ),
-                                    // Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    //   children: [
-                                    //     Text(
-                                    //       'Photos',
-                                    //       style: kManrope25Black.copyWith(fontSize: Dimensions.fontSize18,color: Theme.of(context).primaryColorDark.withOpacity(0.65)),
-                                    //     ),
-                                    //     IconButton(onPressed: () {
-                                    //         Navigator.push(context, MaterialPageRoute(
-                                    //             builder: (builder) => const EditPhotosScreen()));
-                                    //     }, icon: Icon(Icons.edit,
-                                    //     color: Theme.of(context).primaryColorDark.withOpacity(0.65),))
-                                    //   ],
-                                    // ),
-
-                                    // GestureDetector(onTap: () {
-                                    //   Navigator.push(context, MaterialPageRoute(
-                                    //       builder: (builder) => const EditPhotosScreen()));
-                                    //
-                                    // },
-                                    //   child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    //     children: [
-                                    //       Text("Photos",style:styleSatoshiMedium(size: 16, color: primaryColor)),
-                                    //       Image.asset(icEdit,height: 20,width: 20,),
-                                    //     ],
-                                    //   ),
-                                    // ),
-                                    sizedBox16(),
-                                    photos.isEmpty || photos == null
-                                        ? Center(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (builder) =>
-                                                    const EditPhotosScreen()));
-                                          },
-                                          child: const DottedPlaceHolder(
-                                            text: 'Add Photos',
-                                          ),
-                                        ))
-                                        : Stack(
-                                        children: [
-                                         GridView.builder(
-                                          shrinkWrap: true,
-                                          itemCount: photos.length,
-                                          gridDelegate:
-                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 3,
-                                            mainAxisSpacing: 8,
-                                            crossAxisSpacing: 8,
-                                            childAspectRatio: 1,
-                                          ),
-                                          itemBuilder: (_, i) {
-                                            return GestureDetector(
-                                              onTap: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PhotoViewScreen(
-                                                          imageProvider: NetworkImage(
-                                                            photos[i].image != null
-                                                                ? '$baseGalleryImage${photos[i].image}'
-                                                                : '',
-                                                          ),
-                                                        ),
-                                                  ),
-                                                );
-                                              },
-                                              behavior:
-                                              HitTestBehavior.translucent,
-                                              child: Container(
-                                                height: 220,
-                                                width: 130,
-                                                clipBehavior: Clip.hardEdge,
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                    color: Colors.grey,
-                                                    width: 1,
-                                                  ),
-                                                  borderRadius:
-                                                  const BorderRadius.all(
-                                                      Radius.circular(10)),
-                                                ),
-                                                child: CachedNetworkImage(
-                                                  imageUrl: photos[i].image !=
-                                                      null
-                                                      ? '$baseGalleryImage${photos[i].image}'
-                                                      : '',
-                                                  fit: BoxFit.cover,
-                                                  errorWidget:
-                                                      (context, url, error) =>
-                                                      Padding(
-                                                        padding:
-                                                        const EdgeInsets.all(8.0),
-                                                        child: Image.asset(
-                                                          icLogo,
-                                                          height: 40,
-                                                          width: 40,
-                                                        ),
-                                                      ),
-                                                  progressIndicatorBuilder:
-                                                      (a, b, c) => customShimmer(
-                                                    height: 0, /*width: 0,*/
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                        Positioned(
-                                          bottom: 10,
-                                          right: 10,
-                                          child: Row(
-                                            children: [
-                                              InkWell(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (builder) =>
-                                                          const EditPhotosScreen()));
-                                                },
-                                                child: Icon(
-                                                  Icons.edit,
-                                                  color: Theme.of(context)
-                                                      .primaryColorDark
-                                                      .withOpacity(0.65),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            sizedBox16(),
+                            // sizedBox10(),
+                            // Container(
+                            //   width: double.infinity,
+                            //   height: photos.length>3?325:200,
+                            //   decoration: BoxDecoration(
+                            //       color: Theme.of(context).cardColor,
+                            //       borderRadius: BorderRadius.circular(12),
+                            //       boxShadow: [
+                            //         BoxShadow(
+                            //           color: Colors.grey.withOpacity(0.5),
+                            //           spreadRadius: 1,
+                            //           blurRadius: 5,
+                            //           offset: const Offset(
+                            //               0, 3), // changes position of shadow
+                            //         ),
+                            //       ]),
+                            //   child: Padding(
+                            //     padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
+                            //     child: Column(
+                            //       children: [
+                            //         Row(
+                            //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //           children: [
+                            //             Text(
+                            //               'Photos',
+                            //               style: kManrope25Black.copyWith(
+                            //                   fontSize: Dimensions.fontSize18,
+                            //                   color: Theme.of(context)
+                            //                       .primaryColorDark
+                            //                       .withOpacity(0.65)),
+                            //             ),
+                            //             Visibility(
+                            //                 visible: photos.length>3,
+                            //                 child: customContainer(
+                            //                     vertical: 5,
+                            //                     horizontal: 10,
+                            //                     child: Row(
+                            //                       children: [
+                            //                         SvgPicture.asset(ic4Dots),
+                            //                         const SizedBox(
+                            //                           width: 6,
+                            //                         ),
+                            //                         const Text("See All")
+                            //                       ],
+                            //                     ),
+                            //                     radius: 8,
+                            //                     color: Colors.white,
+                            //                     click: () {
+                            //                       Navigator.push(
+                            //                           context,
+                            //                           MaterialPageRoute(
+                            //                               builder: (builder) =>
+                            //                               const OurImagesScreen()));
+                            //                     })),
+                            //           ],
+                            //         ),
+                            //         // Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //         //   children: [
+                            //         //     Text(
+                            //         //       'Photos',
+                            //         //       style: kManrope25Black.copyWith(fontSize: Dimensions.fontSize18,color: Theme.of(context).primaryColorDark.withOpacity(0.65)),
+                            //         //     ),
+                            //         //     IconButton(onPressed: () {
+                            //         //         Navigator.push(context, MaterialPageRoute(
+                            //         //             builder: (builder) => const EditPhotosScreen()));
+                            //         //     }, icon: Icon(Icons.edit,
+                            //         //     color: Theme.of(context).primaryColorDark.withOpacity(0.65),))
+                            //         //   ],
+                            //         // ),
+                            //
+                            //         // GestureDetector(onTap: () {
+                            //         //   Navigator.push(context, MaterialPageRoute(
+                            //         //       builder: (builder) => const EditPhotosScreen()));
+                            //         //
+                            //         // },
+                            //         //   child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //         //     children: [
+                            //         //       Text("Photos",style:styleSatoshiMedium(size: 16, color: primaryColor)),
+                            //         //       Image.asset(icEdit,height: 20,width: 20,),
+                            //         //     ],
+                            //         //   ),
+                            //         // ),
+                            //         sizedBox16(),
+                            //         photos.isEmpty || photos == null
+                            //             ? Center(
+                            //             child: GestureDetector(
+                            //               onTap: () {
+                            //                 Navigator.push(
+                            //                     context,
+                            //                     MaterialPageRoute(
+                            //                         builder: (builder) =>
+                            //                         const EditPhotosScreen()));
+                            //               },
+                            //               child: const DottedPlaceHolder(
+                            //                 text: 'Add Photos',
+                            //               ),
+                            //             ))
+                            //             : Stack(
+                            //             children: [
+                            //              GridView.builder(
+                            //               shrinkWrap: true,
+                            //               itemCount: photos.length,
+                            //               gridDelegate:
+                            //               const SliverGridDelegateWithFixedCrossAxisCount(
+                            //                 crossAxisCount: 3,
+                            //                 mainAxisSpacing: 8,
+                            //                 crossAxisSpacing: 8,
+                            //                 childAspectRatio: 1,
+                            //               ),
+                            //               itemBuilder: (_, i) {
+                            //                 return GestureDetector(
+                            //                   onTap: () {
+                            //                     Navigator.push(
+                            //                       context,
+                            //                       MaterialPageRoute(
+                            //                         builder: (context) =>
+                            //                             PhotoViewScreen(
+                            //                               imageProvider: NetworkImage(
+                            //                                 photos[i].image != null
+                            //                                     ? '$baseGalleryImage${photos[i].image}'
+                            //                                     : '',
+                            //                               ),
+                            //                             ),
+                            //                       ),
+                            //                     );
+                            //                   },
+                            //                   behavior:
+                            //                   HitTestBehavior.translucent,
+                            //                   child: Container(
+                            //                     height: 220,
+                            //                     width: 130,
+                            //                     clipBehavior: Clip.hardEdge,
+                            //                     decoration: BoxDecoration(
+                            //                       border: Border.all(
+                            //                         color: Colors.grey,
+                            //                         width: 1,
+                            //                       ),
+                            //                       borderRadius:
+                            //                       const BorderRadius.all(
+                            //                           Radius.circular(10)),
+                            //                     ),
+                            //                     child: CachedNetworkImage(
+                            //                       imageUrl: photos[i].image !=
+                            //                           null
+                            //                           ? '$baseGalleryImage${photos[i].image}'
+                            //                           : '',
+                            //                       fit: BoxFit.cover,
+                            //                       errorWidget:
+                            //                           (context, url, error) =>
+                            //                           Padding(
+                            //                             padding:
+                            //                             const EdgeInsets.all(8.0),
+                            //                             child: Image.asset(
+                            //                               icLogo,
+                            //                               height: 40,
+                            //                               width: 40,
+                            //                             ),
+                            //                           ),
+                            //                       progressIndicatorBuilder:
+                            //                           (a, b, c) => customShimmer(
+                            //                         height: 0, /*width: 0,*/
+                            //                       ),
+                            //                     ),
+                            //                   ),
+                            //                 );
+                            //               },
+                            //             ),
+                            //             Positioned(
+                            //               bottom: 10,
+                            //               right: 10,
+                            //               child: Row(
+                            //                 children: [
+                            //                   InkWell(
+                            //                     onTap: () {
+                            //                       Navigator.push(
+                            //                           context,
+                            //                           MaterialPageRoute(
+                            //                               builder: (builder) =>
+                            //                               const EditPhotosScreen()));
+                            //                     },
+                            //                     child: Icon(
+                            //                       Icons.edit,
+                            //                       color: Theme.of(context)
+                            //                           .primaryColorDark
+                            //                           .withOpacity(0.65),
+                            //                     ),
+                            //                   ),
+                            //                 ],
+                            //               ),
+                            //             )
+                            //           ],
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ),
+                            // ),
+                            // sizedBox16(),
                           ],
                         ),
                       ),
