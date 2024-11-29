@@ -98,13 +98,10 @@ otherUserdataHolder({
                           Row(
                             children: [
                               Container( padding: const EdgeInsets.symmetric(vertical: 4.0,horizontal: 8),
-                                decoration : BoxDecoration(
-                                color: Colors.greenAccent,borderRadius: BorderRadius.circular(12)
-                              ),
                                 child: Text(
                                   '${dob} ',
                                   overflow: TextOverflow.ellipsis, maxLines: 1,
-                                  style: styleSatoshiLarge(size: 16, color: Colors.black),),
+                                  style: styleSatoshiLarge(size: 16, color: Colors.white),),
                               ),
                               const SizedBox(width: 6,),
                               Container(
@@ -117,13 +114,10 @@ otherUserdataHolder({
                               ),
                               const SizedBox(width: 6,),
                               Container( padding: const EdgeInsets.symmetric(vertical: 4.0,horizontal: 8),
-                                decoration : BoxDecoration(
-                                    color: Colors.yellowAccent.withOpacity(0.70),borderRadius: BorderRadius.circular(12)
-                                ),
                                 child: Text(
                                   '${atributeReligion} ',
                                   overflow: TextOverflow.ellipsis, maxLines: 1,
-                                  style: styleSatoshiLarge(size: 16, color: Colors.black),),
+                                  style: styleSatoshiLarge(size: 16, color: Colors.white),),
                               ),
                             ],
                           ),

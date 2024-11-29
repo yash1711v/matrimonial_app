@@ -153,8 +153,8 @@ class _SignUpOnboardScreenState extends State<SignUpOnboardScreen> {
                 vertical: 10),
             child: SingleChildScrollView(
               child:
-              loading ?
-              loadingButton(context: context) :
+              // loading ?
+              // loadingButton(context: context) :
               button(
                   context: context,
                   onTap: (){

@@ -22,9 +22,12 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import '../../apis/members_api.dart';
 import '../../apis/profile_apis/get_profile_api.dart';
+import '../../apis/profile_apis/images_apis.dart';
 import '../../constants/assets.dart';
 import '../../constants/colors.dart';
 import '../../constants/string.dart';
+import '../../models/images_model.dart';
+import '../../models/info_model.dart';
 import '../../models/matches_model.dart';
 import '../../models/profie_model.dart';
 import '../../utils/urls.dart';
@@ -35,6 +38,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'profile/edit_basic_info.dart';
+import 'package:bureau_couple/src/models/matches_model.dart' as basicModel;
 
 class HomeScreen extends StatefulWidget {
   final LoginResponse response;
@@ -56,8 +60,109 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     getMatches();
     getPreferredMatch();
+    careerInfo();
+    profileDetail();
     // profileDetail();
     // Get.find<ProfileController>().getUserDetailsApi();
+  }
+
+  InfoModel mainInfo = InfoModel();
+  basicModel.BasicInfo basicInfo = basicModel.BasicInfo();
+
+  List<PhotosModel> photos = [];
+
+  void getImage() {
+    setState(() {
+      isLoading = true;
+    });
+
+    var resp = getImagesApi();
+    resp.then((value) {
+      if (!mounted) return; // Check if the widget is still in the tree
+      setState(() {
+        isLoading = false;
+        photos.clear();
+        if (value['status'] == true) {
+          List<dynamic> data = value['data'];
+          for (var obj in data) {
+            List<dynamic> galleries = obj['galleries'];
+            for (var gallery in galleries) {
+              photos.add(PhotosModel.fromJson(gallery));
+            }
+          }
+        }
+      });
+    });
+  }
+
+  ProfileModel profile = ProfileModel();
+
+  profileDetail() {
+    setState(() {
+      isLoading = true;
+    });
+
+    var resp = getProfileApi();
+    resp.then((value) {
+      if (value['status'] == true) {
+        if (mounted) {
+          setState(() {
+            var profileData = value['data']['user'];
+            if (profileData != null) {
+              profile = ProfileModel.fromJson(profileData);
+              print(profile.id);
+              print(profile.firstname);
+              SharedPrefs().setProfilePhoto(profile.image.toString());
+            }
+            isLoading = false;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+          });
+        }
+      }
+    }).catchError((error) {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+      // Handle error
+      print("Error fetching profile: $error");
+    });
+  }
+  
+  careerInfo() {
+    isLoading = true;
+    var resp = getProfileApi();
+    resp.then((value) {
+      // physicalData.clear();
+      if (value['status'] == true) {
+        var physicalAttributesData = value['data']['user']['basic_info'];
+        if (physicalAttributesData != null) {
+          setState(() {
+            basicInfo = basicModel.BasicInfo.fromJson(physicalAttributesData);
+            // fields();
+          });
+        }
+        setState(() {
+          var info = value['data']['user'];
+          if (info != null) {
+            setState(() {
+              mainInfo = InfoModel.fromJson(info);
+            });
+          }
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    });
   }
 
   List<bool> isLoadingList = [];
@@ -127,8 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
-
-  ProfileModel profile = ProfileModel();
+  
 
   // bool isLoading = false;
   // profileDetail() {
@@ -189,8 +293,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (builder) =>
-                                        const EditBasicInfoScreen()));
+                                        EditBasicInfoScreen(photos: photos,)));
                           },
+                          basicInfo: basicInfo, profileModel: profile,
                         ),
                         /*  Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
