@@ -2,57 +2,68 @@ import 'dart:convert';
 
 import 'package:bureau_couple/src/constants/shared_prefs.dart';
 import 'package:bureau_couple/src/utils/urls.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../getx/controllers/auth_controller.dart';
-import '../../../getx/repository/repo/auth_repo.dart';
 import '../../models/LoginResponse.dart';
-import 'package:get/get.dart';
 
 Future<dynamic> loginApi({
-  required String mobileNumber,
+  required String userName,
+  required String password,
 }) async {
-  try{
-   http.post(Uri.parse('${baseUrl}check-mobile'),body: {
-      'mobile': mobileNumber,
-    }).then((response) async {
-      var resp = jsonDecode(response.body);
+  var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('${baseUrl}login'));
+  request.fields.addAll({
+    'username': userName,
+    'password': password,
+  });
+  print(request.fields);
+  http.StreamedResponse response = await request.send();
+  var resp = jsonDecode(await response.stream.bytesToString());
+  print(resp);
+  if (response.statusCode == 200) {
+    if(resp['status'] == 'success'){
+      return LoginResponse.fromJson(resp);
 
-      if(resp["message"] == "Mobile number does not exist."){
-        // Get.find<AuthController>().setVarificationDone(false);
-      } else {
-        // Get.find<AuthController>().setVarificationDone(true);
-        // Get.find<AuthController>().saveUserToken(resp['token']);
-        await SharedPrefs().setLoginToken(resp["token"]);
-      }
-
-   });
-  } catch(e){
-    print(e);
+    }
+    // return resp;
+  } else {
+    print(resp);
+    print(response.statusCode);
+    print(response.reasonPhrase);
+    return false;
+    // print(resp);
+    // print(response.reasonPhrase);
+    // print(response.statusCode);
+    // return resp;
   }
-
-
-
-  }
-  //   return resp;
-  // } else {
-  //   print(resp);
-  //   print(response.reasonPhrase);
-  //   print(response.statusCode);
-  //   return resp;
-  // }
+/*    if(resp['status'] == 'success'){
+      return LoginResponse.fromJson(resp);
+    } else {
+      print(resp);
+      print(response.statusCode);
+      print(response.reasonPhrase);
+      return false;
+    }*/
+}
+//   return resp;
+// } else {
+//   print(resp);
+//   print(response.reasonPhrase);
+//   print(response.statusCode);
+//   return resp;
+// }
 
 
 
 Future<dynamic> logOutApi() async {
-   var headers = {
-   'Authorization': 'Bearer ${SharedPrefs().getLoginToken()}'
+  var headers = {
+    'Authorization': 'Bearer ${SharedPrefs().getLoginToken()}'
   };
   var request = http.MultipartRequest(
       'POST',
       Uri.parse('${baseUrl}logout'));
-   request.headers.addAll(headers);
+  request.headers.addAll(headers);
   http.StreamedResponse response = await request.send();
   var resp = jsonDecode(await response.stream.bytesToString());
   print(resp);

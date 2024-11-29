@@ -115,11 +115,11 @@ class AuthController extends GetxController implements GetxService {
   Future<String> loginApi({required String number}) async {
     _isLoading = true;
     update();
-    String response = await authRepo.login(number: number);
+    // String response = await authRepo.login(number: number);
 
     _isLoading = false;
     update();
-    return response;
+    return "";
   }
 
 
@@ -141,12 +141,12 @@ class AuthController extends GetxController implements GetxService {
   Future<bool> verifyOtp({required String number,required String otp,required String varificationId,required BuildContext context}) async {
     _isLoading = true;
     update();
-    await authRepo.verifyOTP(context:context,otp: otp, varificationId: varificationId, number: number).then((value) {
-      _isLoading = false;
-      update();
-      debugPrint("===========$value");
-      return value;
-    });
+    // await authRepo.verifyOTP(context:context,otp: otp, varificationId: varificationId, number: number).then((value) {
+    //   _isLoading = false;
+    //   update();
+    //   debugPrint("===========$value");
+    //   return value;
+    // });
 
     _isLoading = false;
     update();

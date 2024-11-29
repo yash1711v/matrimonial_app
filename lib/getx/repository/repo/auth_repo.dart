@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../src/apis/login/login_api.dart';
 import '../../controllers/auth_controller.dart';
@@ -19,95 +19,96 @@ class AuthRepo {
 
   AuthRepo({required this.apiClient, required this.sharedPreferences});
 
-  Future<String> login({required String number}) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    String varificationId = "";
-    await auth.verifyPhoneNumber(
-        phoneNumber: "+91${number}",
-        verificationCompleted: (PhoneAuthCredential cred) {},
-        verificationFailed: (e) {
-          log(e.toString(), name: "error at login screen");
-        },
-        codeSent: (vrificationId, code) {
-          debugPrint("code  sent");
-          varificationId = vrificationId;
-          Get.find<AuthController>().setVarificationId(varificationId);
-          // _repo.login(number: (state.number ?? "").trim()).then((value) {
-          //   if (value['status']) {
-          //     _vrificationId = vrificationId;
-          //     context.read<OtpCubit>().setPhoneNumber(state.number ?? "", _vrificationId);
-          //     Navigator.pushReplacementNamed(context, OtpScreen.id);
-          //   } else {
-          //     emit(LoginState(error: "Something went wrong", number: state.number));
-          //   }
-          // });
-        },
-        codeAutoRetrievalTimeout: (val) {});
-    debugPrint("varificationId $varificationId");
-    return varificationId;
-  }
-
-  Future<bool> verifyOTP(
-      {BuildContext? context,
-      required String otp,
-      required String varificationId,
-      required String number}) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    if (otp.toString().trim().length == 6) {
-      if (varificationId.isNotEmpty) {
-        // Create credential using verification ID and OTP
-        final credential = PhoneAuthProvider.credential(
-          verificationId: varificationId!,
-          smsCode: otp,
-        );
-
-        try {
-          // Sign in using the credential
-          await auth.signInWithCredential(credential).then((value) {
-            if (value.user!.uid.isNotEmpty) {
-              ScaffoldMessenger.of(context!).showSnackBar(
-                const SnackBar(
-                  content: Text('Verify Successfully'),
-                ),
-              );
-              loginApi(mobileNumber: number);
-              Get.find<AuthController>().setVarificationDone(true);
-              return true;
-            } else {
-              Get.find<AuthController>().setVarificationDone(false);
-              false;
-            }
-          });
-        } catch (e) {
-          Navigator.pop(context!);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to verify OTP: $e'),
-            ),
-          );
-          print('Failed to verify OTP: $e');
-          return false;
-        }
-      } else {
-        print('Verification ID is null');
-        ScaffoldMessenger.of(context!).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to verify OTP: '),
-          ),
-        );
-        return false;
-      }
-    } else {
-      ScaffoldMessenger.of(context!).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter Valid otp'),
-        ),
-      );
-      return false;
-    }
-
-    return false;
-  }
+  // Future<String> login({required String number}) async {
+  //   FirebaseAuth auth = FirebaseAuth.instance;
+  //   String varificationId = "";
+  //   await auth.verifyPhoneNumber(
+  //       phoneNumber: "+91${number}",
+  //       verificationCompleted: (PhoneAuthCredential cred) {},
+  //       verificationFailed: (e) {
+  //         log(e.toString(), name: "error at login screen");
+  //       },
+  //       codeSent: (vrificationId, code) {
+  //         debugPrint("code  sent");
+  //         varificationId = vrificationId;
+  //         Get.find<AuthController>().setVarificationId(varificationId);
+  //         // _repo.login(number: (state.number ?? "").trim()).then((value) {
+  //         //   if (value['status']) {
+  //         //     _vrificationId = vrificationId;
+  //         //     context.read<OtpCubit>().setPhoneNumber(state.number ?? "", _vrificationId);
+  //         //     Navigator.pushReplacementNamed(context, OtpScreen.id);
+  //         //   } else {
+  //         //     emit(LoginState(error: "Something went wrong", number: state.number));
+  //         //   }
+  //         // });
+  //       },
+  //       codeAutoRetrievalTimeout: (val) {});
+  //   debugPrint("varificationId $varificationId");
+  //   return varificationId;
+  // }
+  //
+  // Future<bool> verifyOTP(
+  //     {BuildContext? context,
+  //     required String otp,
+  //     required String varificationId,
+  //     required String number})
+  // async {
+  //   FirebaseAuth auth = FirebaseAuth.instance;
+  //   if (otp.toString().trim().length == 6) {
+  //     if (varificationId.isNotEmpty) {
+  //       // Create credential using verification ID and OTP
+  //       final credential = PhoneAuthProvider.credential(
+  //         verificationId: varificationId!,
+  //         smsCode: otp,
+  //       );
+  //
+  //       try {
+  //         // Sign in using the credential
+  //         await auth.signInWithCredential(credential).then((value) {
+  //           if (value.user!.uid.isNotEmpty) {
+  //             ScaffoldMessenger.of(context!).showSnackBar(
+  //               const SnackBar(
+  //                 content: Text('Verify Successfully'),
+  //               ),
+  //             );
+  //             loginApi(mobileNumber: number);
+  //             Get.find<AuthController>().setVarificationDone(true);
+  //             return true;
+  //           } else {
+  //             Get.find<AuthController>().setVarificationDone(false);
+  //             false;
+  //           }
+  //         });
+  //       } catch (e) {
+  //         Navigator.pop(context!);
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(
+  //             content: Text('Failed to verify OTP: $e'),
+  //           ),
+  //         );
+  //         print('Failed to verify OTP: $e');
+  //         return false;
+  //       }
+  //     } else {
+  //       print('Verification ID is null');
+  //       ScaffoldMessenger.of(context!).showSnackBar(
+  //         const SnackBar(
+  //           content: Text('Failed to verify OTP: '),
+  //         ),
+  //       );
+  //       return false;
+  //     }
+  //   } else {
+  //     ScaffoldMessenger.of(context!).showSnackBar(
+  //       const SnackBar(
+  //         content: Text('Please enter Valid otp'),
+  //       ),
+  //     );
+  //     return false;
+  //   }
+  //
+  //   return false;
+  // }
 
   Future<void> checkUser() async {
 
