@@ -4,9 +4,7 @@ import 'package:bureau_couple/src/utils/urls.dart';
 import 'package:http/http.dart' as http;
 
 Future<dynamic> signUpApi({
-  required String userName,
   required String email,
-  required String password,
   required String mobileNo,
   required String passwordConfirmation,
   required String country,
@@ -64,12 +62,8 @@ Future<dynamic> signUpApi({
 }) async {
   var request = http.MultipartRequest('POST', Uri.parse('${baseUrl}register'));
   request.fields.addAll({
-    'username': userName,
     'email': email,
-    'password': password,
     'mobile_code': '91',
-    'mobile': mobileNo,
-    'password_confirmation': passwordConfirmation,
     'country': country,
     'firstname': firstName,
     'lastname': lastName,

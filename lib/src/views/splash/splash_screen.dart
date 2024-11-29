@@ -5,15 +5,13 @@ import 'package:bureau_couple/src/constants/assets.dart';
 import 'package:bureau_couple/src/constants/colors.dart';
 import 'package:bureau_couple/src/models/LoginResponse.dart';
 import 'package:bureau_couple/src/views/home/home_dashboard.dart';
-import 'package:bureau_couple/src/views/signIn/signin_option_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 
 import '../../apis/login/login_api.dart';
 import '../../constants/shared_prefs.dart';
-import '../onboarding/onboarding_screen.dart';
-import '../onboarding/welcome_screen.dart';
+
 import '../signIn/sign_in_screen.dart';
 
 
@@ -32,91 +30,15 @@ class _SplashScreenState extends State<SplashScreen> {
     setPage();
   }
 
-  setScreen() {
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (_) => const SignInOptionScreen()));
-    });
-  }
 
   LoginResponse? response;
 
   setPage() {
     SharedPrefs().init();
-    bool loginBool;
-    bool firstRun ;
+
     Future.delayed(const Duration(seconds: 2), () {
-      firstRun = SharedPrefs().getFirstRun() ?? false;
-      loginBool = SharedPrefs().getLogin() ?? false;
-
-      if (firstRun) {
-        if (loginBool) {
-        /*  loginApi(
-            password: '${SharedPrefs().getLoginPassword()}',
-            userName: '${SharedPrefs().getLoginEmail()}',
-          ).then((value) {
-            response = value;
-            if (response?.status != null &&
-                response!.status == 'success') {
-              Navigator.push(context, MaterialPageRoute(builder: (builder) =>
-                  HomeDashboardScreen(response: response!,)));
-
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const SignInScreen(),
-                ),
-              );
-            }
-          });*/
-
-          loginApi(
-            password: '${SharedPrefs().getLoginPassword()}',
-            userName: '${SharedPrefs().getLoginEmail()}',
-          ).then((value) {
-            response = value;
-            if (
-
-                response!.status == 'success'
-            /*value['status'] == 'success'*/) {
-              print("dsd");
-              print(response!.data!.user!.gender.toString());
-              SharedPrefs().setLoginToken(response!.data!.accessToken.toString());
-              SharedPrefs().setLoginTrue();
-              // SharedPrefs().setLoginEmail(emailController.text);
-              // SharedPrefs().setLoginPassword(passwordController.text);
-              Navigator.push(context, MaterialPageRoute(builder: (builder) =>
-               HomeDashboardScreen(response: response!,)));
-              // ToastUtil.showToast("Login Successful");
-
-            } else {
-              print("api false");
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const SignInOptionScreen(),
-                ),
-              );
-            }
-          });
-        } else {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const SignInOptionScreen(),
-              ));
-        }
-      }
-      else {
-        SharedPrefs().setFirstRunDone();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const SignInOptionScreen(),
-          ),
-        );
-      }
+      Navigator.push(context, MaterialPageRoute(builder: (builder)=>
+      const SignInScreen()));
     });
   }
 

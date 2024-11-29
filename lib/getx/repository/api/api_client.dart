@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:bureau_couple/getx/utils/app_constants.dart';
@@ -13,6 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:http/http.dart' as http;
+
+
 
 class ApiClient extends GetxService {
   final String appBaseUrl;
@@ -170,6 +173,7 @@ class ApiClient extends GetxService {
     debugPrint('====> API Response: [${response0.statusCode}] $uri\n${response0.body}');
     return response0;
   }
+
 
 }
 

@@ -16,7 +16,6 @@ import 'dart:io';
 import 'package:photo_view/photo_view.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-
 class EditPhotosScreen extends StatefulWidget {
   const EditPhotosScreen({super.key});
 

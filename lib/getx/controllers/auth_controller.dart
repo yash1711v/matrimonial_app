@@ -112,23 +112,46 @@ class AuthController extends GetxController implements GetxService {
 
   List<dynamic>? get additionalList => _additionalList;
 
-  // Future<void> loginApi(username, password,) async {
-  //   _isLoading = true;
-  //   update();
-  //   Response response = await authRepo.login(username, password);
-  //   var responseData = response.body;
-  //   if(responseData['status'] == "success") {
-  //     _isLoading = false;
-  //     update();
-  //     showCustomSnackBar("Login Success",isError: false);
-  //     authRepo.saveUserToken(responseData['data']['access_token']);
-  //     Get.offAllNamed(RouteHelper.getDashboardRoute());
-  //   } else {
-  //     showCustomSnackBar("Login Failed Please Check Credentials",isError: false);
-  //   }
-  //   _isLoading = false;
-  //   update();
-  // }
+  Future<String> loginApi({required String number}) async {
+    _isLoading = true;
+    update();
+    String response = await authRepo.login(number: number);
+
+    _isLoading = false;
+    update();
+    return response;
+  }
+
+
+  String _varificationId = "";
+  String get varificationId => _varificationId;
+
+  void setVarificationId(String id) {
+    _varificationId = id;
+    update();
+  }
+  bool _varificationDone = false;
+  bool get varificationDone => _varificationDone;
+
+  void setVarificationDone(bool varification) {
+    _varificationDone = varification;
+    update();
+  }
+
+  Future<bool> verifyOtp({required String number,required String otp,required String varificationId,required BuildContext context}) async {
+    _isLoading = true;
+    update();
+    await authRepo.verifyOTP(context:context,otp: otp, varificationId: varificationId, number: number).then((value) {
+      _isLoading = false;
+      update();
+      debugPrint("===========$value");
+      return value;
+    });
+
+    _isLoading = false;
+    update();
+    return false;
+  }
   String? _from;
   String? _to;
 

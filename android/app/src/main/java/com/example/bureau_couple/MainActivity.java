@@ -1,4 +1,4 @@
-package com.example.bureau_couple;
+package com.invoidea.bureaucouple;
 
 import io.flutter.embedding.android.FlutterActivity;
 

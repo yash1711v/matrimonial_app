@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1635883409",
+    "project_id": "bureau-couple",
+    "storage_bucket": "bureau-couple.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1635883409:android:734a64842cbc96b6182230",
+        "android_client_info": {
+          "package_name": "com.invoidea.bureaucouple"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkg4DjLFoeFCuyNb25iMbneylMCM0joeY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

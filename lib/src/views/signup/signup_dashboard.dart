@@ -251,71 +251,8 @@ class _SignUpOnboardScreenState extends State<SignUpOnboardScreen> {
                         setState(() {
                           loading = true;
                         });
-                        // Print all authControl values separately
-                        print('userName: ${authControl.userName}');
-                        print('email: ${authControl.email}');
-                        print('password: ${authControl.password}');
-                        print('mobileNo: ${authControl.phone}');
-                        print('passwordConfirmation: ${authControl.password}');
-                        print('firstName: ${authControl.firstName}');
-                        print('lastName: ${authControl.lastName}');
-                        print('lookingFor: ${authControl.lookingFor}');
-                        print('gender: ${authControl.gender}');
-                        print('motherTongue: ${authControl.motherTongueIndex}');
-                        print('birthDate: ${authControl.year}-${authControl.month}-${authControl.day}');
-                        print('country: India');
-                        print('countryCode: IN');
-                        print('maritalStatus: ${authControl.marriedStatusIndex}');
-                        print('photo: $pickedImagePath');
-                        print('religion: ${authControl.religionMainIndex}');
-                        print('profession: ${authControl.professionIndex}');
-                        print('userType: Normal');
-                        print('community: ${authControl.casteMainIndex}');
-                        print('positionHeld: ${authControl.positionHeldIndex}');
-                        print('state: ${authControl.selectedState}');
-                        print('cadar: ${authControl.cadar}');
-                        print('statePosting: ${authControl.posselectedState}');
-                        print('districtPosting: ${authControl.posselectedDistrict}');
-                        print('postingStartDate: ${authControl.postingYear}');
-                        print('postingEndDate: 2024-07-09');
-                        print('degree: ${authControl.highestDegree}');
-                        print('fieldofStudy: ${authControl.fieldOfStudy}');
-                        print('institute: ${authControl.institute}');
-                        print('batchStart: ${authControl.batchYear}');
-                        print('batchEnd: 2024-07-09');
-                        print('district: ${authControl.selectedDistrict}');
-                        print('middleName: ${authControl.middleName}');
-                        print('maritalStatusP: unmarried');
-                        print('religionP: ${authControl.partnerReligion}');
-                        print('communityP: ${authControl.partnerCommunity}');
-                        print('motherTongueP: ${authControl.partnerMotherTongue}');
-                        print('professionP: ${authControl.partnerProfession}');
-                        print('positionP: ${authControl.partnerPosition}');
-                        print('countryP: India');
-                        print('minAgeP: ${authControl.partnerMinAge}');
-                        print('maxAgeP: ${authControl.partnerMaxAge}');
-                        print('minHeightP: ${authControl.startHeightValue.value}');
-                        print('maxHeightP: ${authControl.endHeightValue.value}');
-                        print('smokingP: ${authControl.smokingIndex}');
-                        print('drinkingP: ${authControl.drikingIndex}');
-                        print('funList: ${formatList(authControl.fun)}');
-                        print('fitnessList: ${formatList(authControl.fitness)}');
-                        print('hobbyList: ${formatList(authControl.hobbies)}');
-                        print('creativeList: ${formatList(authControl.selectedCreatives)}');
-                        print('otherInterestList: ${formatList(authControl.otherInterests)}');
-                        print('financialCondition: ${authControl.annualIncome}');
-                        print('height: ${authControl.attributeHeightValue}');
-                        print('weight: ${authControl.attributeWeightValue}');
-                        print('eyeColor: ${authControl.eyeColor}');
-                        print('bloodGroup: ${authControl.bloodGroup}');
-                        print('hairColor: ${authControl.hairColor}');
-
-
-
                         signUpApi(
-                          userName: authControl.userName.toString(),
                           email: authControl.email.toString(),
-                          password:authControl.password.toString(),
                           mobileNo: authControl.phone.toString(),
                           passwordConfirmation: authControl.password.toString(),
                           firstName: authControl.firstName.toString(),
@@ -402,6 +339,7 @@ class _SignUpOnboardScreenState extends State<SignUpOnboardScreen> {
                             });
                             List<dynamic> errors = value['message']['error'];
                             String errorMessage = errors.isNotEmpty ? errors[0] : "An unknown error occurred.";
+                            debugPrint("=========>$errorMessage");
                             Fluttertoast.showToast(msg: errorMessage);
                           }
                         });
