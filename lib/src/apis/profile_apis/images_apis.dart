@@ -57,6 +57,27 @@ Future getImagesApi() async {
   }
 }
 
+Future getInterestsApi() async {
+  var headers = {
+    'Authorization': 'Bearer ${SharedPrefs().getLoginToken()}'
+  };
+  var request = http.Request('GET', Uri.parse('${baseUrl}get-interests'));
+  request.headers.addAll(headers);
+  print(headers);
+  http.StreamedResponse response = await request.send();
+  var resp = jsonDecode(await response.stream.bytesToString());
+  if(response.statusCode == 200 ) {
+    print(resp);
+    return resp;
+  } else {
+    print(resp);
+    print(response.statusCode);
+    print(response.reasonPhrase);
+    return resp;
+  }
+}
+
+
 Future<dynamic> imageDeleteApi({
   required String id,
 

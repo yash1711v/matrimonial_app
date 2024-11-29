@@ -26,6 +26,7 @@ import '../../../apis/profile_apis/images_apis.dart';
 import '../../../constants/assets.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/textstyles.dart';
+import '../../../models/Interests.dart';
 import '../../../models/images_model.dart';
 import '../../../models/profie_model.dart';
 import '../../../utils/widgets/buttons.dart';
@@ -51,27 +52,42 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final List<String>? interest = [
-    "Football",
-    "Nature",
-    "Language",
-    "Fashion",
-    "Photography",
-    "Music",
-    "Writing"
-  ];
+    List<Interest>? interest = [];
 
   @override
   void initState() {
     profileDetail();
     getImage();
+    getInterests();
     super.initState();
   }
+
+  void getInterests() {
+    setState(() {
+      isLoading = true;
+    });
+
+    var resp = getInterestsApi();
+    resp.then((value) {
+      if (!mounted) return; // Check if the widget is still in the tree
+      setState(() {
+        isLoading = false;
+        interest =  List<Interest>.from(value['data'].map((x) => Interest.fromJson(x)));
+      });
+      debugPrint('Interests: ${value['data']}');
+    });
+    debugPrint('Interests: $interest');
+  }
+
+
 
   File pickedImage = File("");
   final ImagePicker _imgPicker = ImagePicker();
   bool isLoading = false;
   ProfileModel profile = ProfileModel();
+
+
+
 
   profileDetail() {
     setState(() {
@@ -165,6 +181,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final allHobbies = interest!.expand((item) => item.hobbies).toList();
+
     return Scaffold(
       appBar: CustomAppBar2(
         title: "Profile",
@@ -743,7 +761,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             sizedBox20(),
                            Container(
                              width: double.infinity,
-                             height: 325,
                              decoration: BoxDecoration(
                                  color: Theme.of(context).cardColor,
                                  borderRadius: BorderRadius.circular(12),
@@ -756,11 +773,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                          0, 3), // changes position of shadow
                                    ),
                                  ]),
-                             child: Padding(
-                               padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 8),
-                               child: Column(
-                                 children: [
-                                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                             child: Column(
+                               children: [
+                                 Padding(
+                                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                   child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                      children: [
                                        Text(
                                          'Interest & Hobbies',
@@ -782,208 +799,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                            ))
                                      ],
                                    ),
-                                   // const SizedBox(height: 12,),
-                                   Container(
-                                     padding: const EdgeInsets.all(12),
-                                     decoration: BoxDecoration(
-                                         border: Border.all(
-                                             width: 0.5, color: Colors.black),
-                                         borderRadius: BorderRadius.circular(12),
-                                         color: Theme.of(context).cardColor),
-                                     child: Column(
-                                       children: [
-                                         Row(
-                                           children: [
-                                             Expanded(
-                                               child: Wrap(
-                                                 alignment: WrapAlignment.start,
-                                                 spacing: 4.0,
-                                                 children: profile.fun
-                                                     .toString()
-                                                     .split(', ')
-                                                     .map((item) {
-                                                   return Container(
-                                                     padding: const EdgeInsets.all(
-                                                         Dimensions.paddingSize10),
-                                                     decoration: BoxDecoration(
-                                                         color: color4B164C
-                                                             .withOpacity(0.80),
-                                                         // border: Border.all(width:1,
-                                                         //     color: color4B164C.withOpacity(0.80)),
-                                                         borderRadius:
-                                                         BorderRadius.circular(
-                                                             Dimensions.radius15)),
-                                                     child: Text(
-                                                       item,
-                                                       style: satoshiBold.copyWith(
-                                                           fontSize:
-                                                           Dimensions.fontSize12,
-                                                           color: Theme.of(context)
-                                                               .cardColor),
-                                                     ),
-                                                   );
-                                                 }).toList(),
-                                               ),
-                                             ),
-                                           ],
-                                         ),
-                                         Row(
-                                           children: [
-                                             Expanded(
-                                               child: Wrap(
-                                                 alignment: WrapAlignment.start,
-                                                 spacing: 4.0,
-                                                 children: profile.creative
-                                                     .toString()
-                                                     .split(', ')
-                                                     .map((item) {
-                                                   return Container(
-                                                     margin:
-                                                     const EdgeInsets.symmetric(
-                                                         vertical: Dimensions
-                                                             .paddingSize5),
-                                                     padding: const EdgeInsets.all(
-                                                         Dimensions.paddingSize10),
-                                                     decoration: BoxDecoration(
-                                                         color: color4B164C
-                                                             .withOpacity(0.80),
-                                                         // border: Border.all(width:1,
-                                                         //     color: color4B164C.withOpacity(0.80)),
-                                                         borderRadius:
-                                                         BorderRadius.circular(
-                                                             Dimensions.radius15)),
-                                                     child: Text(
-                                                       item,
-                                                       style: satoshiBold.copyWith(
-                                                           fontSize:
-                                                           Dimensions.fontSize12,
-                                                           color: Theme.of(context)
-                                                               .cardColor),
-                                                     ),
-                                                   );
-                                                 }).toList(),
-                                               ),
-                                             ),
-                                           ],
-                                         ),
-                                         Row(
-                                           children: [
-                                             Expanded(
-                                               child: Wrap(
-                                                 alignment: WrapAlignment.start,
-                                                 spacing: 4.0,
-                                                 children: profile.fitness
-                                                     .toString()
-                                                     .split(', ')
-                                                     .map((item) {
-                                                   return Container(
-                                                     margin:
-                                                     const EdgeInsets.symmetric(
-                                                         vertical: Dimensions
-                                                             .paddingSize5),
-                                                     padding: const EdgeInsets.all(
-                                                         Dimensions.paddingSize10),
-                                                     decoration: BoxDecoration(
-                                                         color: color4B164C
-                                                             .withOpacity(0.80),
-                                                         // border: Border.all(width:1,
-                                                         //     color: color4B164C.withOpacity(0.80)),
-                                                         borderRadius:
-                                                         BorderRadius.circular(
-                                                             Dimensions.radius15)),
-                                                     child: Text(
-                                                       item,
-                                                       style: satoshiBold.copyWith(
-                                                           fontSize:
-                                                           Dimensions.fontSize12,
-                                                           color: Theme.of(context)
-                                                               .cardColor),
-                                                     ),
-                                                   );
-                                                 }).toList(),
-                                               ),
-                                             ),
-                                           ],
-                                         ),
-                                         Row(
-                                           children: [
-                                             Expanded(
-                                               child: Wrap(
-                                                 alignment: WrapAlignment.start,
-                                                 spacing: 4.0,
-                                                 children: profile.hobby
-                                                     .toString()
-                                                     .split(', ')
-                                                     .map((item) {
-                                                   return Container(
-                                                     margin:
-                                                     const EdgeInsets.symmetric(
-                                                         vertical: Dimensions
-                                                             .paddingSize5),
-                                                     padding: const EdgeInsets.all(
-                                                         Dimensions.paddingSize10),
-                                                     decoration: BoxDecoration(
-                                                         color: color4B164C
-                                                             .withOpacity(0.80),
-                                                         borderRadius:
-                                                         BorderRadius.circular(
-                                                             Dimensions.radius15)),
-                                                     child: Text(
-                                                       item,
-                                                       style: satoshiBold.copyWith(
-                                                           fontSize:
-                                                           Dimensions.fontSize12,
-                                                           color: Theme.of(context)
-                                                               .cardColor),
-                                                     ),
-                                                   );
-                                                 }).toList(),
-                                               ),
-                                             ),
-                                           ],
-                                         ),
-                                         Row(
-                                           children: [
-                                             Expanded(
-                                               child: Wrap(
-                                                 alignment: WrapAlignment.start,
-                                                 spacing: 4.0,
-                                                 children: profile.otherInterest
-                                                     .toString()
-                                                     .split(', ')
-                                                     .map((item) {
-                                                   return Container(
-                                                     margin:
-                                                     const EdgeInsets.symmetric(
-                                                         vertical: Dimensions
-                                                             .paddingSize5),
-                                                     padding: const EdgeInsets.all(
-                                                         Dimensions.paddingSize10),
-                                                     decoration: BoxDecoration(
-                                                         color: color4B164C
-                                                             .withOpacity(0.80),
-                                                         borderRadius:
-                                                         BorderRadius.circular(
-                                                             Dimensions.radius15)),
-                                                     child: Text(
-                                                       item,
-                                                       style: satoshiBold.copyWith(
-                                                           fontSize:
-                                                           Dimensions.fontSize12,
-                                                           color: Theme.of(context)
-                                                               .cardColor),
-                                                     ),
-                                                   );
-                                                 }).toList(),
-                                               ),
-                                             ),
-                                           ],
-                                         ),
-                                       ],
-                                     ),
+                                 ),
+                                 // const SizedBox(height: 12,),
+                                 Container(
+                                   padding: const EdgeInsets.all(12),
+                                   decoration: BoxDecoration(
+                                     // border: Border.all(width: 0.5, color: Colors.black),
+                                     borderRadius: BorderRadius.circular(12),
+                                     color: Theme.of(context).cardColor,
                                    ),
-                                 ],
-                               ),
+                                   child: Wrap(
+                                     spacing: 12.0, // Horizontal spacing between items
+                                     runSpacing: 8.0, // Vertical spacing between rows
+                                     children: allHobbies.map((hobby) {
+                                       return Container(
+                                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                         decoration: BoxDecoration(
+                                           color: const Color(0xFF4B164C).withOpacity(0.80),
+                                           borderRadius: BorderRadius.circular(15),
+                                         ),
+                                         child: Text(
+                                           hobby,
+                                           textAlign: TextAlign.center,
+                                           style: const TextStyle(
+                                             color: Colors.white,
+                                             fontSize: 16,
+                                           ),
+                                         ),
+                                       );
+                                     }).toList(),
+                                   ),
+                                 )
+                                 // Container(
+                                 //   padding: const EdgeInsets.all(12),
+                                 //   decoration: BoxDecoration(
+                                 //       border: Border.all(
+                                 //           width: 0.5, color: Colors.black),
+                                 //       borderRadius: BorderRadius.circular(12),
+                                 //       color: Theme.of(context).cardColor),
+                                 //   child: GridView.builder(
+                                 //     padding:  EdgeInsets.zero,
+                                 //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                 //       crossAxisCount: 3, // Number of items in a row
+                                 //       crossAxisSpacing: 12.0, // Horizontal spacing between grid items
+                                 //       mainAxisSpacing: 8.0,
+                                 //         childAspectRatio:2.5// Vertical spacing between grid items
+                                 //     ),
+                                 //     itemCount: allHobbies?.length, // Number of items
+                                 //     itemBuilder: (context, index) {
+                                 //       return Container(
+                                 //         alignment: Alignment.center,
+                                 //         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Add padding around the text
+                                 //         decoration: BoxDecoration(
+                                 //           color: color4B164C.withOpacity(0.80),
+                                 //           borderRadius: BorderRadius.circular(Dimensions.radius15),
+                                 //         ),
+                                 //         child: FittedBox(
+                                 //           fit: BoxFit.fill,
+                                 //           child: Text(
+                                 //             allHobbies[index],
+                                 //             textAlign: TextAlign.center, // Center-align the text
+                                 //             style: const TextStyle(
+                                 //               color: Colors.white,
+                                 //               fontSize: 16,
+                                 //             ),
+                                 //           ),
+                                 //         ),
+                                 //       );
+                                 //     },
+                                 //       shrinkWrap: true
+                                 //   ),
+                                 // ),
+                               ],
                              ),
                            ),
                             // sizedBox10(),
