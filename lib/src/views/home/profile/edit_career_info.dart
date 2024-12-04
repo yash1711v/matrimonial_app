@@ -48,6 +48,7 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
   final designationController = TextEditingController();
   bool loading = false;
   bool isLoading = false;
+  List<Map<String,Map<String, TextEditingController>>> fieldControllers = [];
 
   List<String> fieldNames = []; // Initial constant fields
   Map<String, TextEditingController> controllers = {};
@@ -64,17 +65,31 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
 
   List<CareerInfo> career = [];
 
+
   void showAddFieldDialog() {
-    TextEditingController nameController = TextEditingController();
+    TextEditingController UnivertyInstitute = TextEditingController();
+    TextEditingController highestDegree = TextEditingController();
+    TextEditingController fieldOfStudy = TextEditingController();
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Add New Field"),
-          content: TextField(
-            controller: nameController,
-            decoration: InputDecoration(hintText: "Enter field name"),
+          content: SizedBox(
+            height: 150,
+            child: Column(
+              children: [
+                TextField(
+                  controller: UnivertyInstitute,
+                  decoration: InputDecoration(hintText: "Position"),
+                ),
+                TextField(
+                  controller: highestDegree,
+                  decoration: InputDecoration(hintText: "State of Posting"),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -86,13 +101,14 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
             TextButton(
               child: Text("OK"),
               onPressed: () {
-                String newFieldName = nameController.text.trim();
-                if (newFieldName.isNotEmpty) {
-                  setState(() {
-                    fieldNames.add(newFieldName);
-                    controllers[newFieldName] = TextEditingController();
+                setState(() {
+                  fieldControllers.add({
+                    "newFields ${fieldControllers.length+1}": {
+                      "Position": UnivertyInstitute,
+                      "State of Posting": highestDegree,
+                    }
                   });
-                }
+                });
                 Navigator.of(context).pop();
               },
             ),
@@ -101,6 +117,7 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
       },
     );
   }
+
 
   careerInfo() {
     isLoading = true;
@@ -322,7 +339,6 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                            padding: const EdgeInsets.only(bottom: 8.0),
                            child: Container(
                              width: double.infinity,
-                             height: 200,
                              decoration: BoxDecoration(
                                  color: Theme.of(context).cardColor,
                                  borderRadius: BorderRadius.circular(12),
@@ -441,11 +457,50 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                                        );
                                      },
                                    ),
+                                   sizedBox6(),
                                  ],
                                ),
                              ),
                            ),
-                         )
+                         ),
+
+                          sizedBox16(),
+                          for(int i = 0; i < fieldControllers.length; i++)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 20.0),
+                              child: Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                    color: Theme.of(context).cardColor,
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.5),
+                                        spreadRadius: 1,
+                                        blurRadius: 5,
+                                        offset: const Offset(
+                                            0, 3), // changes position of shadow
+                                      ),
+                                    ]),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
+                                  child: Column(
+                                    children: [
+                                      EditDetailsTextField(
+                                        title: "Position",
+                                        controller: fieldControllers[i]["newFields ${i+1}"]!["Position"]! ?? TextEditingController(),
+                                      ),
+                                      sizedBox6(),
+                                      EditDetailsTextField(
+                                        title: "State of Posting",
+                                        controller: fieldControllers[i]["newFields ${i+1}"]!["State of Posting"]! ?? TextEditingController(),
+                                      ),
+                                      sizedBox6(),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
                           /*                ListView.builder(
                        physics: const NeverScrollableScrollPhysics(),
                        shrinkWrap: true,

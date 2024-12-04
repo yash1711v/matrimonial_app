@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:bureau_couple/getx/data/response/community_list_model.dart';
@@ -9,6 +10,7 @@ import 'package:bureau_couple/getx/data/response/profession_model.dart';
 import 'package:bureau_couple/getx/data/response/religion_model.dart';
 import 'package:bureau_couple/getx/features/widgets/date_converter.dart';
 import 'package:bureau_couple/getx/repository/repo/auth_repo.dart';
+import 'package:bureau_couple/src/models/category.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -16,6 +18,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
+import '../../src/models/interest_model.dart';
 import '../utils/app_constants.dart';
 import '../utils/colors.dart';
 
@@ -74,6 +77,43 @@ class AuthController extends GetxController implements GetxService {
       print('Error saving User ID to SharedPreferences: $e');
     }
   }
+
+
+
+  final List<Category> categories = [];
+
+  final List<String> selectedInterests = [];
+
+  final List<Interest> selectedInterestsList = [];
+
+  void initCategories(List<Map<String, dynamic>> apiData) {
+    categories.clear();
+    categories.addAll(apiData.map((data) => Category(
+      name: data['category_name'],
+      interests: List<String>.from(data['interests']),
+    )));
+    update();
+  }
+
+  void toggleCategoryExpansion(Category category) {
+    category.isExpanded.toggle();
+    update();
+  }
+
+  void selectInterest(String interest, [Category? category]) {
+
+
+    // Implement logic for selecting interests
+    if(selectedInterests.contains(interest)){
+      selectedInterests.remove(interest);
+      selectedInterestsList.remove(Interest(interestName: category!.name, hobbies: category!.interests));
+    }else {
+      selectedInterests.add(interest);
+      selectedInterestsList.add(Interest(interestName: category!.name, hobbies: category!.interests));
+    }
+    update();
+  }
+
 
   Future<String?> getUserIdFromPrefs() async {
     try {
@@ -3598,6 +3638,38 @@ class AuthController extends GetxController implements GetxService {
 
   // List<String> get getDiet => highestDegreeList;
 
+
+
+  Future<dynamic> getInterests() async {
+    _isLoading = true;
+    update();
+    try {
+      Response response = await authRepo.getInterests();
+      if (response.statusCode == 200) {
+        List<dynamic> responseData = response.body['data'];
+        var _interestsList =
+            responseData.map((json) => Interest.fromJson(json)).toList();
+        _isLoading = false;
+        update();
+        return _interestsList;
+
+      } else {
+        // Handle API error
+        // ApiChecker.checkApi(response);
+        _isLoading = false;
+        update();
+      }
+    } catch (error) {
+      // Handle errors, such as network failures
+      print("Error while fetching list: $error");
+      _isLoading = false;
+      update();
+    } finally {
+      _isLoading = false;
+      update();
+    }
+  }
+
   void setDiet(String? val) {
     _diet = val?.isNotEmpty == true ? val : dietList.first;
     update();
@@ -3606,6 +3678,29 @@ class AuthController extends GetxController implements GetxService {
   void setPartnerDiet(String? val) {
     _partnerDiet = val?.isNotEmpty == true ? val : dietList.first;
     update();
+  }
+
+  Future<void> saveInterests() async {
+    print('Selected Interests: $selectedInterestsList');
+
+     List<Map<String,dynamic>> interests = selectedInterestsList.map((e) => e.toJson()).toList();
+
+
+    _isLoading = true;
+    update();
+    try {
+      await authRepo.saveInterests(interests);
+
+    } catch (error) {
+      // Handle errors, such as network failures
+      print("Error while fetching list: $error");
+      _isLoading = false;
+      update();
+    } finally {
+      _isLoading = false;
+      update();
+    }
+
   }
 }
 

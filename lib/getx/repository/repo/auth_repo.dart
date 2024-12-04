@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 // import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../src/apis/login/login_api.dart';
+import '../../../src/constants/shared_prefs.dart';
 import '../../controllers/auth_controller.dart';
 
 class AuthRepo {
@@ -224,6 +225,20 @@ class AuthRepo {
   }
   Future<Response> getDegree() {
     return apiClient.getDataApi(AppConstants.degree);
+  }
+  Future<Response> getInterests() {
+    return apiClient.getDataApi(AppConstants.interests);
+  }
+  Future<void> saveInterests(dynamic data) async {
+   var headers = {
+   'Content-Type': 'application/json; charset=UTF-8',
+   'Accept' : 'application/json',
+     'Authorization': 'Bearer ${SharedPrefs().getLoginToken()}'
+    };
+    for(int i=0;i<data.length;i++){
+      apiClient.postData(AppConstants.saveInterests, data[i],headers: headers);
+    }
+
   }
 
   Future<Response> getCommunityUrl(id) {

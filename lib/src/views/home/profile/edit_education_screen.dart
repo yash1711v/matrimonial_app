@@ -36,29 +36,47 @@ class EditEducationScreen extends StatefulWidget {
 class _EditEducationScreenState extends State<EditEducationScreen> {
   bool isLoading = false;
 
-  List<String> fieldNames = []; // Initial constant fields
-  Map<String, TextEditingController> controllers = {};
+
+  List<Map<String,Map<String, TextEditingController>>> fieldControllers = [];
 
 
   @override
   void initState() {
     educationInfo();
     super.initState();
-    for (var name in fieldNames) {
-      controllers[name] = TextEditingController();
-    }
+
   }
+
+
+
   void showAddFieldDialog() {
-    TextEditingController nameController = TextEditingController();
+    TextEditingController UnivertyInstitute = TextEditingController();
+    TextEditingController highestDegree = TextEditingController();
+    TextEditingController fieldOfStudy = TextEditingController();
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Add New Field"),
-          content: TextField(
-            controller: nameController,
-            decoration: InputDecoration(hintText: "Enter field name"),
+          content: SizedBox(
+            height: 150,
+            child: Column(
+              children: [
+                TextField(
+                  controller: UnivertyInstitute,
+                  decoration: InputDecoration(hintText: "Enter your University/Institute"),
+                ),
+                TextField(
+                  controller: highestDegree,
+                  decoration: InputDecoration(hintText: "Enter highest degree"),
+                ),
+                TextField(
+                  controller: fieldOfStudy,
+                  decoration: InputDecoration(hintText: "Enter field of study"),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -70,13 +88,15 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
             TextButton(
               child: Text("OK"),
               onPressed: () {
-                String newFieldName = nameController.text.trim();
-                if (newFieldName.isNotEmpty) {
-                  setState(() {
-                    fieldNames.add(newFieldName);
-                    controllers[newFieldName] = TextEditingController();
+                setState(() {
+                  fieldControllers.add({
+                    "newFields ${fieldControllers.length+1}": {
+                      "University/Institute": UnivertyInstitute,
+                      "Highest Degree": highestDegree,
+                      "Field of Study": fieldOfStudy
+                    }
                   });
-                }
+                });
                 Navigator.of(context).pop();
               },
             ),
@@ -90,7 +110,7 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
 
   List<EducationInfo> educationDetails = [];
 
-  educationInfo() {
+  void educationInfo() {
     isLoading = true;
     var resp = getProfileApi();
     resp.then((value) {
@@ -160,12 +180,29 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
                   : button(
                       context: context,
                       onTap: () {
+
+                        List<String> institute = [universityController
+                            .text];
+                        List<String> degree = [degreeController
+                            .text];
+                        List<String> fieldOfStudy = [fieldOfStudyController.text];
+
+                        fieldControllers.forEach((element) {
+                          institute.add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["University/Institute"]!.text);
+                          degree.add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["Highest Degree"]!.text);
+                          fieldOfStudy .add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["Field of Study"]!.text);
+                        });
+
+                        debugPrint("Institute: $institute");
+                        debugPrint("Institute: $degree");
+                        debugPrint("Institute: $fieldOfStudy");
+
                         educationController.editEducationInfoApi(
                             'educationInfo',
                             educationDetails[0].id.toString(),
-                            degreeController.text,
-                            fieldOfStudyController.text,
-                            universityController.text);
+                            degree,
+                            institute,
+                            institute);
                         Get.back();
                       },
                       title: "Save"),
@@ -343,88 +380,97 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
                                                               loading = true;
                                                             });
                                                             Get.back();
+                                                          List<String> institute = [instituteController
+                                                              .text];
+                                                          List<String> degree = [degreeController
+                                                              .text];
+                                                            List<String> fieldOfStudy = [fieldOfStudyController.text];
 
-                                                            educationInfoAddApi(
-                                                                    institute:
-                                                                        instituteController
-                                                                            .text,
-                                                                    degree:
-                                                                        degreeController
-                                                                            .text,
-                                                                    fieldOfStudy:
-                                                                        fieldOfStudyController
-                                                                            .text,
-                                                                    regNO:
-                                                                        resultController
-                                                                            .text,
-                                                                    start:
-                                                                        startingYearController
-                                                                            .text,
-                                                                    end: endingYearController
-                                                                        .text,
-                                                                    result:
-                                                                        resultController
-                                                                            .text,
-                                                                    outOf:
-                                                                        outOfController
-                                                                            .text,
-                                                                    rollNo:
-                                                                        rollNoController
-                                                                            .text)
-                                                                .then((value) {
-                                                              /*  setState(() {
-                                              });*/
-                                                              if (value[
-                                                                      'status'] ==
-                                                                  true) {
-                                                                setState(() {
-                                                                  loading =
-                                                                      false;
-                                                                });
-                                                                ToastUtil.showToast(
-                                                                    "Updated Successfully");
-                                                                instituteController
-                                                                    .clear();
-                                                                degreeController
-                                                                    .clear();
-                                                                fieldOfStudyController
-                                                                    .clear();
-                                                                resultController
-                                                                    .clear();
-                                                                startingYearController
-                                                                    .clear();
-                                                                degreeController
-                                                                    .clear();
-                                                                endingYearController
-                                                                    .clear();
-                                                                resultController
-                                                                    .clear();
-                                                                outOfController
-                                                                    .clear();
-                                                                rollNoController
-                                                                    .clear();
-                                                              } else {
-                                                                setState(() {
-                                                                  loading =
-                                                                      false;
-                                                                });
-                                                                List<dynamic>
-                                                                    errors =
-                                                                    value['message']
-                                                                        [
-                                                                        'error'];
-                                                                String
-                                                                    errorMessage =
-                                                                    errors.isNotEmpty
-                                                                        ? errors[
-                                                                            0]
-                                                                        : "An unknown error occurred.";
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            errorMessage);
-                                                              }
-                                                            });
+                                                          fieldControllers.forEach((element) {
+                                                            institute.add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["University/Institute"]!.text);
+                                                            degree.add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["Highest Degree"]!.text);
+                                                            fieldOfStudy .add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["Field of Study"]!.text);
+                                                          });
+
+                                                          debugPrint("Institute: $institute");
+                                                          debugPrint("Institute: $degree");
+                                                          debugPrint("Institute: $fieldOfStudy");
+
+                                              //               educationInfoAddApi(
+                                              //                       institute: institute,
+                                              //                       degree: degree,
+                                              //                       fieldOfStudy: fieldOfStudy,
+                                              //                       regNO:
+                                              //                           resultController
+                                              //                               .text,
+                                              //                       start:
+                                              //                           startingYearController
+                                              //                               .text,
+                                              //                       end: endingYearController
+                                              //                           .text,
+                                              //                       result:
+                                              //                           resultController
+                                              //                               .text,
+                                              //                       outOf:
+                                              //                           outOfController
+                                              //                               .text,
+                                              //                       rollNo:
+                                              //                           rollNoController
+                                              //                               .text)
+                                              //                   .then((value) {
+                                              //                 /*  setState(() {
+                                              // });*/
+                                              //                 if (value[
+                                              //                         'status'] ==
+                                              //                     true) {
+                                              //                   setState(() {
+                                              //                     loading =
+                                              //                         false;
+                                              //                   });
+                                              //                   ToastUtil.showToast(
+                                              //                       "Updated Successfully");
+                                              //                   instituteController
+                                              //                       .clear();
+                                              //                   degreeController
+                                              //                       .clear();
+                                              //                   fieldOfStudyController
+                                              //                       .clear();
+                                              //                   resultController
+                                              //                       .clear();
+                                              //                   startingYearController
+                                              //                       .clear();
+                                              //                   degreeController
+                                              //                       .clear();
+                                              //                   endingYearController
+                                              //                       .clear();
+                                              //                   resultController
+                                              //                       .clear();
+                                              //                   outOfController
+                                              //                       .clear();
+                                              //                   rollNoController
+                                              //                       .clear();
+                                              //                 } else {
+                                              //                   setState(() {
+                                              //                     loading =
+                                              //                         false;
+                                              //                   });
+                                              //                   List<dynamic>
+                                              //                       errors =
+                                              //                       value['message']
+                                              //                           [
+                                              //                           'error'];
+                                              //                   String
+                                              //                       errorMessage =
+                                              //                       errors.isNotEmpty
+                                              //                           ? errors[
+                                              //                               0]
+                                              //                           : "An unknown error occurred.";
+                                              //                   Fluttertoast
+                                              //                       .showToast(
+                                              //                           msg:
+                                              //                               errorMessage);
+                                              //                 }
+                                              //               });
                                                           },
                                                           title: "Save")
                                                 ],
@@ -440,7 +486,7 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
                                       )))
                               : Column(
                             children: [
-                              for(int i = 0; i < educationDetails.length; i++)
+
                             Container(
                               width: double.infinity,
                               height: 230,
@@ -506,24 +552,54 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
                                         title: 'Field of Study',
                                         controller: fieldOfStudyController),
                                     sizedBox6(),
-                                    Visibility(
-                                      visible: fieldNames.isNotEmpty && fieldNames.length > 0,
-                                      child: ListView.builder(
-                                          shrinkWrap: true,
-                                          itemCount: fieldNames.length,
-                                          itemBuilder: (_, i){
-
-                                            return EditDetailsTextField(
-                                              title: fieldNames[i],
-                                              controller: controllers[fieldNames[i]] ?? TextEditingController(),
-                                            );
-
-                                          }),
-                                    )
                                   ],
                                 ),
                               ),
-                            )
+                            ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                       for(int i = 0; i < fieldControllers.length; i++)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20.0),
+                            child: Container(
+                                width: double.infinity,
+                                height: 230,
+                                decoration: BoxDecoration(
+                                    color: Theme.of(context).cardColor,
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.5),
+                                        spreadRadius: 1,
+                                        blurRadius: 5,
+                                        offset: const Offset(
+                                            0, 3), // changes position of shadow
+                                      ),
+                                    ]),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
+                                  child: Column(
+                                    children: [
+                                      EditDetailsTextField(
+                                        title: "University/Institute",
+                                        controller: fieldControllers[i]["newFields ${i+1}"]!["University/Institute"]! ?? TextEditingController(),
+                                      ),
+                                      sizedBox6(),
+                                      EditDetailsTextField(
+                                        title: "Highest Degree",
+                                        controller: fieldControllers[i]["newFields ${i+1}"]!["Highest Degree"]! ?? TextEditingController(),
+                                      ),
+                                      EditDetailsTextField(
+                                        title: "Field of Study",
+                                        controller: fieldControllers[i]["newFields ${i+1}"]!["Field of Study"]! ?? TextEditingController(),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                          ),
+
                           ],)
 
 

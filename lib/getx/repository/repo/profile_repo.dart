@@ -50,7 +50,7 @@ class ProfileRepo {
     return await apiClient.getData('${AppConstants.otherProfileUrl}?id=$otherUserId');
   }
 
-  Future<Response> editEducationInfo(String? type,String? id,String? degree,fieldOfStudy,institute) async {
+  Future<Response> editEducationInfo(String? type,String? id,List<String>? degree,fieldOfStudy,institute) async {
     return await apiClient.postData(AppConstants.editProfileDataUrl, {
       "type" :'educationInfo',
       "id" :id,

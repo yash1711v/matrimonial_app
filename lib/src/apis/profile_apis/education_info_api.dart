@@ -4,9 +4,9 @@ import 'package:bureau_couple/src/utils/urls.dart';
 import 'package:http/http.dart' as http;
 
 Future<dynamic> educationInfoAddApi({
-  required String institute,
-  required String degree,
-  required String fieldOfStudy,
+  required List<String> institute,
+  required List<String> degree,
+  required List<String> fieldOfStudy,
   required String regNO,
   required String start,
   required String end,
@@ -23,9 +23,9 @@ Future<dynamic> educationInfoAddApi({
       'POST',
       Uri.parse('${baseUrl}profile-setting/education/update'));
   request.fields.addAll({
-    'institute': institute,
-    'degree': degree,
-    'field_of_study': fieldOfStudy,
+    'institute': jsonEncode(institute),
+    'degree': jsonEncode(degree),
+    'field_of_study': jsonEncode(fieldOfStudy),
     'reg_no': regNO,
     'start': start,
     'end': end,
@@ -35,7 +35,7 @@ Future<dynamic> educationInfoAddApi({
 
   });
   request.headers.addAll(headers);
-  print(request.fields);
+  print("Fields: ${request.fields}");
   print(headers);
   http.StreamedResponse response = await request.send();
   var resp = jsonDecode(await response.stream.bytesToString());

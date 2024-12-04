@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bureau_couple/getx/controllers/profile_controller.dart';
 import 'package:bureau_couple/getx/data/response/profile_model.dart';
 import 'package:bureau_couple/getx/features/screens/interest/edit_interest_screen.dart';
@@ -6,20 +8,21 @@ import 'package:bureau_couple/getx/utils/styles.dart';
 import 'package:bureau_couple/src/constants/fonts.dart';
 import 'package:bureau_couple/src/constants/shared_prefs.dart';
 import 'package:bureau_couple/src/constants/sizedboxe.dart';
-import 'package:get/get.dart';
+import 'package:bureau_couple/src/models/interest_model.dart';
 import 'package:bureau_couple/src/utils/urls.dart';
 import 'package:bureau_couple/src/utils/widgets/common_widgets.dart';
 import 'package:bureau_couple/src/utils/widgets/customAppbar.dart';
 import 'package:bureau_couple/src/utils/widgets/custom_image_widget.dart';
 import 'package:bureau_couple/src/views/home/profile/edit_career_info.dart';
 import 'package:bureau_couple/src/views/home/profile/edit_education_screen.dart';
-import 'package:bureau_couple/src/views/home/profile/edit_photos.dart';
 import 'package:bureau_couple/src/views/home/profile/edit_physical_atributes.dart';
 import 'package:bureau_couple/src/views/signIn/sign_in_screen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+
 import '../../../apis/login/login_api.dart';
 import '../../../apis/profile_apis/get_profile_api.dart';
 import '../../../apis/profile_apis/images_apis.dart';
@@ -27,21 +30,13 @@ import '../../../constants/assets.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/textstyles.dart';
 import '../../../models/images_model.dart';
-import '../../../models/profie_model.dart';
 import '../../../utils/widgets/buttons.dart';
 import '../../../utils/widgets/custom_dialog.dart';
-import '../../../utils/widgets/loader.dart';
+import '../../../utils/widgets/hobbies_widget.dart';
 import '../../../utils/widgets/pop_up_menu_button.dart';
-import 'package:percent_indicator/percent_indicator.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import 'change_password_sheet.dart';
 import 'edit_basic_info.dart';
-import 'edit_family_info.dart';
 import 'edit_preferred_matches.dart';
-import 'our_images_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -51,16 +46,16 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final List<String>? interest = [
-    "Football",
-    "Nature",
-    "Language",
-    "Fashion",
-    "Photography",
-    "Music",
-    "Writing"
-  ];
-
+  // final List<String>? interest = [
+  //   "Football",
+  //   "Nature",
+  //   "Language",
+  //   "Fashion",
+  //   "Photography",
+  //   "Music",
+  //   "Writing"
+  // ];
+  Interest interests = Interest(interestName: "", hobbies: []);
   @override
   void initState() {
     profileDetail();
@@ -78,12 +73,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       isLoading = true;
     });
 
+
+
     var resp = getProfileApi();
     resp.then((value) {
       if (value['status'] == true) {
         if (mounted) {
           setState(() {
             var profileData = value['data']['user'];
+              interests = Interest.fromJson(value['data']['user']["interest"]);
+            debugPrint("user: ${value['data']['user']}");
             if (profileData != null) {
               profile = ProfileModel.fromJson(profileData);
               print(profile.id);
@@ -185,7 +184,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             context: context,
                             builder: (BuildContext context) {
                               return DeleteAccountDialog(
-                                titleButton1: 'Back',
+                                titleButton1: 'Cancel',
                                 click1: () {},
                                 click2: () {
                                   Navigator.push(
@@ -196,7 +195,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 },
                                 heading: 'Delete this Account?',
                                 subheading:
-                                    ' This Account with will be permanently deleted',
+                                    'Are You Sure You? Want to Delete',
                                 mainButton: elevatedButton(
                                     height: 38,
                                     color: Colors.red,
@@ -347,7 +346,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             sizedBox10(),
                             Container(
                               width: double.infinity,
-                              height: 300,
+                              height: 660,
                               decoration: BoxDecoration(
                                   color: Theme.of(context).cardColor,
                                   borderRadius: BorderRadius.circular(12),
@@ -383,7 +382,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (builder) =>
-                                                         EditBasicInfoScreen(photos: photos,)));
+                                                        EditBasicInfoScreen(
+                                                          photos: photos,
+                                                        )));
                                           },
                                           child: Icon(
                                             Icons.edit,
@@ -394,6 +395,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ),
                                       ],
                                     ),
+                                    buildInfoRow(
+                                        title: 'About',
+                                        text: profile.basicInfo?.aboutUs ?? '',
+                                        onTap: () {}),
                                     buildInfoRow(
                                         title: 'First Name',
                                         text: profile.firstname ?? '',
@@ -424,6 +429,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         title: 'Date of Birth',
                                         text:
                                             profile.basicInfo?.birthDate ?? '',
+                                        onTap: () {}),
+                                    buildInfoRow(
+                                        title: 'Gender',
+                                        text: profile.basicInfo?.gender ?? '',
+                                        onTap: () {}),
+                                    buildInfoRow(
+                                        title: 'Religion',
+                                        text: profile.basicInfo?.religion ?? '',
+                                        onTap: () {}),
+                                    buildInfoRow(
+                                        title: 'Smoking habit',
+                                        text: profile.basicInfo?.smokingName ??
+                                            '',
+                                        onTap: () {}),
+                                    buildInfoRow(
+                                        title: 'Drinking habit',
+                                        text: profile.basicInfo?.drinkingName ??
+                                            '',
+                                        onTap: () {}),
+                                    buildInfoRow(
+                                        title: 'Community',
+                                        text:
+                                            profile.basicInfo?.communityName ??
+                                                '',
+                                        onTap: () {}),
+                                    buildInfoRow(
+                                        title: 'Diet',
+                                        text: profile.basicInfo?.diet ?? '',
+                                        onTap: () {}),
+                                    buildInfoRow(
+                                        title: 'Annual Income',
+                                        text: profile.basicInfo
+                                                ?.financialCondition ??
+                                            '',
+                                        onTap: () {}),
+                                    buildInfoRow(
+                                        title: 'Mother Tongue',
+                                        text: profile
+                                                .basicInfo?.motherTongueName ??
+                                            '',
+                                        onTap: () {}),
+                                    buildInfoRow(
+                                        title: 'State',
+                                        text: profile.basicInfo?.presentAddress!
+                                                .state ??
+                                            '',
+                                        onTap: () {}),
+                                    buildInfoRow(
+                                        title: 'Disability',
+                                        text:
+                                            profile.basicInfo?.disability ?? '',
+                                        onTap: () {}),
+                                    buildInfoRow(
+                                        title: 'Marital Status',
+                                        text:
+                                            profile.basicInfo?.maritalStatus ??
+                                                '',
                                         onTap: () {}),
                                   ],
                                 ),
@@ -581,7 +643,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             sizedBox10(),
                             Container(
                               width: double.infinity,
-                              height: 145,
+                              height: 220,
                               decoration: BoxDecoration(
                                   color: Theme.of(context).cardColor,
                                   borderRadius: BorderRadius.circular(12),
@@ -649,6 +711,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 .toString() ??
                                             "",
                                         onTap: () {}),
+                                    buildInfoRow(
+                                        title: 'Eye Color',
+                                        text: profile
+                                                .physicalAttributes?.eyeColor
+                                                .toString() ??
+                                            "",
+                                        onTap: () {}),
+                                    buildInfoRow(
+                                        title: 'Hair Color',
+                                        text: profile
+                                                .physicalAttributes?.hairColor
+                                                .toString() ??
+                                            "",
+                                        onTap: () {}),
                                   ],
                                 ),
                               ),
@@ -656,7 +732,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             sizedBox10(),
                             Container(
                               width: double.infinity,
-                              height: 175,
+                              height: 250,
                               decoration: BoxDecoration(
                                   color: Theme.of(context).cardColor,
                                   borderRadius: BorderRadius.circular(12),
@@ -670,7 +746,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                   ]),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 10),
                                 child: Column(
                                   children: [
                                     Row(
@@ -736,256 +813,83 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           "",
                                       onTap: () {},
                                     ),
+                                    buildInfoRow(
+                                      title: 'Age bracket',
+                                      text: profile.partnerExpectation!.minAge
+                                                  .toString() +
+                                              "-" +
+                                              profile.partnerExpectation!.maxAge
+                                                  .toString() ??
+                                          "",
+                                      onTap: () {},
+                                    ),
+                                    buildInfoRow(
+                                      title: 'Highest bracket',
+                                      text: profile.partnerExpectation!.minHeight
+                                                  .toString() +
+                                              "-" +
+                                              profile.partnerExpectation!.maxHeight
+                                                  .toString() + " ft",
+                                      onTap: () {},
+                                    ),
                                   ],
                                 ),
                               ),
                             ),
                             sizedBox20(),
-                           Container(
-                             width: double.infinity,
-                             height: 325,
-                             decoration: BoxDecoration(
-                                 color: Theme.of(context).cardColor,
-                                 borderRadius: BorderRadius.circular(12),
-                                 boxShadow: [
-                                   BoxShadow(
-                                     color: Colors.grey.withOpacity(0.5),
-                                     spreadRadius: 1,
-                                     blurRadius: 5,
-                                     offset: const Offset(
-                                         0, 3), // changes position of shadow
-                                   ),
-                                 ]),
-                             child: Padding(
-                               padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 8),
-                               child: Column(
-                                 children: [
-                                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                     children: [
-                                       Text(
-                                         'Interest & Hobbies',
-                                         style: kManrope25Black.copyWith(
-                                             fontSize: Dimensions.fontSize18,
-                                             color: Theme.of(context)
-                                                 .primaryColorDark
-                                                 .withOpacity(0.65)),
-                                       ),
-                                       IconButton(
-                                           onPressed: () {
-                                             Get.to(const EditInterestScreen());
-                                           },
-                                           icon: Icon(
-                                             Icons.edit,
-                                             color: Theme.of(context)
-                                                 .primaryColorDark
-                                                 .withOpacity(0.65),
-                                           ))
-                                     ],
-                                   ),
-                                   // const SizedBox(height: 12,),
-                                   Container(
-                                     padding: const EdgeInsets.all(12),
-                                     decoration: BoxDecoration(
-                                         border: Border.all(
-                                             width: 0.5, color: Colors.black),
-                                         borderRadius: BorderRadius.circular(12),
-                                         color: Theme.of(context).cardColor),
-                                     child: Column(
-                                       children: [
-                                         Row(
-                                           children: [
-                                             Expanded(
-                                               child: Wrap(
-                                                 alignment: WrapAlignment.start,
-                                                 spacing: 4.0,
-                                                 children: profile.fun
-                                                     .toString()
-                                                     .split(', ')
-                                                     .map((item) {
-                                                   return Container(
-                                                     padding: const EdgeInsets.all(
-                                                         Dimensions.paddingSize10),
-                                                     decoration: BoxDecoration(
-                                                         color: color4B164C
-                                                             .withOpacity(0.80),
-                                                         // border: Border.all(width:1,
-                                                         //     color: color4B164C.withOpacity(0.80)),
-                                                         borderRadius:
-                                                         BorderRadius.circular(
-                                                             Dimensions.radius15)),
-                                                     child: Text(
-                                                       item,
-                                                       style: satoshiBold.copyWith(
-                                                           fontSize:
-                                                           Dimensions.fontSize12,
-                                                           color: Theme.of(context)
-                                                               .cardColor),
-                                                     ),
-                                                   );
-                                                 }).toList(),
-                                               ),
-                                             ),
-                                           ],
-                                         ),
-                                         Row(
-                                           children: [
-                                             Expanded(
-                                               child: Wrap(
-                                                 alignment: WrapAlignment.start,
-                                                 spacing: 4.0,
-                                                 children: profile.creative
-                                                     .toString()
-                                                     .split(', ')
-                                                     .map((item) {
-                                                   return Container(
-                                                     margin:
-                                                     const EdgeInsets.symmetric(
-                                                         vertical: Dimensions
-                                                             .paddingSize5),
-                                                     padding: const EdgeInsets.all(
-                                                         Dimensions.paddingSize10),
-                                                     decoration: BoxDecoration(
-                                                         color: color4B164C
-                                                             .withOpacity(0.80),
-                                                         // border: Border.all(width:1,
-                                                         //     color: color4B164C.withOpacity(0.80)),
-                                                         borderRadius:
-                                                         BorderRadius.circular(
-                                                             Dimensions.radius15)),
-                                                     child: Text(
-                                                       item,
-                                                       style: satoshiBold.copyWith(
-                                                           fontSize:
-                                                           Dimensions.fontSize12,
-                                                           color: Theme.of(context)
-                                                               .cardColor),
-                                                     ),
-                                                   );
-                                                 }).toList(),
-                                               ),
-                                             ),
-                                           ],
-                                         ),
-                                         Row(
-                                           children: [
-                                             Expanded(
-                                               child: Wrap(
-                                                 alignment: WrapAlignment.start,
-                                                 spacing: 4.0,
-                                                 children: profile.fitness
-                                                     .toString()
-                                                     .split(', ')
-                                                     .map((item) {
-                                                   return Container(
-                                                     margin:
-                                                     const EdgeInsets.symmetric(
-                                                         vertical: Dimensions
-                                                             .paddingSize5),
-                                                     padding: const EdgeInsets.all(
-                                                         Dimensions.paddingSize10),
-                                                     decoration: BoxDecoration(
-                                                         color: color4B164C
-                                                             .withOpacity(0.80),
-                                                         // border: Border.all(width:1,
-                                                         //     color: color4B164C.withOpacity(0.80)),
-                                                         borderRadius:
-                                                         BorderRadius.circular(
-                                                             Dimensions.radius15)),
-                                                     child: Text(
-                                                       item,
-                                                       style: satoshiBold.copyWith(
-                                                           fontSize:
-                                                           Dimensions.fontSize12,
-                                                           color: Theme.of(context)
-                                                               .cardColor),
-                                                     ),
-                                                   );
-                                                 }).toList(),
-                                               ),
-                                             ),
-                                           ],
-                                         ),
-                                         Row(
-                                           children: [
-                                             Expanded(
-                                               child: Wrap(
-                                                 alignment: WrapAlignment.start,
-                                                 spacing: 4.0,
-                                                 children: profile.hobby
-                                                     .toString()
-                                                     .split(', ')
-                                                     .map((item) {
-                                                   return Container(
-                                                     margin:
-                                                     const EdgeInsets.symmetric(
-                                                         vertical: Dimensions
-                                                             .paddingSize5),
-                                                     padding: const EdgeInsets.all(
-                                                         Dimensions.paddingSize10),
-                                                     decoration: BoxDecoration(
-                                                         color: color4B164C
-                                                             .withOpacity(0.80),
-                                                         borderRadius:
-                                                         BorderRadius.circular(
-                                                             Dimensions.radius15)),
-                                                     child: Text(
-                                                       item,
-                                                       style: satoshiBold.copyWith(
-                                                           fontSize:
-                                                           Dimensions.fontSize12,
-                                                           color: Theme.of(context)
-                                                               .cardColor),
-                                                     ),
-                                                   );
-                                                 }).toList(),
-                                               ),
-                                             ),
-                                           ],
-                                         ),
-                                         Row(
-                                           children: [
-                                             Expanded(
-                                               child: Wrap(
-                                                 alignment: WrapAlignment.start,
-                                                 spacing: 4.0,
-                                                 children: profile.otherInterest
-                                                     .toString()
-                                                     .split(', ')
-                                                     .map((item) {
-                                                   return Container(
-                                                     margin:
-                                                     const EdgeInsets.symmetric(
-                                                         vertical: Dimensions
-                                                             .paddingSize5),
-                                                     padding: const EdgeInsets.all(
-                                                         Dimensions.paddingSize10),
-                                                     decoration: BoxDecoration(
-                                                         color: color4B164C
-                                                             .withOpacity(0.80),
-                                                         borderRadius:
-                                                         BorderRadius.circular(
-                                                             Dimensions.radius15)),
-                                                     child: Text(
-                                                       item,
-                                                       style: satoshiBold.copyWith(
-                                                           fontSize:
-                                                           Dimensions.fontSize12,
-                                                           color: Theme.of(context)
-                                                               .cardColor),
-                                                     ),
-                                                   );
-                                                 }).toList(),
-                                               ),
-                                             ),
-                                           ],
-                                         ),
-                                       ],
-                                     ),
-                                   ),
-                                 ],
-                               ),
-                             ),
-                           ),
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  color: Theme.of(context).cardColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 1,
+                                      blurRadius: 5,
+                                      offset: const Offset(
+                                          0, 3), // changes position of shadow
+                                    ),
+                                  ]),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 0.0, vertical: 8),
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Interest & Hobbies',
+                                            style: kManrope25Black.copyWith(
+                                                fontSize: Dimensions.fontSize18,
+                                                color: Theme.of(context)
+                                                    .primaryColorDark
+                                                    .withOpacity(0.65)),
+                                          ),
+                                          IconButton(
+                                              onPressed: () {
+                                                Get.to(
+                                                    const EditInterestScreen());
+                                              },
+                                              icon: Icon(
+                                                Icons.edit,
+                                                color: Theme.of(context)
+                                                    .primaryColorDark
+                                                    .withOpacity(0.65),
+                                              ))
+                                        ],
+                                      ),
+                                    ),
+                                    // const SizedBox(height: 12,),
+                                    HobbiesWrap(allHobbies: interests.hobbies,)
+                                  ],
+                                ),
+                              ),
+                            ),
                             // sizedBox10(),
                             // Container(
                             //   width: double.infinity,
