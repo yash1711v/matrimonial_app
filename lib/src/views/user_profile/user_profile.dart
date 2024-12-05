@@ -1,4 +1,3 @@
-import 'package:bureau_couple/getx/controllers/favourite_controller.dart';
 import 'package:bureau_couple/getx/controllers/profile_controller.dart';
 import 'package:bureau_couple/getx/features/widgets/custom_decorated_containers.dart';
 import 'package:bureau_couple/getx/utils/dimensions.dart';
@@ -7,14 +6,13 @@ import 'package:bureau_couple/src/constants/fonts.dart';
 import 'package:bureau_couple/src/constants/sizedboxe.dart';
 import 'package:bureau_couple/src/utils/urls.dart';
 import 'package:bureau_couple/src/utils/widgets/common_widgets.dart';
-import 'package:get/get.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../apis/members_api/bookmart_api.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:readmore/readmore.dart';
+
 import '../../apis/members_api/request_apis.dart';
 import '../../apis/other_user_api/other_user_profile_details.dart';
 import '../../constants/assets.dart';
@@ -22,14 +20,8 @@ import '../../constants/colors.dart';
 import '../../constants/string.dart';
 import '../../constants/textstyles.dart';
 import '../../models/other_person_details_models.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import '../../utils/widgets/buttons.dart';
-import 'package:intl/intl.dart';
-import 'package:readmore/readmore.dart';
-
 import '../../utils/widgets/custom_image_widget.dart';
-import '../home/profile/profile_screen.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final String userId;
@@ -74,6 +66,34 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     });
   }
 
+  int totalMatches(OtherProfileModel model) {
+    int total = 0;
+
+    // Safely check for nulls and increment total for each matching condition
+    if (model.data?.matches?.partnerExpectation?.communityName ==
+        model.data?.user?.partnerExpectation?.communityName) {
+      total++;
+    }
+    if (model.data?.matches?.partnerExpectation?.motherTongueName ==
+        model.data?.user?.partnerExpectation?.motherTongueName) {
+      total++;
+    }
+    if (model.data?.matches?.address?.state ==
+        model.data?.user?.address?.state) {
+      total++;
+    }
+    if (model.data?.matches?.partnerExpectation?.professionName ==
+        model.data?.user?.partnerExpectation?.professionName) {
+      total++;
+    }
+    if (model.data?.matches?.partnerExpectation?.positionName ==
+        model.data?.user?.partnerExpectation?.positionName) {
+      total++;
+    }
+
+    return total;
+  }
+
   DateTime? birthDate;
   int age = 0;
   bool loading = false;
@@ -93,7 +113,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       body: isLoading
           ? const UserProfileShimmer()
           : SingleChildScrollView(
-              child: GetBuilder<ProfileController>(builder: (profileController) {
+              child:
+                  GetBuilder<ProfileController>(builder: (profileController) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 0.0),
                   child: Column(
@@ -185,7 +206,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: List.generate(
                                     model.data?.matches?.galleries?.length ?? 0,
-                                        (index) => Container(
+                                    (index) => Container(
                                       width: 40,
                                       height: 6,
                                       margin: const EdgeInsets.symmetric(
@@ -210,9 +231,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       flex: 3,
                                       child: Column(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                            MainAxisAlignment.center,
                                         crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Row(
                                             children: [
@@ -220,9 +241,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                 flex: 3,
                                                 child: Column(
                                                   mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                                      MainAxisAlignment.center,
                                                   crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Row(
                                                       children: [
@@ -230,14 +251,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                           flex: 4,
                                                           child: Text(
                                                             "${StringUtils.capitalize(model.data!.matches!.firstname ?? '')} ${StringUtils.capitalize(model.data!.matches!.lastname ?? 'User')}",
-                                                            overflow: TextOverflow
-                                                                .ellipsis,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                             maxLines: 1,
                                                             style:
-                                                            styleSatoshiBold(
-                                                                size: 22,
-                                                                color: Colors
-                                                                    .white),
+                                                                styleSatoshiBold(
+                                                                    size: 22,
+                                                                    color: Colors
+                                                                        .white),
                                                           ),
                                                         ),
                                                         const SizedBox(
@@ -252,29 +274,31 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                       children: [
                                                         Container(
                                                           padding:
-                                                          const EdgeInsets
-                                                              .symmetric(
-                                                              vertical: 4.0,
-                                                              horizontal: 8),
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  vertical: 4.0,
+                                                                  horizontal:
+                                                                      8),
                                                           decoration: BoxDecoration(
                                                               color: Colors
                                                                   .greenAccent,
                                                               borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  12)),
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          12)),
                                                           child: Text(
                                                             StringUtils
                                                                 .capitalize(
-                                                                '$age yrs'),
-                                                            overflow: TextOverflow
-                                                                .ellipsis,
+                                                                    '$age yrs'),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                             maxLines: 1,
                                                             style:
-                                                            styleSatoshiLarge(
-                                                                size: 16,
-                                                                color: Colors
-                                                                    .black),
+                                                                styleSatoshiLarge(
+                                                                    size: 16,
+                                                                    color: Colors
+                                                                        .black),
                                                           ),
                                                         ),
                                                         const SizedBox(
@@ -284,9 +308,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                           height: 4,
                                                           width: 4,
                                                           decoration:
-                                                          const BoxDecoration(
+                                                              const BoxDecoration(
                                                             shape:
-                                                            BoxShape.circle,
+                                                                BoxShape.circle,
                                                             color: Colors.white,
                                                           ),
                                                         ),
@@ -295,34 +319,36 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                         ),
                                                         Container(
                                                           padding:
-                                                          const EdgeInsets
-                                                              .symmetric(
-                                                              vertical: 4.0,
-                                                              horizontal: 8),
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  vertical: 4.0,
+                                                                  horizontal:
+                                                                      8),
                                                           decoration: BoxDecoration(
                                                               color: Colors
                                                                   .yellowAccent
                                                                   .withOpacity(
-                                                                  0.70),
+                                                                      0.70),
                                                               borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  12)),
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          12)),
                                                           child: Text(
-                                                            StringUtils
-                                                                .capitalize(model
-                                                                .data
-                                                                ?.matches
-                                                                ?.basicInfo?.religionName ??
+                                                            StringUtils.capitalize(model
+                                                                    .data
+                                                                    ?.matches
+                                                                    ?.basicInfo
+                                                                    ?.religionName ??
                                                                 ''),
-                                                            overflow: TextOverflow
-                                                                .ellipsis,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                             maxLines: 1,
                                                             style:
-                                                            styleSatoshiLarge(
-                                                                size: 16,
-                                                                color: Colors
-                                                                    .black),
+                                                                styleSatoshiLarge(
+                                                                    size: 16,
+                                                                    color: Colors
+                                                                        .black),
                                                           ),
                                                         ),
                                                       ],
@@ -330,10 +356,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                     sizedBox10(),
                                                     Row(
                                                       mainAxisAlignment:
-                                                      MainAxisAlignment.start,
+                                                          MainAxisAlignment
+                                                              .start,
                                                       crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start,
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         const SizedBox(
                                                           width: 2,
@@ -345,8 +372,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                               Text(
                                                                 '${model.data!.matches!.basicInfo!.presentAddress!.state ?? ''} • ${model.data!.matches!.basicInfo!.professionName ?? ''} • ${model.data!.matches!.basicInfo!.communityName ?? ''}',
                                                                 overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
+                                                                    TextOverflow
+                                                                        .ellipsis,
                                                                 maxLines: 2,
                                                                 style: styleSatoshiLarge(
                                                                     size: 16,
@@ -371,7 +398,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(left: 16, top: 50),
+                                padding:
+                                    const EdgeInsets.only(left: 16, top: 50),
                                 child: TextButton(
                                     onPressed: () {
                                       Get.back();
@@ -395,42 +423,44 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             model.data!.matches!.basicInfo!.aboutUs!.isEmpty
                                 ? const SizedBox()
                                 : CustomBorderContainer(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'About',
-                                    style: kManrope25Black.copyWith(
-                                        fontSize: Dimensions.fontSize18,
-                                        color: Theme.of(context)
-                                            .primaryColorDark
-                                            .withOpacity(0.65)),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'About',
+                                          style: kManrope25Black.copyWith(
+                                              fontSize: Dimensions.fontSize18,
+                                              color: Theme.of(context)
+                                                  .primaryColorDark
+                                                  .withOpacity(0.65)),
+                                        ),
+                                        sizedBox10(),
+                                        ReadMoreText(
+                                          model.data?.matches?.basicInfo
+                                                  ?.aboutUs ??
+                                              "",
+                                          trimLines: 4,
+                                          colorClickableText: Colors.pink,
+                                          trimMode: TrimMode.Line,
+                                          trimCollapsedText: 'Show more',
+                                          trimExpandedText: ' Show less',
+                                          moreStyle: styleSatoshiLight(
+                                              size: 14, color: primaryColor),
+                                          lessStyle: styleSatoshiLight(
+                                              size: 14, color: primaryColor),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  sizedBox10(),
-                                  ReadMoreText(
-                                    model.data?.matches?.basicInfo?.aboutUs ??
-                                        "",
-                                    trimLines: 4,
-                                    colorClickableText: Colors.pink,
-                                    trimMode: TrimMode.Line,
-                                    trimCollapsedText: 'Show more',
-                                    trimExpandedText: ' Show less',
-                                    moreStyle: styleSatoshiLight(
-                                        size: 14, color: primaryColor),
-                                    lessStyle: styleSatoshiLight(
-                                        size: 14, color: primaryColor),
-                                  ),
-                                ],
-                              ),
-                            ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 sizedBox10(),
-
-
                                 CustomBorderContainer(
-                                  child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Basic Info',
@@ -452,13 +482,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                           image: icHeightIcon,
                                           title: 'Height',
                                           text:
-                                          "${model.data?.matches?.physicalAttributes?.height} ft" ??
-                                              ''),
+                                              "${model.data?.matches?.physicalAttributes?.height} ft" ??
+                                                  ''),
                                       const Divider(),
                                       buildProfileRow(
                                           image: icReligionIcon,
                                           title: 'Religion',
-                                          text: model.data!.matches!.religionName
+                                          text: model
+                                              .data!.matches!.religionName
                                               .toString()),
                                       const Divider(),
                                       buildProfileRow(
@@ -472,11 +503,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                           image: icMarriedStatusPro,
                                           title: 'Married Status',
                                           text: StringUtils.capitalize(model
-                                              .data!
-                                              .matches
-                                              ?.basicInfo
-                                              ?.maritialStatus!
-                                              .title ??
+                                                  .data!
+                                                  .matches
+                                                  ?.basicInfo
+                                                  ?.maritialStatus!
+                                                  .title ??
                                               "")),
                                     ],
                                   ),
@@ -484,9 +515,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                               ],
                             ),
                             sizedBox16(),
-
                             CustomBorderContainer(
-                              child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     'Professional Info',
@@ -562,9 +593,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                              CrossAxisAlignment.center,
                                           mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                              MainAxisAlignment.center,
                                           children: [
                                             GestureDetector(
                                               onTap: () {},
@@ -577,10 +608,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                             sizedBox6(),
                                             Text(
                                               model
-                                                  .data
-                                                  ?.matches
-                                                  ?.educationInfo?[0]
-                                                  .degree ??
+                                                      .data
+                                                      ?.matches
+                                                      ?.educationInfo?[0]
+                                                      .degree ??
                                                   "",
                                               textAlign: TextAlign.center,
                                               style: styleSatoshiMedium(
@@ -595,9 +626,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                              CrossAxisAlignment.center,
                                           mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                              MainAxisAlignment.center,
                                           children: [
                                             Image.asset(
                                               icUserBagIcon,
@@ -606,7 +637,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                             ),
                                             sizedBox6(),
                                             Text(
-                                              model.data!.matches!.professionName.toString(),
+                                              model
+                                                  .data!.matches!.professionName
+                                                  .toString(),
                                               textAlign: TextAlign.center,
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
@@ -626,7 +659,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             ),
                             sizedBox16(),
                             CustomBorderContainer(
-                              child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     'Interest & Hobbies',
@@ -650,21 +684,23 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                               .split(', ')
                                               .map((item) {
                                             return Container(
-                                              margin: const EdgeInsets.symmetric(
-                                                  vertical:
-                                                  Dimensions.paddingSize5),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: Dimensions
+                                                          .paddingSize5),
                                               padding: const EdgeInsets.all(
                                                   Dimensions.paddingSize10),
                                               decoration: BoxDecoration(
-                                                  color: color4B164C.withOpacity(0.80),
+                                                  color: color4B164C
+                                                      .withOpacity(0.80),
                                                   borderRadius:
-                                                  BorderRadius.circular(
-                                                      Dimensions.radius15)),
+                                                      BorderRadius.circular(
+                                                          Dimensions.radius15)),
                                               child: Text(
                                                 item,
                                                 style: satoshiBold.copyWith(
                                                     fontSize:
-                                                    Dimensions.fontSize12,
+                                                        Dimensions.fontSize12,
                                                     color: Theme.of(context)
                                                         .cardColor),
                                               ),
@@ -680,26 +716,29 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         child: Wrap(
                                           alignment: WrapAlignment.start,
                                           spacing: 4.0,
-                                          children: model.data!.matches!.creative
+                                          children: model
+                                              .data!.matches!.creative
                                               .toString()
                                               .split(', ')
                                               .map((item) {
                                             return Container(
-                                              margin: const EdgeInsets.symmetric(
-                                                  vertical:
-                                                  Dimensions.paddingSize5),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: Dimensions
+                                                          .paddingSize5),
                                               padding: const EdgeInsets.all(
                                                   Dimensions.paddingSize10),
                                               decoration: BoxDecoration(
-                                                  color: color4B164C.withOpacity(0.80),
+                                                  color: color4B164C
+                                                      .withOpacity(0.80),
                                                   borderRadius:
-                                                  BorderRadius.circular(
-                                                      Dimensions.radius15)),
+                                                      BorderRadius.circular(
+                                                          Dimensions.radius15)),
                                               child: Text(
                                                 item,
                                                 style: satoshiBold.copyWith(
                                                     fontSize:
-                                                    Dimensions.fontSize12,
+                                                        Dimensions.fontSize12,
                                                     color: Theme.of(context)
                                                         .cardColor),
                                               ),
@@ -721,22 +760,22 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                               .map((item) {
                                             return Container(
                                               margin:
-                                              const EdgeInsets.symmetric(
-                                                  vertical: Dimensions
-                                                      .paddingSize5),
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: Dimensions
+                                                          .paddingSize5),
                                               padding: const EdgeInsets.all(
                                                   Dimensions.paddingSize10),
                                               decoration: BoxDecoration(
                                                   color: color4B164C
                                                       .withOpacity(0.80),
                                                   borderRadius:
-                                                  BorderRadius.circular(
-                                                      Dimensions.radius15)),
+                                                      BorderRadius.circular(
+                                                          Dimensions.radius15)),
                                               child: Text(
                                                 item,
                                                 style: satoshiBold.copyWith(
                                                     fontSize:
-                                                    Dimensions.fontSize12,
+                                                        Dimensions.fontSize12,
                                                     color: Theme.of(context)
                                                         .cardColor),
                                               ),
@@ -757,22 +796,23 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                               .split(', ')
                                               .map((item) {
                                             return Container(
-                                              margin: const EdgeInsets.symmetric(
-                                                  vertical:
-                                                  Dimensions.paddingSize5),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: Dimensions
+                                                          .paddingSize5),
                                               padding: const EdgeInsets.all(
                                                   Dimensions.paddingSize10),
                                               decoration: BoxDecoration(
                                                   color: color4B164C
                                                       .withOpacity(0.80),
                                                   borderRadius:
-                                                  BorderRadius.circular(
-                                                      Dimensions.radius15)),
+                                                      BorderRadius.circular(
+                                                          Dimensions.radius15)),
                                               child: Text(
                                                 item,
                                                 style: satoshiBold.copyWith(
                                                     fontSize:
-                                                    Dimensions.fontSize12,
+                                                        Dimensions.fontSize12,
                                                     color: Theme.of(context)
                                                         .cardColor),
                                               ),
@@ -794,22 +834,23 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                               .split(', ')
                                               .map((item) {
                                             return Container(
-                                              margin: const EdgeInsets.symmetric(
-                                                  vertical:
-                                                  Dimensions.paddingSize5),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: Dimensions
+                                                          .paddingSize5),
                                               padding: const EdgeInsets.all(
                                                   Dimensions.paddingSize10),
                                               decoration: BoxDecoration(
                                                   color: color4B164C
                                                       .withOpacity(0.80),
                                                   borderRadius:
-                                                  BorderRadius.circular(
-                                                      Dimensions.radius15)),
+                                                      BorderRadius.circular(
+                                                          Dimensions.radius15)),
                                               child: Text(
                                                 item,
                                                 style: satoshiBold.copyWith(
                                                     fontSize:
-                                                    Dimensions.fontSize12,
+                                                        Dimensions.fontSize12,
                                                     color: Theme.of(context)
                                                         .cardColor),
                                               ),
@@ -844,7 +885,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         right: 0,
                                         child: Row(
                                           mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                              MainAxisAlignment.center,
                                           children: [
                                             Center(
                                               child: Container(
@@ -852,17 +893,18 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                     shape: BoxShape.circle,
                                                     color: Colors.grey
                                                         .withOpacity(0.40)),
-                                                padding: const EdgeInsets.all(4),
+                                                padding:
+                                                    const EdgeInsets.all(4),
                                                 child: ClipOval(
                                                     child: CustomImageWidget(
-                                                      image: model.data?.user
-                                                          ?.image !=
+                                                  image: model.data?.user
+                                                              ?.image !=
                                                           null
-                                                          ? '$baseProfilePhotoUrl${model.data?.user?.image}'
-                                                          : 'fallback_image_url_here',
-                                                      height: 70,
-                                                      width: 70,
-                                                    )),
+                                                      ? '$baseProfilePhotoUrl${model.data?.user?.image}'
+                                                      : 'fallback_image_url_here',
+                                                  height: 70,
+                                                  width: 70,
+                                                )),
                                               ),
                                             ),
                                             Center(
@@ -871,17 +913,18 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                     shape: BoxShape.circle,
                                                     color: Colors.grey
                                                         .withOpacity(0.40)),
-                                                padding: const EdgeInsets.all(4),
+                                                padding:
+                                                    const EdgeInsets.all(4),
                                                 child: ClipOval(
                                                     child: CustomImageWidget(
-                                                      image: model.data?.matches
-                                                          ?.image !=
+                                                  image: model.data?.matches
+                                                              ?.image !=
                                                           null
-                                                          ? '$baseProfilePhotoUrl${model.data?.matches?.image}'
-                                                          : 'fallback_image_url_here',
-                                                      height: 70,
-                                                      width: 70,
-                                                    )),
+                                                      ? '$baseProfilePhotoUrl${model.data?.matches?.image}'
+                                                      : 'fallback_image_url_here',
+                                                  height: 70,
+                                                  width: 70,
+                                                )),
                                               ),
                                             ),
                                           ],
@@ -896,13 +939,16 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                             Text(
                                               "Your Match Preferences",
                                               style: styleSatoshiLight(
-                                                  size: 16, color: Colors.white),
+                                                  size: 16,
+                                                  color: Colors.white),
                                               overflow: TextOverflow.ellipsis,
                                             ),
+                                            Spacer(),
                                             Text(
-                                              "",
+                                              "${totalMatches(model)}  out of 5",
                                               style: styleSatoshiLight(
-                                                  size: 20, color: Colors.white),
+                                                  size: 16,
+                                                  color: Colors.white),
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ],
@@ -935,15 +981,21 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                           image: icGotraIcon,
                                           title: 'Community',
                                           text: StringUtils.capitalize(model
-                                              .data?.user?.partnerExpectation?.communityName ??
-                                              ""),
-                                          iconRightWrong: model.data?.matches
-                                              ?.partnerExpectation?.communityName ==
-                                              model
                                                   .data
                                                   ?.user
                                                   ?.partnerExpectation
-                                                  ?.communityName
+                                                  ?.communityName ??
+                                              ""),
+                                          iconRightWrong: model
+                                                      .data
+                                                      ?.matches
+                                                      ?.partnerExpectation
+                                                      ?.communityName ==
+                                                  model
+                                                      .data
+                                                      ?.user
+                                                      ?.partnerExpectation
+                                                      ?.communityName
                                               ? Icons.done
                                               : Icons.close,
                                         ),
@@ -951,13 +1003,22 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         buildPrefProfileRow(
                                           image: icMotherToungeIcon,
                                           title: 'Mother Tongue',
-                                          text: StringUtils.capitalize(model.data
-                                              ?.user?.partnerExpectation?.motherTongueName ??
+                                          text: StringUtils.capitalize(model
+                                                  .data
+                                                  ?.user
+                                                  ?.partnerExpectation
+                                                  ?.motherTongueName ??
                                               ""),
-                                          iconRightWrong: model.data?.matches
-                                              ?.partnerExpectation?.motherTongueName ==
-                                              model.data?.user
-                                                  ?.partnerExpectation?.motherTongueName
+                                          iconRightWrong: model
+                                                      .data
+                                                      ?.matches
+                                                      ?.partnerExpectation
+                                                      ?.motherTongueName ==
+                                                  model
+                                                      .data
+                                                      ?.user
+                                                      ?.partnerExpectation
+                                                      ?.motherTongueName
                                               ? Icons.done
                                               : Icons.close,
                                         ),
@@ -965,13 +1026,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         buildPrefProfileRow(
                                           image: icState,
                                           title: 'State',
-                                          text: StringUtils.capitalize(model.data
-                                              ?.matches?.address?.state ??
+                                          text: StringUtils.capitalize(model
+                                                  .data
+                                                  ?.matches
+                                                  ?.address
+                                                  ?.state ??
                                               ""),
-                                          iconRightWrong: model.data?.matches?.address
-                                              ?.state ==
-                                              model.data?.user?.address?.state
-                                          // ?.motherTongue!.name
+                                          iconRightWrong: model.data?.matches
+                                                      ?.address?.state ==
+                                                  model.data?.user?.address
+                                                      ?.state
+                                              // ?.motherTongue!.name
                                               ? Icons.done
                                               : Icons.close,
                                         ),
@@ -979,12 +1044,22 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         buildPrefProfileRow(
                                           image: icProfession,
                                           title: 'Profession',
-                                          text: StringUtils.capitalize(model.data
-                                              ?.matches?.partnerExpectation?.professionName ??
+                                          text: StringUtils.capitalize(model
+                                                  .data
+                                                  ?.matches
+                                                  ?.partnerExpectation
+                                                  ?.professionName ??
                                               ""),
-                                          iconRightWrong: model.data?.matches
-                                              ?.partnerExpectation?.professionName ==
-                                              model.data?.user?.partnerExpectation?.professionName
+                                          iconRightWrong: model
+                                                      .data
+                                                      ?.matches
+                                                      ?.partnerExpectation
+                                                      ?.professionName ==
+                                                  model
+                                                      .data
+                                                      ?.user
+                                                      ?.partnerExpectation
+                                                      ?.professionName
                                               ? Icons.done
                                               : Icons.close,
                                         ),
@@ -993,16 +1068,21 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                           image: icGotraIcon,
                                           title: 'Service',
                                           text: StringUtils.capitalize(model
-                                              .data?.user?.partnerExpectation
-                                              ?.positionName ??
-                                              ""),
-                                          iconRightWrong: model.data?.matches
-                                              ?.partnerExpectation?.positionName ==
-                                              model
                                                   .data
                                                   ?.user
                                                   ?.partnerExpectation
-                                                  ?.positionName
+                                                  ?.positionName ??
+                                              ""),
+                                          iconRightWrong: model
+                                                      .data
+                                                      ?.matches
+                                                      ?.partnerExpectation
+                                                      ?.positionName ==
+                                                  model
+                                                      .data
+                                                      ?.user
+                                                      ?.partnerExpectation
+                                                      ?.positionName
                                               ? Icons.done
                                               : Icons.close,
                                         ),
@@ -1024,7 +1104,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                     connected = !connected;
                                   });
                                   sendRequestApi(
-                                    memberId: model.data!.matches!.id!.toString(),
+                                    memberId:
+                                        model.data!.matches!.id!.toString(),
                                   ).then((value) {
                                     if (value['status'] == true) {
                                       setState(() {});
@@ -1034,7 +1115,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       setState(() {});
 
                                       List<dynamic> errors =
-                                      value['message']['error'];
+                                          value['message']['error'];
                                       String errorMessage = errors.isNotEmpty
                                           ? errors[0]
                                           : "An unknown error occurred.";
@@ -1043,7 +1124,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                   });
                                 },
                                 title:
-                                connected ? 'Request Sent' : "Connect Now"),
+                                    connected ? 'Request Sent' : "Connect Now"),
                           ],
                         ),
                       ),
@@ -1147,9 +1228,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               ],
             ),
           ),
-          const Expanded(
-              child: Icon(Icons.done))
-          
+          const Expanded(child: Icon(Icons.done))
+
           // Expanded(
           //     child: Image.asset(
           //   icon,

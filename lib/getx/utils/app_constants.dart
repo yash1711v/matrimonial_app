@@ -13,6 +13,8 @@ class AppConstants{
   static const String unSaveBookMark = "removeBookmark";
   static const String attributesUrl = "user-attributes";
   static const String degree = "get-degrees";
+  static const String interests = "get-interests";
+  static const String saveInterests = "interest-store";
   static const String sendRequest = "express-interest";
   static const String savedMatchesUrl = "bookmarkSaveMatches";
   static const String unsavedMatchesUrl = "removeBookmark";
