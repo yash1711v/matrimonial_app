@@ -1,3 +1,5 @@
+import 'package:bureau_couple/src/models/interest_model.dart';
+
 class ProfileModel {
   int? id;
   int? profileId;
@@ -38,6 +40,7 @@ class ProfileModel {
   PhysicalAttributes? physicalAttributes;
   List<CareerInfo>? careerInfo;
   List<EducationInfo>? educationInfo;
+  List<Interest>? interest;
 
   ProfileModel(
       {this.id,
@@ -67,6 +70,7 @@ class ProfileModel {
         this.otherInterest,
         this.creative,
         this.hobby,
+        this.interest,
         this.communityName,
         this.motherTongueName,
         this.religionName,
@@ -139,6 +143,12 @@ class ProfileModel {
       educationInfo = <EducationInfo>[];
       json['education_info'].forEach((v) {
         educationInfo!.add(new EducationInfo.fromJson(v));
+      });
+    }
+    if (json['interest'] != null) {
+      interest = <Interest>[];
+      json['interest'].forEach((v) {
+        interest!.add(new Interest.fromJson(v));
       });
     }
   }
@@ -672,7 +682,7 @@ class CareerInfo {
   CareerInfo.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     userId = json['user_id'];
-    position = json['position'];
+    position = int.parse(json['position']);
     from = json['from'];
 
     createdAt = json['created_at'];

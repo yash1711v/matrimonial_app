@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bureau_couple/getx/controllers/auth_controller.dart';
 import 'package:bureau_couple/getx/controllers/profile_controller.dart';
 import 'package:bureau_couple/getx/data/response/profile_model.dart';
 import 'package:bureau_couple/getx/features/screens/interest/edit_interest_screen.dart';
@@ -46,15 +47,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // final List<String>? interest = [
-  //   "Football",
-  //   "Nature",
-  //   "Language",
-  //   "Fashion",
-  //   "Photography",
-  //   "Music",
-  //   "Writing"
-  // ];
+  final Set<String>? userHobbies = {};
   Interest interests = Interest(interestName: "", hobbies: []);
   @override
   void initState() {
@@ -81,12 +74,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (mounted) {
           setState(() {
             var profileData = value['data']['user'];
-              interests = Interest.fromJson(value['data']['user']["interest"]);
+              // interests = Interest.fromJson(value['data']['user']["interest"]);
             debugPrint("user: ${value['data']['user']}");
             if (profileData != null) {
               profile = ProfileModel.fromJson(profileData);
               print(profile.id);
               print(profile.firstname);
+              Get.find<AuthController>().selectInterestList(profile.interest ?? []);
+              profile.interest!.forEach((element) {
+                element.hobbies!.forEach((hobbies) {
+                  setState(() {
+                    userHobbies!.add(hobbies);
+                  });
+                });
+              });
               SharedPrefs().setProfilePhoto(profile.image.toString());
             }
             isLoading = false;
@@ -164,6 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("userHobbies: $userHobbies");
     return Scaffold(
       appBar: CustomAppBar2(
         title: "Profile",
@@ -872,8 +874,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           ),
                                           IconButton(
                                               onPressed: () {
-                                                Get.to(
-                                                    const EditInterestScreen());
+                                                Get.to(() => EditInterestScreen());
                                               },
                                               icon: Icon(
                                                 Icons.edit,
@@ -885,7 +886,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     ),
                                     // const SizedBox(height: 12,),
-                                    HobbiesWrap(allHobbies: interests.hobbies,)
+                                    HobbiesWrap(allHobbies: userHobbies!,)
                                   ],
                                 ),
                               ),
