@@ -19,6 +19,7 @@ class AppConstants{
   static const String savedMatchesUrl = "bookmarkSaveMatches";
   static const String unsavedMatchesUrl = "removeBookmark";
   static const String editProfileDataUrl = "profileSetting";
+  static const String updateEducationInfo = "profile-setting/education/update";
   static const String communityListUrl = "religion-community";
 
 

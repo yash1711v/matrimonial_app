@@ -116,7 +116,7 @@ class _SignInOptionScreenState extends State<SignInOptionScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 160,left: 44,right: 44,bottom: 60),
-                child: Image.asset(icLogo,),
+                child: Image.asset(icLogo,width: double.infinity,),
               ),
 
 

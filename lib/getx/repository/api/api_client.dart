@@ -74,13 +74,13 @@ class ApiClient extends GetxService {
 
   Future<Response> postData(String uri, dynamic body, {Map<String, String>? headers}) async {
     try {
-      debugPrint('====> API Call: $uri\nHeader: $headers');
+      debugPrint('====> API Call: $uri\nHeader: $_mainHeaders');
       debugPrint('====> API Body: $body');
       var bodyEncoded = json.encode(body);
       http.Response response = await http.post(
         Uri.parse(appBaseUrl+uri),
         body: jsonEncode(body),
-        headers: headers ?? _mainHeaders,
+        headers: _mainHeaders,
       ).timeout(Duration(seconds: timeoutInSeconds));
       debugPrint("Response: ${response.body}");
       return handleResponse(response, uri);

@@ -119,6 +119,7 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
         setState(() {
           // profile = ProfileModel.fromJson(value);
           for (var v in value['data']['user']['education_info']) {
+            debugPrint("Education Info: $v");
             educationDetails.add(EducationInfo.fromJson(v));
           }
           fields();
@@ -150,6 +151,17 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
     fieldOfStudyController.text =
         educationDetails[0].fieldOfStudy.toString() ?? '';
     universityController.text = educationDetails[0].institute.toString() ?? '';
+   for(int i = 0; i< educationDetails.length; i++) {
+      if(i > 0){
+        fieldControllers.add({
+          "newFields ${i}": {
+            "University/Institute": TextEditingController(text: educationDetails[i].institute.toString()),
+            "Highest Degree": TextEditingController(text: educationDetails[i].degree.toString()),
+            "Field of Study": TextEditingController(text: educationDetails[i].fieldOfStudy.toString())
+          }
+        });
+      }
+    }
     // _highestDegreeIdController.text = educationDetails[0].
   }
 
@@ -161,6 +173,7 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return GetBuilder<ProfileController>(builder: (educationController) {
       return GetBuilder<AuthController>(builder: (authControl) {
         return Scaffold(
@@ -486,7 +499,7 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
                                       )))
                               : Column(
                             children: [
-
+                              for(int i = 0; i < educationDetails.length; i++)
                             Container(
                               width: double.infinity,
                               height: 230,

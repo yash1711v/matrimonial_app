@@ -189,10 +189,21 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                         if (authControl.positionHeldIndex == 0) {
                           showCustomSnackBar("Please Select Position");
                         } else {
+
+
+                          List<String> position = [authControl.positionHeldIndex.toString()];
+                          List<String> stateOfPosting = [stateController
+                              .text];
+
+                          fieldControllers.forEach((element) {
+                            position.add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["Position"]!.text);
+                            stateOfPosting.add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["State of Posting"]!.text);
+                          });
+
                           profileControl.editCareerInfoApi(
                               career[0].id.toString(),
-                              authControl.positionHeldIndex.toString(),
-                              stateController.text,
+                              position,
+                              stateOfPosting,
                               districtController.text,
                               fromController.text,
                               endController.text);

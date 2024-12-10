@@ -52,14 +52,14 @@ class ProfileRepo {
 
   Future<Response> editEducationInfo(String? type,String? id,List<String>? degree,fieldOfStudy,institute) async {
     return await apiClient.postData(AppConstants.editProfileDataUrl, {
-      // "type" :'educationInfo',
+      "type" :'educationInfo',
       "id" :id,
       "degree": degree,
       "field_of_study" :fieldOfStudy,
       "institute" :institute,
     });
   }
-  Future<Response> editCareerInfo(String? id,String? position,String? stateOfPosting,String? districtOfPosting,String? from,String? end) async {
+  Future<Response> editCareerInfo(String? id,List<String>? position, stateOfPosting, String? districtOfPosting,String? from,String? end) async {
     return await apiClient.postData(AppConstants.editProfileDataUrl, { "type" :'careerInfo',
       "id" : id,
       "position" :position,
