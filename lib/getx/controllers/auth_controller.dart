@@ -84,7 +84,7 @@ class AuthController extends GetxController implements GetxService {
 
   final List<String> selectedInterests = [];
 
-  final List<Interest> selectedInterestsList = [];
+   List<Interest> selectedInterestsList = [];
 
   void initCategories(List<Map<String, dynamic>> apiData) {
     categories.clear();
@@ -111,6 +111,21 @@ class AuthController extends GetxController implements GetxService {
       selectedInterests.add(interest);
       selectedInterestsList.add(Interest(interestName: category!.name, hobbies: category!.interests));
     }
+    update();
+  }
+  void selectInterestList(List<Interest> interest, [Category? category]) {
+    selectedInterestsList.clear();
+    selectedInterests.clear();
+    selectedInterestsList = interest;
+    selectedInterestsList.forEach((element) {
+      element.hobbies.forEach((hobbies) {
+        if(selectedInterests.contains(hobbies)){
+        }else {
+          selectedInterests.add(hobbies);
+        }
+      });
+    });
+    debugPrint('Selected Interest List===>: $selectedInterestsList');
     update();
   }
 
@@ -3689,7 +3704,17 @@ class AuthController extends GetxController implements GetxService {
     _isLoading = true;
     update();
     try {
-      await authRepo.saveInterests(interests);
+      var body = {
+        "interests": interests,
+      };
+      await authRepo.saveInterests(body).then((value) {
+        debugPrint(value.body["message"]);
+        if (value.body["data"].isNotEmpty) {
+          _isLoading = false;
+          update();
+          Get.back();
+        }
+      });
 
     } catch (error) {
       // Handle errors, such as network failures

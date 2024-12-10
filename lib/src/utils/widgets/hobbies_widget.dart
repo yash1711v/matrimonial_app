@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class HobbiesWrap extends StatelessWidget {
-  final List<String> allHobbies;
+  final Set<String> allHobbies;
 
   const HobbiesWrap({required this.allHobbies, Key? key}) : super(key: key);
 

@@ -229,16 +229,14 @@ class AuthRepo {
   Future<Response> getInterests() {
     return apiClient.getDataApi(AppConstants.interests);
   }
-  Future<void> saveInterests(dynamic data) async {
+  Future<dynamic> saveInterests(dynamic data) async {
    var headers = {
    'Content-Type': 'application/json; charset=UTF-8',
    'Accept' : 'application/json',
      'Authorization': 'Bearer ${SharedPrefs().getLoginToken()}'
     };
-    for(int i=0;i<data.length;i++){
-      apiClient.postData(AppConstants.saveInterests, data[i],headers: headers);
-    }
-
+    var response =  await apiClient.postData(AppConstants.saveInterests, data,headers: headers);
+  return response;
   }
 
   Future<Response> getCommunityUrl(id) {

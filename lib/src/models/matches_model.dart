@@ -36,7 +36,7 @@ class MatchesModel {
   int? interestStatus;
   BasicInfo? basicInfo;
   String? bloodGroups;
-  String? maritialStatus;
+  Map<String, dynamic>? maritialStatus;
   PartnerExpectation? partnerExpectation;
   PhysicalAttributes? physicalAttributes;
   String? family;
@@ -457,7 +457,7 @@ class PartnerExpectation {
   String? updatedAt;
   int? motherTongue;
   String? community;
-  int? position;
+  String? position;
   String? religionName;
   String? communityName;
   String? professionName;
@@ -527,7 +527,7 @@ class PartnerExpectation {
     updatedAt = json['updated_at'];
     motherTongue = json['mother_tongue'];
     community = json['community'];
-    position = json['position'];
+    position = json['position'].toString();
     religionName = json['religion_name'];
     communityName = json['community_name'];
     professionName = json['profession_name'];
@@ -637,7 +637,7 @@ class PhysicalAttributes {
 class CareerInfo {
   int? id;
   int? userId;
-  int? position;
+  String? position;
   String? from;
   String? end;
   String? createdAt;
@@ -659,7 +659,7 @@ class CareerInfo {
   CareerInfo.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     userId = json['user_id'];
-    position = json['position'];
+    position = json['position'].toString();
     from = json['from'];
     end = json['end'];
     createdAt = json['created_at'];

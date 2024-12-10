@@ -19,13 +19,8 @@ class _EditInterestScreenState extends State<EditInterestScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-
-      final authController = Get.find<AuthController>();
-      authController.initCategories([]);
-      authController.selectedInterests.clear();
-      authController.selectedInterestsList.clear();
       // Simulating API data
-      authController.getInterests().then((value) {
+      Get.find<AuthController>().getInterests().then((value) {
         List<Map<String, dynamic>> interests = [];
         value.forEach((element) {
           interests.add({
@@ -33,8 +28,9 @@ class _EditInterestScreenState extends State<EditInterestScreen> {
             "interests": element.hobbies
           });
         });
-        authController.initCategories(interests);
+        Get.find<AuthController>().initCategories(interests);
       });
+      debugPrint("UserInterest:===>${Get.find<AuthController>().selectedInterests}");
     });
     super.initState();
   }

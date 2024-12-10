@@ -1,5 +1,5 @@
 import 'package:bureau_couple/getx/controllers/auth_controller.dart';
-import 'package:bureau_couple/getx/data/response/profile_model.dart';
+import 'package:bureau_couple/getx/data/response/profile_model.dart' as pfm;
 import 'package:bureau_couple/getx/features/widgets/custom_button%20_widget.dart';
 import 'package:bureau_couple/getx/utils/dimensions.dart';
 import 'package:bureau_couple/getx/utils/theme.dart';
@@ -22,7 +22,7 @@ class HomeProfileHolder extends StatelessWidget {
   final String img;
   final String name;
  final basicModel.BasicInfo basicInfo;
- final ProfileModel profileModel;
+ final pfm.ProfileModel profileModel;
   // final String email;
   final Function() tap;
 
@@ -98,7 +98,7 @@ class HomeProfileHolder extends StatelessWidget {
                           ),
                           const SizedBox(width: 6,),
                           Text(
-                            "Heighr: ${Get.find<ProfileController>().convertHeightToFeetInches(profileModel.physicalAttributes!.height.toString())}",
+                            "Height: ${Get.find<ProfileController>().convertHeightToFeetInches(((profileModel.physicalAttributes??pfm.PhysicalAttributes())!.height??"").toString())}",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: styleSatoshiLight(

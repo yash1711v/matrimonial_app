@@ -189,6 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           if (value['status'] == true) {
             for (var v in value['data']['members']) {
+              debugPrint("members: $v");
               matches.add(MatchesModel.fromJson(v));
               isLoadingList.add(false);
               like.add(false); // // Add false for each new match

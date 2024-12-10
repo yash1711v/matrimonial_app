@@ -556,7 +556,7 @@ class PhysicalAttributes {
 class CareerInfo {
   int? id;
   int? userId;
-  int? position;
+  String? position;
   String? from;
   String? end;
   String? createdAt;
@@ -580,7 +580,7 @@ class CareerInfo {
   CareerInfo.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     userId = json['user_id'];
-    position = json['position'];
+    position = json['position'] ?? "";
     from = json['from'];
     end = json['end'];
     createdAt = json['created_at'];
