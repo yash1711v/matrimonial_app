@@ -299,7 +299,7 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
                 SizedBox(height: 25,),
                 Container(
                   width: double.infinity,
-                  height: photos.length>3?325:200,
+                  height: 325,
                   decoration: BoxDecoration(
                       color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(12),
@@ -392,8 +392,7 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
                         //   ),
                         // ),
                         sizedBox16(),
-                        photos.isEmpty || photos == null
-                            ? Center(
+                        if (photos.isEmpty || photos == null) Center(
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -405,8 +404,7 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
                               child: const DottedPlaceHolder(
                                 text: 'Add Photos',
                               ),
-                            ))
-                            : Stack(
+                            )) else Stack(
                           children: [
                             GridView.builder(
                               shrinkWrap: true,
@@ -525,11 +523,20 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
                                         context: context,
                                         onTap: () {
                                           debugPrint("Make it Profile:'$baseGalleryImage${photos[ImageAsPic['index']].image!}'");
-                                          setState(() {
-                                            profilePic = '$baseGalleryImage${photos[ImageAsPic['index']].image!}';
-                                            ImageAsPic['image'] = false;
-                                            picAsProfile = false;
+                                          addProfileImageAPi(photo: '$baseGalleryImage${photos[ImageAsPic['index']].image!}'
+                                            // id: career[0].id.toString(),
+                                          ).then((value){
+                                            debugPrint("Make it Profile:'${value["message"]}'");
+                                            if(value["message"] == "Profile picture updated successfully"){
+                                              ToastUtil.showToast("Profile picture updated successfully");
+                                              setState(() {
+                                                profilePic = '$baseGalleryImage${photos[ImageAsPic['index']].image!}';
+                                                ImageAsPic['image'] = false;
+                                                picAsProfile = false;
+                                              });
+                                            }
                                           });
+
                                         },
                                         title: "Make it Profile"),
                                   ],

@@ -905,6 +905,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     : 0;
                                 return GestureDetector(
                                   onTap: () {
+                                    debugPrint("value===id> :${preferredMatches[i]
+                                        .id
+                                        .toString()}");
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(

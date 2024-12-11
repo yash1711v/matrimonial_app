@@ -88,16 +88,48 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
             TextButton(
               child: Text("OK"),
               onPressed: () {
-                setState(() {
-                  fieldControllers.add({
-                    "newFields ${fieldControllers.length+1}": {
-                      "University/Institute": UnivertyInstitute,
-                      "Highest Degree": highestDegree,
-                      "Field of Study": fieldOfStudy
-                    }
-                  });
+
+
+                List<String> institute = [UnivertyInstitute.text];
+                List<String> degree = [highestDegree.text];
+                List<String> fieldOfStudyList = [fieldOfStudy.text];
+                // setState(() {
+                //   fieldControllers.add({
+                //     "newFields ${fieldControllers.length+1}": {
+                //       "University/Institute": UnivertyInstitute,
+                //       "Highest Degree": highestDegree,
+                //       "Field of Study": fieldOfStudy,
+                //       "id": TextEditingController(text: "")
+                //     }
+                //   });
+                // });
+
+
+                debugPrint("Institute: $institute");
+                debugPrint("Institute: $degree");
+                debugPrint("Institute: $fieldOfStudy");
+                //
+                Get.find<ProfileController>().editEducationInfoApi(
+                    'educationInfo',
+                     null,
+                    degree,
+                  fieldOfStudyList,
+                    institute
+                    ).then((Value){
+                      debugPrint("value ==> $Value");
+                      setState(() {
+                        fieldControllers.add({
+                          "newFields ${fieldControllers.length+1}": {
+                            "University/Institute": UnivertyInstitute,
+                            "Highest Degree": highestDegree,
+                            "Field of Study": fieldOfStudy,
+                            "id": TextEditingController(text: Value.toString())
+                          }
+                        });
+                      });
+                      Navigator.of(context).pop();
                 });
-                Navigator.of(context).pop();
+
               },
             ),
           ],
@@ -154,10 +186,11 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
    for(int i = 0; i< educationDetails.length; i++) {
       if(i > 0){
         fieldControllers.add({
-          "newFields ${i}": {
+          "newFields $i": {
             "University/Institute": TextEditingController(text: educationDetails[i].institute.toString()),
             "Highest Degree": TextEditingController(text: educationDetails[i].degree.toString()),
-            "Field of Study": TextEditingController(text: educationDetails[i].fieldOfStudy.toString())
+            "Field of Study": TextEditingController(text: educationDetails[i].fieldOfStudy.toString()),
+            "id": TextEditingController(text: educationDetails[i].id.toString())
           }
         });
       }
@@ -188,34 +221,32 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
           bottomNavigationBar: Padding(
             padding: const EdgeInsets.all(16.0),
             child: SingleChildScrollView(
-              child: educationController.isEducationLoading
-                  ? loadingElevatedButton(context: context, color: primaryColor)
-                  : button(
+              child: button(
                       context: context,
                       onTap: () {
 
-                        List<String> institute = [universityController
-                            .text];
-                        List<String> degree = [degreeController
-                            .text];
-                        List<String> fieldOfStudy = [fieldOfStudyController.text];
-
-                        fieldControllers.forEach((element) {
-                          institute.add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["University/Institute"]!.text);
-                          degree.add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["Highest Degree"]!.text);
-                          fieldOfStudy .add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["Field of Study"]!.text);
-                        });
-
-                        debugPrint("Institute: $institute");
-                        debugPrint("Institute: $degree");
-                        debugPrint("Institute: $fieldOfStudy");
-
-                        educationController.editEducationInfoApi(
-                            'educationInfo',
-                            educationDetails[0].id.toString(),
-                            degree,
-                            institute,
-                            institute);
+                        // // List<String> institute = [universityController
+                        // //     .text];
+                        // // List<String> degree = [degreeController
+                        // //     .text];
+                        // // List<String> fieldOfStudy = [fieldOfStudyController.text];
+                        // //
+                        // // fieldControllers.forEach((element) {
+                        // //   institute.add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["University/Institute"]!.text);
+                        // //   degree.add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["Highest Degree"]!.text);
+                        // //   fieldOfStudy .add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["Field of Study"]!.text);
+                        // // });
+                        // //
+                        // // debugPrint("Institute: $institute");
+                        // // debugPrint("Institute: $degree");
+                        // // debugPrint("Institute: $fieldOfStudy");
+                        // //
+                        // educationController.editEducationInfoApi(
+                        //     'educationInfo',
+                        //     educationDetails[0].id.toString(),
+                        //     degree,
+                        //     institute,
+                        //     institute);
                         Get.back();
                       },
                       title: "Save"),
@@ -499,7 +530,7 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
                                       )))
                               : Column(
                             children: [
-                              for(int i = 0; i < educationDetails.length; i++)
+                              // for(int i = 0; i < educationDetails.length; i++)
                             Container(
                               width: double.infinity,
                               height: 230,
@@ -520,49 +551,45 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
                                 child: Column(
                                   children: [
                                     EditDetailsTextField(
+                                      onChange: (value){
+                                        Get.find<ProfileController>().editEducationInfoApi(
+                                            'educationInfo',
+                                            educationDetails[0].id.toString(),
+                                            [degreeController.text],
+                                            [fieldOfStudyController.text],
+                                            [universityController.text]
+                                        );
+                                      },
                                         title: 'University / institute',
-                                        controller: universityController),
+                                        controller: universityController
+
+                                    ),
                                     sizedBox6(),
                                     EditDetailsTextField(
                                       title: 'Highest Degree',
                                       controller: degreeController,
-                                      readOnly: true,
-                                      onTap: () {
-                                        Get.bottomSheet(
-                                          SingleChildScrollView(
-                                            child: Container(
-                                              color: Theme.of(context).cardColor,
-                                              padding: const EdgeInsets.all(
-                                                  Dimensions.paddingSizeDefault),
-                                              child: Column(
-                                                children: [
-                                                  Text(
-                                                    'Highest Degree',
-                                                    style: kManrope25Black.copyWith(
-                                                        fontSize: 16),
-                                                  ),
-                                                  sizedBox12(),
-                                                  CustomDropdownButtonFormField<String>(
-                                                    value: authControl.highestDegree,
-                                                    items: authControl.highesdegree,
-                                                    hintText: "Select Highest Degree",
-                                                    onChanged: (String? value) {
-                                                      authControl
-                                                          .setHighestDegree(value!);
-                                                      degreeController.text = value;
-                                                      print(authControl.highestDegree);
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
+                                      onChange: (value){
+                                        Get.find<ProfileController>().editEducationInfoApi(
+                                            'educationInfo',
+                                            educationDetails[0].id.toString(),
+                                            [degreeController.text],
+                                            [fieldOfStudyController.text],
+                                            [universityController.text]
                                         );
                                       },
                                     ),
                                     sizedBox6(),
                                     EditDetailsTextField(
                                         title: 'Field of Study',
+                                        onChange: (value){
+                                          Get.find<ProfileController>().editEducationInfoApi(
+                                              'educationInfo',
+                                              educationDetails[0].id.toString(),
+                                              [degreeController.text],
+                                              [fieldOfStudyController.text],
+                                              [universityController.text]
+                                          );
+                                        },
                                         controller: fieldOfStudyController),
                                     sizedBox6(),
                                   ],
@@ -573,44 +600,75 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
                             height: 20,
                           ),
                        for(int i = 0; i < fieldControllers.length; i++)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 20.0),
-                            child: Container(
-                                width: double.infinity,
-                                height: 230,
-                                decoration: BoxDecoration(
-                                    color: Theme.of(context).cardColor,
-                                    borderRadius: BorderRadius.circular(12),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        spreadRadius: 1,
-                                        blurRadius: 5,
-                                        offset: const Offset(
-                                            0, 3), // changes position of shadow
-                                      ),
-                                    ]),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
-                                  child: Column(
-                                    children: [
-                                      EditDetailsTextField(
-                                        title: "University/Institute",
-                                        controller: fieldControllers[i]["newFields ${i+1}"]!["University/Institute"]! ?? TextEditingController(),
-                                      ),
-                                      sizedBox6(),
-                                      EditDetailsTextField(
-                                        title: "Highest Degree",
-                                        controller: fieldControllers[i]["newFields ${i+1}"]!["Highest Degree"]! ?? TextEditingController(),
-                                      ),
-                                      EditDetailsTextField(
-                                        title: "Field of Study",
-                                        controller: fieldControllers[i]["newFields ${i+1}"]!["Field of Study"]! ?? TextEditingController(),
-                                      ),
-                                    ],
+                          Visibility(
+                            visible: i>0,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 20.0),
+                              child: Container(
+                                  width: double.infinity,
+                                  height: 230,
+                                  decoration: BoxDecoration(
+                                      color: Theme.of(context).cardColor,
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 1,
+                                          blurRadius: 5,
+                                          offset: const Offset(
+                                              0, 3), // changes position of shadow
+                                        ),
+                                      ]),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
+                                    child: Column(
+                                      children: [
+                                        EditDetailsTextField(
+                                          title: "University/Institute",
+                                          onChange: (value){
+                                            Get.find<ProfileController>().editEducationInfoApi(
+                                                'educationInfo',
+                                                fieldControllers[i]["newFields ${i+1}"]!["id"]!.text,
+                                                [fieldControllers[i]["newFields ${i+1}"]!["Highest Degree"]!.text],
+                                                [fieldControllers[i]["newFields ${i+1}"]!["Field of Study"]!.text],
+                                              [value??""],
+                                            );
+                                          },
+                                          controller: fieldControllers[i]["newFields ${i+1}"]!["University/Institute"]! ?? TextEditingController(),
+                                        ),
+                                        sizedBox6(),
+                                        EditDetailsTextField(
+                                          title: "Highest Degree",
+                                          onChange: (value){
+                                            Get.find<ProfileController>().editEducationInfoApi(
+                                                'educationInfo',
+                                                fieldControllers[i]["newFields ${i+1}"]!["id"]!.text,
+                                                [value??""],
+                                              [fieldControllers[i]["newFields ${i+1}"]!["Field of Study"]!.text],
+                                                [fieldControllers[i]["newFields ${i+1}"]!["University/Institute"]!.text],
+
+                                            );
+                                          },
+                                          controller: fieldControllers[i]["newFields ${i+1}"]!["Highest Degree"]! ?? TextEditingController(),
+                                        ),
+                                        EditDetailsTextField(
+                                          title: "Field of Study",
+                                          onChange: (value){
+                                            Get.find<ProfileController>().editEducationInfoApi(
+                                                'educationInfo',
+                                                fieldControllers[i]["newFields ${i+1}"]!["id"]!.text,
+                                                [fieldControllers[i]["newFields ${i+1}"]!["Highest Degree"]!.text],
+                                                [value??""],
+                                              [fieldControllers[i]["newFields ${i+1}"]!["University/Institute"]!.text],
+                                            );
+                                          },
+                                          controller: fieldControllers[i]["newFields ${i+1}"]!["Field of Study"]! ?? TextEditingController(),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
+                            ),
                           ),
 
                           ],)

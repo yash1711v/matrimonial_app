@@ -67,7 +67,7 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
 
 
   void showAddFieldDialog() {
-    TextEditingController UnivertyInstitute = TextEditingController();
+    TextEditingController positionControllerDialog = TextEditingController();
     TextEditingController highestDegree = TextEditingController();
     TextEditingController fieldOfStudy = TextEditingController();
 
@@ -81,7 +81,54 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
             child: Column(
               children: [
                 TextField(
-                  controller: UnivertyInstitute,
+                  readOnly: true,
+                  controller: positionControllerDialog,
+                  onTap: (){
+                    Get.bottomSheet(
+                      SingleChildScrollView(
+                        child: Container(
+                          color: Theme.of(context).cardColor,
+                          padding: const EdgeInsets.all(
+                              Dimensions.paddingSizeDefault),
+                          child: Column(
+                            children: [
+                              Text(
+                                'Profession',
+                                style: kManrope25Black.copyWith(
+                                    fontSize: 16),
+                              ),
+                              sizedBox12(),
+                              CustomDropdownButtonFormField<String>(
+                                value: Get.find<AuthController>().professionList!
+                                    .firstWhere((religion) =>
+                                religion.id ==
+                                    Get.find<AuthController>().professionIndex)
+                                    .name,
+                                // Assuming you have a selectedPosition variable
+                                items: Get.find<AuthController>().professionList!
+                                    .map((position) => position.name!)
+                                    .toList(),
+                                hintText: "Select Position",
+                                onChanged: (String? value) {
+                                  if (value != null) {
+                                    var selected = Get.find<AuthController>().professionList!
+                                        .firstWhere((position) =>
+                                    position.name == value);
+                                    Get.find<AuthController>().setProfessionIndex(
+                                        selected.id, true);
+                                    positionControllerDialog.text =
+                                        selected.name.toString();
+                                    print(
+                                        Get.find<AuthController>().professionIndex);
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                   decoration: InputDecoration(hintText: "Position"),
                 ),
                 TextField(
@@ -101,15 +148,35 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
             TextButton(
               child: Text("OK"),
               onPressed: () {
-                setState(() {
-                  fieldControllers.add({
-                    "newFields ${fieldControllers.length+1}": {
-                      "Position": UnivertyInstitute,
-                      "State of Posting": highestDegree,
-                    }
-                  });
+
+
+
+                List<String> position = [Get.find<AuthController>().professionIndex.toString()];
+                List<String> stateOfPosting = [highestDegree
+                    .text];
+
+
+                Get.find<ProfileController>().editCareerInfoApi(
+                    null,
+                    position,
+                    stateOfPosting,
+                    districtController.text,
+                    fromController.text,
+                    endController.text).then((value){
+                      debugPrint("Value: $value");
+                      setState(() {
+                        fieldControllers.add({
+                          "newFields ${fieldControllers.length+1}": {
+                            "Position": positionControllerDialog,
+                            "State of Posting": highestDegree,
+                            "id": TextEditingController(text: value.toString()),
+                          }
+                        });
+                      });
+
+                      Navigator.of(context).pop();
                 });
-                Navigator.of(context).pop();
+
               },
             ),
           ],
@@ -148,7 +215,7 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
   final districtController = TextEditingController();
   final fromController = TextEditingController();
   final endController = TextEditingController();
-
+     int id = 0;
   // final positionController = TextEditingController();
 
   void fields() {
@@ -157,6 +224,28 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
     stateController.text = career[0].statePosting.toString() ?? '';
     districtController.text = career[0].districtPosting.toString() ?? '';
     fromController.text = career[0].from ?? '';
+    id = career[0].id ?? 0;
+
+
+    var selected = [];
+    for(int i = 0; i< career.length; i++) {
+    Get.find<AuthController>().professionList!
+        .forEach((element){
+      if(element.id == career[i].position && i>0){
+        selected.add(element.name);
+      }
+    });}
+    for(int i = 0; i< career.length; i++) {
+      if(i > 0){
+        fieldControllers.add({
+          "newFields $i": {
+            "Position": TextEditingController(text: selected[i-1]),
+            "State of Posting": TextEditingController(text: career[i].statePosting.toString()),
+            "id": TextEditingController(text: career[i].id.toString()),
+          }
+        });
+      }
+    }
     // endController.text = career[0].end.toString() ?? '';
   }
 
@@ -190,29 +279,29 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                           showCustomSnackBar("Please Select Position");
                         } else {
 
-
-                          List<String> position = [authControl.positionHeldIndex.toString()];
-                          List<String> stateOfPosting = [stateController
-                              .text];
-
-                          fieldControllers.forEach((element) {
-                            position.add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["Position"]!.text);
-                            stateOfPosting.add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["State of Posting"]!.text);
-                          });
-
-                          profileControl.editCareerInfoApi(
-                              career[0].id.toString(),
-                              position,
-                              stateOfPosting,
-                              districtController.text,
-                              fromController.text,
-                              endController.text);
-                          print(positionController.text);
-                          print(fromController.text);
-                          print(endController.text);
-                          print(stateController.text);
-                          print(districtController.text);
-                          print(authControl.professionIndex.toString());
+                          //
+                          // List<String> position = [authControl.positionHeldIndex.toString()];
+                          // List<String> stateOfPosting = [stateController
+                          //     .text];
+                          //
+                          // fieldControllers.forEach((element) {
+                          //   position.add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["Position"]!.text);
+                          //   stateOfPosting.add(element["newFields ${fieldControllers.indexOf(element)+1}"]!["State of Posting"]!.text);
+                          // });
+                          //
+                          // profileControl.editCareerInfoApi(
+                          //     career[0].id.toString(),
+                          //     position,
+                          //     stateOfPosting,
+                          //     districtController.text,
+                          //     fromController.text,
+                          //     endController.text);
+                          // print(positionController.text);
+                          // print(fromController.text);
+                          // print(endController.text);
+                          // print(stateController.text);
+                          // print(districtController.text);
+                          // print(authControl.professionIndex.toString());
                           // Navigator.pop(context);
                           Get.back();
                         }
@@ -345,7 +434,6 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                           //         child: DottedPlaceHolder(text: "Add Career Info"),
                           //       ),
                           //     )) else
-                        for(int i = 0; i < career.length; i++)
                          Padding(
                            padding: const EdgeInsets.only(bottom: 8.0),
                            child: Container(
@@ -408,6 +496,16 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                                                            selected.name.toString();
                                                        print(
                                                            authControl.professionIndex);
+
+                                                     profileControl.editCareerInfoApi(
+                                                         career[0].id.toString(),
+                                                         [authControl.positionHeldIndex.toString()],
+                                                         [stateController.text],
+                                                         districtController.text,
+                                                         fromController.text,
+                                                       endController.text
+                                                       );
+
                                                      }
                                                    },
                                                  ),
@@ -450,6 +548,14 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                                                      stateController.text = authControl
                                                          .posselectedState
                                                          .toString();
+                                                     profileControl.editCareerInfoApi(
+                                                         career[0].id.toString(),
+                                                         [authControl.positionHeldIndex.toString()],
+                                                         [stateController.text],
+                                                         districtController.text,
+                                                         fromController.text,
+                                                         endController.text
+                                                     );
                                                    },
                                                    validator: (value) {
                                                      if (value == null ||
@@ -477,37 +583,155 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
 
                           sizedBox16(),
                           for(int i = 0; i < fieldControllers.length; i++)
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 20.0),
-                              child: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                    color: Theme.of(context).cardColor,
-                                    borderRadius: BorderRadius.circular(12),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        spreadRadius: 1,
-                                        blurRadius: 5,
-                                        offset: const Offset(
-                                            0, 3), // changes position of shadow
-                                      ),
-                                    ]),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
-                                  child: Column(
-                                    children: [
-                                      EditDetailsTextField(
-                                        title: "Position",
-                                        controller: fieldControllers[i]["newFields ${i+1}"]!["Position"]! ?? TextEditingController(),
-                                      ),
-                                      sizedBox6(),
-                                      EditDetailsTextField(
-                                        title: "State of Posting",
-                                        controller: fieldControllers[i]["newFields ${i+1}"]!["State of Posting"]! ?? TextEditingController(),
-                                      ),
-                                      sizedBox6(),
-                                    ],
+                            Visibility(
+                              visible: i>0,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 20.0),
+                                child: Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                      color: Theme.of(context).cardColor,
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 1,
+                                          blurRadius: 5,
+                                          offset: const Offset(
+                                              0, 3), // changes position of shadow
+                                        ),
+                                      ]),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
+                                    child: Column(
+                                      children: [
+                                        EditDetailsTextField(
+                                          title: "Position",
+                                          controller: fieldControllers[i]["newFields ${i+1}"]!["Position"]! ?? TextEditingController(),
+                                          readOnly: true,
+                                          onTap: (){
+                                            Get.bottomSheet(
+                                            SingleChildScrollView(
+                                              child: Container(
+                                                color: Theme.of(context).cardColor,
+                                                padding: const EdgeInsets.all(
+                                                    Dimensions.paddingSizeDefault),
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                      'Profession',
+                                                      style: kManrope25Black.copyWith(
+                                                          fontSize: 16),
+                                                    ),
+                                                    sizedBox12(),
+                                                    CustomDropdownButtonFormField<String>(
+                                                      value: Get.find<AuthController>().professionList!
+                                                          .firstWhere((religion) =>
+                                                      religion.id ==
+                                                          Get.find<AuthController>().professionIndex)
+                                                          .name,
+                                                      // Assuming you have a selectedPosition variable
+                                                      items: Get.find<AuthController>().professionList!
+                                                          .map((position) => position.name!)
+                                                          .toList(),
+                                                      hintText: "Select Position",
+                                                      onChanged: (String? value) {
+                                                        if (value != null) {
+                                                          var selected = Get.find<AuthController>().professionList!
+                                                              .firstWhere((position) =>
+                                                          position.name == value);
+                                                          Get.find<AuthController>().setProfessionIndex(
+                                                              selected.id, true);
+                                                         setState(() {
+                                                           fieldControllers[i]["newFields ${i+1}"]!["Position"]!.text =
+                                                               selected.name.toString();
+                                                         });
+                                                          print(
+                                                              Get.find<AuthController>().professionIndex);
+
+                                                          profileControl.editCareerInfoApi(
+                                                              fieldControllers[i]["newFields ${i+1}"]!["id"]!.text,
+                                                              [selected.id.toString()],
+                                                              [fieldControllers[i]["newFields ${i+1}"]!["State of Posting"]!.text],
+                                                              districtController.text,
+                                                              fromController.text,
+                                                              endController.text
+                                                          );
+                                                        }
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ));
+                                          },
+                                        ),
+                                        sizedBox6(),
+                                        EditDetailsTextField(
+                                          title: "State of Posting",
+                                          controller: fieldControllers[i]["newFields ${i+1}"]!["State of Posting"]! ?? TextEditingController(),
+                                          readOnly: true,
+                                          onTap: (){
+                                            Get.bottomSheet(
+                                              SingleChildScrollView(
+                                                child: Container(
+                                                  color: Theme.of(context).cardColor,
+                                                  padding: const EdgeInsets.all(
+                                                      Dimensions.paddingSizeDefault),
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        'State of Posting',
+                                                        style: kManrope25Black.copyWith(
+                                                            fontSize: 16),
+                                                      ),
+                                                      sizedBox12(),
+                                                      CustomDropdownButtonFormField<String>(
+                                                        value: authControl.posselectedState,
+                                                        items: authControl.posstates,
+                                                        hintText: "Select Posting State",
+                                                        onChanged: (value) {
+                                                          authControl.possetState(value ??
+                                                              authControl.posstates.first);
+                                                          print(
+                                                              'cadre =========== >${authControl.posselectedState}');
+                                                          fieldControllers[i]["newFields ${i+1}"]!["State of Posting"]!.text = authControl
+                                                              .posselectedState
+                                                              .toString();
+
+                                                          var selected = Get.find<AuthController>().professionList!
+                                                              .firstWhere((position) =>
+                                                          position.name == fieldControllers[i]["newFields ${i+1}"]!["Position"]!.text);
+
+                                                          profileControl.editCareerInfoApi(
+                                                              fieldControllers[i]["newFields ${i+1}"]!["id"]!.text,
+                                                              [selected.id.toString()],
+                                                              [fieldControllers[i]["newFields ${i+1}"]!["State of Posting"]!.text],
+                                                              districtController.text,
+                                                              fromController.text,
+                                                              endController.text
+                                                          );
+                                                        },
+                                                        validator: (value) {
+                                                          if (value == null ||
+                                                              value.isEmpty ||
+                                                              value ==
+                                                                  'Please Posting State') {
+                                                            return 'Please Posting State';
+                                                          }
+                                                          return null;
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        sizedBox6(),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

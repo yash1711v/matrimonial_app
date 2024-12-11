@@ -8,6 +8,7 @@ import 'package:bureau_couple/getx/repository/repo/profile_repo.dart';
 import 'package:bureau_couple/src/constants/shared_prefs.dart';
 import 'package:bureau_couple/src/models/images_model.dart';
 import 'package:bureau_couple/src/models/preference_model.dart';
+import 'package:flutter/cupertino.dart';
 // import 'package:carousel_slider/carousel_controller.dart';
 import 'package:get/get.dart';
 
@@ -302,11 +303,17 @@ class ProfileController extends GetxController implements GetxService {
 
   bool _isEducationLoading = false;
   bool get isEducationLoading => _isEducationLoading;
-  Future<void> editEducationInfoApi(type,id,degree,fieldOfStudy,institute) async {
+  Future<int> editEducationInfoApi(type,id,degree,fieldOfStudy,institute) async {
     _isEducationLoading = true;
     update();
+    int responseID = 0 ;
     Response response = await profileRepo.editEducationInfo(type, id, degree, fieldOfStudy, institute);
     var responseData = response.body;
+    if(responseData["status"] == true){
+      responseID = responseData["data"]["original"]["data"]["id"];
+
+      return responseID;
+    }
     // if(responseData['status'] == true) {
     //   print("Api ===================== >> $responseData");
     //   print(response);
@@ -320,11 +327,13 @@ class ProfileController extends GetxController implements GetxService {
     // }
     _isEducationLoading = false;
     update();
+    return responseID;
   }
 
-  Future<void> editCareerInfoApi(id, position, stateOfPosting, districtOfPosting, from, end) async {
+  Future<int> editCareerInfoApi(id, position, stateOfPosting, districtOfPosting, from, end) async {
     _isLoading = true;
     update();
+    int responseID = 0;
     try {
       Response response = await profileRepo.editCareerInfo(id, position, stateOfPosting, districtOfPosting, from, end);
 
@@ -336,7 +345,8 @@ class ProfileController extends GetxController implements GetxService {
         if (responseData['status'] == true) {
           // Assume `responseData` contains an index that should be an int
           int? index = int.tryParse(responseData['index']?.toString() ?? '');
-
+          debugPrint("id: ${responseData["data"]["original"]["data"]["id"]}");
+          responseID = responseData["data"]["original"]["data"]["id"];
           if (index != null) {
             // Success handling
             _isLoading = false;
@@ -361,7 +371,7 @@ class ProfileController extends GetxController implements GetxService {
       _isLoading = false;
       update();
     }
-
+  return responseID;
   }
 
   ProfileModel? _profile;

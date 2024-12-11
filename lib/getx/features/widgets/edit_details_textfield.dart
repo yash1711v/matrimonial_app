@@ -6,13 +6,14 @@ class EditDetailsTextField extends StatelessWidget {
   final Function()? onTap;
   final bool? isNonEditable;
   final bool readOnly;
+  final Function(String? value)? onChange;
 
   const EditDetailsTextField({
     Key? key,
     required this.title,
     required this.controller,
     this.onTap,
-    this.readOnly = false, this.isNonEditable = false, // Default value for readOnly is false
+    this.readOnly = false, this.isNonEditable = false, this.onChange, // Default value for readOnly is false
   }) : super(key: key);
 
   @override
@@ -35,6 +36,7 @@ class EditDetailsTextField extends StatelessWidget {
         ),
         TextFormField(
           controller: controller,
+          onChanged: onChange??(value){},
           onTap: onTap, // onTap is optional
           readOnly: readOnly, // Conditional readOnly behavior
           decoration: InputDecoration(

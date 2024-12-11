@@ -1,3 +1,5 @@
+import 'package:bureau_couple/src/models/interest_model.dart';
+
 class OtherProfileModel {
   bool? status;
   Data? data;
@@ -842,12 +844,13 @@ class Matches {
   String? professionName;
   BasicInfo? basicInfo;
   String? bloodGroups;
-  String? maritialStatus;
+  Map<String, dynamic>? maritialStatus;
   PartnerExpectation? partnerExpectation;
   PhysicalAttributes? physicalAttributes;
   List<CareerInfo>? careerInfo;
   List<EducationInfo>? educationInfo;
   List<Galleries>? galleries;
+  List<Interest>? interest;
 
   Matches(
       {this.id,
@@ -890,7 +893,9 @@ class Matches {
         this.physicalAttributes,
         this.careerInfo,
         this.educationInfo,
-        this.galleries});
+        this.galleries,
+        this.interest
+      });
 
   Matches.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -956,6 +961,12 @@ class Matches {
         galleries!.add(new Galleries.fromJson(v));
       });
     }
+    if (json['interest'] != null) {
+      interest = <Interest>[];
+      json['interest'].forEach((v) {
+        interest!.add(new Interest.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -1016,6 +1027,9 @@ class Matches {
 
     if (this.galleries != null) {
       data['galleries'] = this.galleries!.map((v) => v.toJson()).toList();
+    }
+    if (this.interest != null) {
+      data['interest'] = this.interest!.map((v) => v.toJson()).toList();
     }
     return data;
   }

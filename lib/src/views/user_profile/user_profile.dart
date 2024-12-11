@@ -22,6 +22,9 @@ import '../../constants/textstyles.dart';
 import '../../models/other_person_details_models.dart';
 import '../../utils/widgets/buttons.dart';
 import '../../utils/widgets/custom_image_widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
+import '../../utils/widgets/hobbies_widget.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final String userId;
@@ -45,6 +48,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   OtherProfileModel model = OtherProfileModel();
+  final Set<String>? userHobbies = {};
 
   getProfileDetails() {
     isLoading = true;
@@ -56,6 +60,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           setState(() {
             model = OtherProfileModel.fromJson(value);
             isLoading = false;
+          });
+
+          model.data?.matches!.interest!.forEach((element) {
+            element.hobbies!.forEach((hobbies) {
+              setState(() {
+                userHobbies!.add(hobbies);
+              });
+            });
           });
         } else {
           setState(() {
@@ -115,305 +127,538 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           : SingleChildScrollView(
               child:
                   GetBuilder<ProfileController>(builder: (profileController) {
+                debugPrint(
+                    "model.data?.matches?.galleries?.length ${model.data?.matches?.galleries?.length}");
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 0.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
+
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.center,
+                      //     children: [
+                      //       Text(
+                      //         "${StringUtils.capitalize(model.data!.matches!.firstname ?? '')} ${StringUtils.capitalize(model.data!.matches!.lastname ?? 'User')}",
+                      //         overflow: TextOverflow.ellipsis,
+                      //         maxLines: 1,
+                      //         style: styleSatoshiBold(
+                      //             size: 22, color: Colors.black),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      // Image.network("$baseProfilePhotoUrl${model.data!.matches!.image}"),
+
+
+                      Stack(
                         children: [
-                          Stack(
-                            children: [
-                              // ClipRRect(
-                              //   borderRadius: const BorderRadius.only(
-                              //       bottomRight: Radius.circular(32),
-                              //       bottomLeft: Radius.circular(32)),
-                              //   child: CarouselSlider.builder(
-                              //     itemCount:
-                              //     model.data?.matches?.galleries?.length ?? 0,
-                              //     itemBuilder: (ctx, index, realIndex) {
-                              //       return Stack(
-                              //         children: [
-                              //           ClipRRect(
-                              //             borderRadius: const BorderRadius.only(
-                              //                 bottomRight: Radius.circular(32),
-                              //                 bottomLeft: Radius.circular(32)),
-                              //             child: CachedNetworkImage(
-                              //               imageUrl:
-                              //               '$baseGalleryImage${model.data?.matches?.galleries?[index].image}',
-                              //               fit: BoxFit.fill,
-                              //               errorWidget: (context, url, error) =>
-                              //                   Padding(
-                              //                     padding: const EdgeInsets.all(8.0),
-                              //                     child: Image.asset(icLogo),
-                              //                   ),
-                              //               progressIndicatorBuilder: (context,
-                              //                   url, downloadProgress) =>
-                              //                   customShimmer(height: 0),
-                              //             ),
-                              //           ),
-                              //           Positioned(
-                              //             bottom: 0,
-                              //             left: 0,
-                              //             right: 0,
-                              //             child: ClipRect(
-                              //               child: Container(
-                              //                 height: 170,
-                              //                 width: 1.sw,
-                              //                 margin: const EdgeInsets.symmetric(
-                              //                     horizontal: 0),
-                              //                 clipBehavior: Clip.hardEdge,
-                              //                 decoration: BoxDecoration(
-                              //                     gradient: LinearGradient(
-                              //                       colors: [
-                              //                         Colors.black
-                              //                             .withOpacity(0.8),
-                              //                         Colors.transparent
-                              //                       ],
-                              //                       stops: const [0, 10],
-                              //                       begin: Alignment.bottomCenter,
-                              //                       end: Alignment.topCenter,
-                              //                     ),
-                              //                     borderRadius:
-                              //                     BorderRadius.circular(32)),
-                              //                 // child: Image.asset(images[i],
-                              //                 // height: 170,),
-                              //               ),
-                              //             ),
-                              //           ),
-                              //         ],
-                              //       );
-                              //     },
-                              //     options: CarouselOptions(
-                              //       height: 500,
-                              //       viewportFraction: 2,
-                              //       enlargeFactor: 0.3,
-                              //       aspectRatio: 0.8,
-                              //       enableInfiniteScroll: false,
-                              //       onPageChanged: (index, reason) {
-                              //         setState(() {
-                              //           _currentIndex = index;
-                              //         });
-                              //       },
-                              //     ),
-                              //   ),
-                              // ),
-                              Positioned(
-                                top: 40,
-                                left: 0,
-                                right: 0,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: List.generate(
-                                    model.data?.matches?.galleries?.length ?? 0,
-                                    (index) => Container(
-                                      width: 40,
-                                      height: 6,
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 2),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(24),
-                                        color: _currentIndex == index
-                                            ? Colors.white
-                                            : Colors.black.withOpacity(0.30),
+                          Container(
+                            height: 500,
+                            width: double.infinity,
+                            clipBehavior: Clip.hardEdge,
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10.0),
+                              ),
+                            ),
+                            child: ColorFiltered(
+                              colorFilter: ColorFilter.mode(
+                                Colors.black.withOpacity(0.3),
+                                BlendMode.srcOver,
+                              ),
+                              child: CachedNetworkImage(
+                                imageUrl: model.data!.matches!.image != null
+                                    ? '$baseProfilePhotoUrl${model.data!.matches!.image}'
+                                    : '',
+                                fit: BoxFit.fill,
+                                errorWidget:
+                                    (context, url, error) =>
+                                    Padding(
+                                      padding:
+                                      const EdgeInsets.all(8.0),
+                                      child: Image.asset(
+                                        icLogo,
+                                        height: 40,
+                                        width: 40,
                                       ),
                                     ),
-                                  ),
+                                progressIndicatorBuilder:
+                                    (a, b, c) => customShimmer(
+                                  height: 0, /*width: 0,*/
                                 ),
                               ),
-                              Positioned(
-                                bottom: 30,
-                                left: 40,
-                                right: 0,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            left: 20,
+                            right: 20,
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${StringUtils.capitalize(model.data!.matches!.firstname ?? '')} ${StringUtils.capitalize(model.data!.matches!.lastname ?? 'User')}',
+                                        maxLines: 2,
+                                        overflow:
+                                        TextOverflow.ellipsis,
+                                        style: styleSatoshiBold(
+                                            size: 14,
+                                            color: Colors.white),
+                                      ),
+                                      Row(
                                         children: [
                                           Row(
                                             children: [
-                                              Expanded(
-                                                flex: 3,
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Expanded(
-                                                          flex: 4,
-                                                          child: Text(
-                                                            "${StringUtils.capitalize(model.data!.matches!.firstname ?? '')} ${StringUtils.capitalize(model.data!.matches!.lastname ?? 'User')}",
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            maxLines: 1,
-                                                            style:
-                                                                styleSatoshiBold(
-                                                                    size: 22,
-                                                                    color: Colors
-                                                                        .white),
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 6,
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  vertical: 4.0,
-                                                                  horizontal:
-                                                                      8),
-                                                          decoration: BoxDecoration(
-                                                              color: Colors
-                                                                  .greenAccent,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          12)),
-                                                          child: Text(
-                                                            StringUtils
-                                                                .capitalize(
-                                                                    '$age yrs'),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            maxLines: 1,
-                                                            style:
-                                                                styleSatoshiLarge(
-                                                                    size: 16,
-                                                                    color: Colors
-                                                                        .black),
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 6,
-                                                        ),
-                                                        Container(
-                                                          height: 4,
-                                                          width: 4,
-                                                          decoration:
-                                                              const BoxDecoration(
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 6,
-                                                        ),
-                                                        Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  vertical: 4.0,
-                                                                  horizontal:
-                                                                      8),
-                                                          decoration: BoxDecoration(
-                                                              color: Colors
-                                                                  .yellowAccent
-                                                                  .withOpacity(
-                                                                      0.70),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          12)),
-                                                          child: Text(
-                                                            StringUtils.capitalize(model
-                                                                    .data
-                                                                    ?.matches
-                                                                    ?.basicInfo
-                                                                    ?.religionName ??
-                                                                ''),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            maxLines: 1,
-                                                            style:
-                                                                styleSatoshiLarge(
-                                                                    size: 16,
-                                                                    color: Colors
-                                                                        .black),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    sizedBox10(),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        const SizedBox(
-                                                          width: 2,
-                                                        ),
-                                                        Expanded(
-                                                          flex: 10,
-                                                          child: Row(
-                                                            children: [
-                                                              Text(
-                                                                '${model.data!.matches!.basicInfo!.presentAddress!.state ?? ''} • ${model.data!.matches!.basicInfo!.professionName ?? ''} • ${model.data!.matches!.basicInfo!.communityName ?? ''}',
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                maxLines: 2,
-                                                                style: styleSatoshiLarge(
-                                                                    size: 16,
-                                                                    color: Colors
-                                                                        .white),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    sizedBox16(),
-                                                  ],
+                                              Text(
+                                                '$age yrs',
+                                                style:
+                                                styleSatoshiRegular(
+                                                    size: 10,
+                                                    color: Colors
+                                                        .white),
+                                              ),
+                                              const SizedBox(
+                                                width: 6,
+                                              ),
+                                              Container(
+                                                height: 4,
+                                                width: 4,
+                                                decoration:
+                                                const BoxDecoration(
+                                                  shape: BoxShape
+                                                      .circle,
+                                                  color:
+                                                  Colors.white,
                                                 ),
+                                              ),
+                                              const SizedBox(
+                                                width: 6,
+                                              ),
+                                              Text(
+                                                "${model.data!.matches!.physicalAttributes!.height ?? ''} ft",
+                                                style:
+                                                styleSatoshiRegular(
+                                                    size: 10,
+                                                    color: Colors
+                                                        .white),
                                               ),
                                             ],
                                           ),
                                         ],
                                       ),
-                                    ),
-                                  ],
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment
+                                            .spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment
+                                                  .start,
+                                              children: [
+                                                Text(
+                                                  model.data!.matches!
+                                                      .basicInfo
+                                                      ?.professionName ??
+                                                      '',
+                                                  style: styleSatoshiRegular(
+                                                      size: 13,
+                                                      color: Colors
+                                                          .white),
+                                                ),
+                                                Text(
+                                                  overflow:
+                                                  TextOverflow
+                                                      .ellipsis,
+                                                  maxLines: 2,
+                                                  model.data!.matches!
+                                                      .basicInfo
+                                                      ?.presentAddress
+                                                      ?.state ??
+                                                      '',
+                                                  style: styleSatoshiRegular(
+                                                      size: 13,
+                                                      color: Colors
+                                                          .white),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      sizedBox18(),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 16, top: 50),
-                                child: TextButton(
-                                    onPressed: () {
-                                      Get.back();
-                                    },
-                                    child: Icon(
-                                      Icons.arrow_back_rounded,
-                                      size: Dimensions.fontSize40,
-                                      color: Theme.of(context).cardColor,
-                                    )),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ],
                       ),
+
+                       SizedBox(height: 25,),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: Row(
+                          children: [
+                            Text("Photos",style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black
+                            ),)
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 25,),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 150,
+                        child: model.data?.matches?.galleries?.isNotEmpty ?? false?Visibility(
+                          visible: model.data?.matches?.galleries?.isNotEmpty ?? false,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: model.data?.matches?.galleries!.length,
+                            itemBuilder: (BuildContext context, int index) {
+                          
+                              return Container(
+                                width: 100,
+                                height: 100,
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 2),
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(image: NetworkImage("$baseGalleryImage${model.data?.matches?.galleries![index].image}"))
+                                ),
+                              );
+                            },
+                          
+                          ),
+                        ):Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("NO PHOTOS ADDED "),
+                          ],
+                        ),
+                      ),
+                      // Column(
+                      //   children: [
+                      //     Row(
+                      //       mainAxisAlignment: MainAxisAlignment.center,
+                      //       children: List.generate(
+                      //         model.data?.matches?.galleries?.length ?? 0,
+                      //             (index) => Container(
+                      //           width: 40,
+                      //           height: 100,
+                      //           margin: const EdgeInsets.symmetric(
+                      //               horizontal: 2),
+                      //           decoration: BoxDecoration(
+                      //             borderRadius: BorderRadius.circular(24),
+                      //             color: _currentIndex == index
+                      //                 ? Colors.black
+                      //                 : Colors.black.withOpacity(0.30),
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     // Stack(
+                      //     //   children: [
+                      //     //     // ClipRRect(
+                      //     //     //   borderRadius: const BorderRadius.only(
+                      //     //     //       bottomRight: Radius.circular(32),
+                      //     //     //       bottomLeft: Radius.circular(32)),
+                      //     //     //   child: CarouselSlider.builder(
+                      //     //     //     itemCount:
+                      //     //     //     model.data?.matches?.galleries?.length ?? 0,
+                      //     //     //     itemBuilder: (ctx, index, realIndex) {
+                      //     //     //       return Stack(
+                      //     //     //         children: [
+                      //     //     //           ClipRRect(
+                      //     //     //             borderRadius: const BorderRadius.only(
+                      //     //     //                 bottomRight: Radius.circular(32),
+                      //     //     //                 bottomLeft: Radius.circular(32)),
+                      //     //     //             child: CachedNetworkImage(
+                      //     //     //               imageUrl:
+                      //     //     //               '$baseGalleryImage${model.data?.matches?.galleries?[index].image}',
+                      //     //     //               fit: BoxFit.fill,
+                      //     //     //               errorWidget: (context, url, error) =>
+                      //     //     //                   Padding(
+                      //     //     //                     padding: const EdgeInsets.all(8.0),
+                      //     //     //                     child: Image.asset(icLogo),
+                      //     //     //                   ),
+                      //     //     //               progressIndicatorBuilder: (context,
+                      //     //     //                   url, downloadProgress) =>
+                      //     //     //                   customShimmer(height: 0),
+                      //     //     //             ),
+                      //     //     //           ),
+                      //     //     //           Positioned(
+                      //     //     //             bottom: 0,
+                      //     //     //             left: 0,
+                      //     //     //             right: 0,
+                      //     //     //             child: ClipRect(
+                      //     //     //               child: Container(
+                      //     //     //                 height: 170,
+                      //     //     //                 width: 1.sw,
+                      //     //     //                 margin: const EdgeInsets.symmetric(
+                      //     //     //                     horizontal: 0),
+                      //     //     //                 clipBehavior: Clip.hardEdge,
+                      //     //     //                 decoration: BoxDecoration(
+                      //     //     //                     gradient: LinearGradient(
+                      //     //     //                       colors: [
+                      //     //     //                         Colors.black
+                      //     //     //                             .withOpacity(0.8),
+                      //     //     //                         Colors.transparent
+                      //     //     //                       ],
+                      //     //     //                       stops: const [0, 10],
+                      //     //     //                       begin: Alignment.bottomCenter,
+                      //     //     //                       end: Alignment.topCenter,
+                      //     //     //                     ),
+                      //     //     //                     borderRadius:
+                      //     //     //                     BorderRadius.circular(32)),
+                      //     //     //                 // child: Image.asset(images[i],
+                      //     //     //                 // height: 170,),
+                      //     //     //               ),
+                      //     //     //             ),
+                      //     //     //           ),
+                      //     //     //         ],
+                      //     //     //       );
+                      //     //     //     },
+                      //     //     //     options: CarouselOptions(
+                      //     //     //       height: 500,
+                      //     //     //       viewportFraction: 2,
+                      //     //     //       enlargeFactor: 0.3,
+                      //     //     //       aspectRatio: 0.8,
+                      //     //     //       enableInfiniteScroll: false,
+                      //     //     //       onPageChanged: (index, reason) {
+                      //     //     //         setState(() {
+                      //     //     //           _currentIndex = index;
+                      //     //     //         });
+                      //     //     //       },
+                      //     //     //     ),
+                      //     //     //   ),
+                      //     //     // ),
+                      //     //     Positioned(
+                      //     //       top: 40,
+                      //     //       left: 0,
+                      //     //       right: 0,
+                      //     //       child: Row(
+                      //     //         mainAxisAlignment: MainAxisAlignment.center,
+                      //     //         children: List.generate(
+                      //     //           model.data?.matches?.galleries?.length ?? 0,
+                      //     //           (index) => Container(
+                      //     //             width: 40,
+                      //     //             height: 6,
+                      //     //             margin: const EdgeInsets.symmetric(
+                      //     //                 horizontal: 2),
+                      //     //             decoration: BoxDecoration(
+                      //     //               borderRadius: BorderRadius.circular(24),
+                      //     //               color: _currentIndex == index
+                      //     //                   ? Colors.black
+                      //     //                   : Colors.black.withOpacity(0.30),
+                      //     //             ),
+                      //     //           ),
+                      //     //         ),
+                      //     //       ),
+                      //     //     ),
+                      //     //     Positioned(
+                      //     //       bottom: 30,
+                      //     //       left: 40,
+                      //     //       right: 0,
+                      //     //       child: Row(
+                      //     //         children: [
+                      //     //           Expanded(
+                      //     //             flex: 3,
+                      //     //             child: Column(
+                      //     //               mainAxisAlignment:
+                      //     //                   MainAxisAlignment.center,
+                      //     //               crossAxisAlignment:
+                      //     //                   CrossAxisAlignment.start,
+                      //     //               children: [
+                      //     //                 Row(
+                      //     //                   children: [
+                      //     //                     Expanded(
+                      //     //                       flex: 3,
+                      //     //                       child: Column(
+                      //     //                         mainAxisAlignment:
+                      //     //                             MainAxisAlignment.center,
+                      //     //                         crossAxisAlignment:
+                      //     //                             CrossAxisAlignment.start,
+                      //     //                         children: [
+                      //     //                           Row(
+                      //     //                             children: [
+                      //     //                               Expanded(
+                      //     //                                 flex: 4,
+                      //     //                                 child: Text(
+                      //     //                                   "${StringUtils.capitalize(model.data!.matches!.firstname ?? '')} ${StringUtils.capitalize(model.data!.matches!.lastname ?? 'User')}",
+                      //     //                                   overflow:
+                      //     //                                       TextOverflow
+                      //     //                                           .ellipsis,
+                      //     //                                   maxLines: 1,
+                      //     //                                   style:
+                      //     //                                       styleSatoshiBold(
+                      //     //                                           size: 22,
+                      //     //                                           color: Colors
+                      //     //                                               .white),
+                      //     //                                 ),
+                      //     //                               ),
+                      //     //                               const SizedBox(
+                      //     //                                 width: 10,
+                      //     //                               ),
+                      //     //                             ],
+                      //     //                           ),
+                      //     //                           const SizedBox(
+                      //     //                             height: 6,
+                      //     //                           ),
+                      //     //                           // Row(
+                      //     //                           //   children: [
+                      //     //                           //     Container(
+                      //     //                           //       padding:
+                      //     //                           //           const EdgeInsets
+                      //     //                           //               .symmetric(
+                      //     //                           //               vertical: 4.0,
+                      //     //                           //               horizontal:
+                      //     //                           //                   8),
+                      //     //                           //       decoration: BoxDecoration(
+                      //     //                           //           color: Colors
+                      //     //                           //               .greenAccent,
+                      //     //                           //           borderRadius:
+                      //     //                           //               BorderRadius
+                      //     //                           //                   .circular(
+                      //     //                           //                       12)),
+                      //     //                           //       child: Text(
+                      //     //                           //         StringUtils
+                      //     //                           //             .capitalize(
+                      //     //                           //                 '$age yrs'),
+                      //     //                           //         overflow:
+                      //     //                           //             TextOverflow
+                      //     //                           //                 .ellipsis,
+                      //     //                           //         maxLines: 1,
+                      //     //                           //         style:
+                      //     //                           //             styleSatoshiLarge(
+                      //     //                           //                 size: 16,
+                      //     //                           //                 color: Colors
+                      //     //                           //                     .black),
+                      //     //                           //       ),
+                      //     //                           //     ),
+                      //     //                           //     const SizedBox(
+                      //     //                           //       width: 6,
+                      //     //                           //     ),
+                      //     //                           //     Container(
+                      //     //                           //       height: 4,
+                      //     //                           //       width: 4,
+                      //     //                           //       decoration:
+                      //     //                           //           const BoxDecoration(
+                      //     //                           //         shape:
+                      //     //                           //             BoxShape.circle,
+                      //     //                           //         color: Colors.white,
+                      //     //                           //       ),
+                      //     //                           //     ),
+                      //     //                           //     const SizedBox(
+                      //     //                           //       width: 6,
+                      //     //                           //     ),
+                      //     //                           //     Container(
+                      //     //                           //       padding:
+                      //     //                           //           const EdgeInsets
+                      //     //                           //               .symmetric(
+                      //     //                           //               vertical: 4.0,
+                      //     //                           //               horizontal:
+                      //     //                           //                   8),
+                      //     //                           //       decoration: BoxDecoration(
+                      //     //                           //           color: Colors
+                      //     //                           //               .yellowAccent
+                      //     //                           //               .withOpacity(
+                      //     //                           //                   0.70),
+                      //     //                           //           borderRadius:
+                      //     //                           //               BorderRadius
+                      //     //                           //                   .circular(
+                      //     //                           //                       12)),
+                      //     //                           //       child: Text(
+                      //     //                           //         StringUtils.capitalize(model
+                      //     //                           //                 .data
+                      //     //                           //                 ?.matches
+                      //     //                           //                 ?.basicInfo
+                      //     //                           //                 ?.religionName ??
+                      //     //                           //             ''),
+                      //     //                           //         overflow:
+                      //     //                           //             TextOverflow
+                      //     //                           //                 .ellipsis,
+                      //     //                           //         maxLines: 1,
+                      //     //                           //         style:
+                      //     //                           //             styleSatoshiLarge(
+                      //     //                           //                 size: 16,
+                      //     //                           //                 color: Colors
+                      //     //                           //                     .black),
+                      //     //                           //       ),
+                      //     //                           //     ),
+                      //     //                           //   ],
+                      //     //                           // ),
+                      //     //                           sizedBox10(),
+                      //     //                           // Row(
+                      //     //                           //   mainAxisAlignment:
+                      //     //                           //       MainAxisAlignment
+                      //     //                           //           .start,
+                      //     //                           //   crossAxisAlignment:
+                      //     //                           //       CrossAxisAlignment
+                      //     //                           //           .start,
+                      //     //                           //   children: [
+                      //     //                           //     const SizedBox(
+                      //     //                           //       width: 2,
+                      //     //                           //     ),
+                      //     //                           //     Expanded(
+                      //     //                           //       flex: 10,
+                      //     //                           //       child: Row(
+                      //     //                           //         children: [
+                      //     //                           //           Text(
+                      //     //                           //             '${model.data!.matches!.basicInfo!.presentAddress!.state ?? ''} • ${model.data!.matches!.basicInfo!.professionName ?? ''} • ${model.data!.matches!.basicInfo!.communityName ?? ''}',
+                      //     //                           //             overflow:
+                      //     //                           //                 TextOverflow
+                      //     //                           //                     .ellipsis,
+                      //     //                           //             maxLines: 2,
+                      //     //                           //             style: styleSatoshiLarge(
+                      //     //                           //                 size: 16,
+                      //     //                           //                 color: Colors
+                      //     //                           //                     .white),
+                      //     //                           //           ),
+                      //     //                           //         ],
+                      //     //                           //       ),
+                      //     //                           //     ),
+                      //     //                           //   ],
+                      //     //                           // ),
+                      //     //                           sizedBox16(),
+                      //     //                         ],
+                      //     //                       ),
+                      //     //                     ),
+                      //     //                   ],
+                      //     //                 ),
+                      //     //               ],
+                      //     //             ),
+                      //     //           ),
+                      //     //         ],
+                      //     //       ),
+                      //     //     ),
+                      //     //     Padding(
+                      //     //       padding:
+                      //     //           const EdgeInsets.only(left: 16, top: 50),
+                      //     //       child: TextButton(
+                      //     //           onPressed: () {
+                      //     //             Get.back();
+                      //     //           },
+                      //     //           child: Icon(
+                      //     //             Icons.arrow_back_rounded,
+                      //     //             size: Dimensions.fontSize40,
+                      //     //             color: Theme.of(context).cardColor,
+                      //     //           )),
+                      //     //     ),
+                      //     //   ],
+                      //     // ),
+                      //   ],
+                      // ),
                       sizedBox20(),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -502,11 +747,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       buildProfileRow(
                                           image: icMarriedStatusPro,
                                           title: 'Married Status',
-                                          text: StringUtils.capitalize(model
+                                          text: StringUtils.capitalize((model
                                                   .data!
                                                   .matches
                                                   ?.basicInfo
-                                                  ?.maritialStatus!
+                                                  ?.maritialStatus ?? MaritialStatus(id: 0,title: ""))
                                                   .title ??
                                               "")),
                                     ],
@@ -658,211 +903,254 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                               ),
                             ),
                             sizedBox16(),
-                            CustomBorderContainer(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Interest & Hobbies',
-                                    style: kManrope25Black.copyWith(
-                                        fontSize: Dimensions.fontSize18,
-                                        color: Theme.of(context)
-                                            .primaryColorDark
-                                            .withOpacity(0.65)),
-                                  ),
-                                  const SizedBox(
-                                    height: 12,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Wrap(
-                                          alignment: WrapAlignment.start,
-                                          spacing: 4.0,
-                                          children: model.data!.matches!.fun
-                                              .toString()
-                                              .split(', ')
-                                              .map((item) {
-                                            return Container(
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: Dimensions
-                                                          .paddingSize5),
-                                              padding: const EdgeInsets.all(
-                                                  Dimensions.paddingSize10),
-                                              decoration: BoxDecoration(
-                                                  color: color4B164C
-                                                      .withOpacity(0.80),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          Dimensions.radius15)),
-                                              child: Text(
-                                                item,
-                                                style: satoshiBold.copyWith(
-                                                    fontSize:
-                                                        Dimensions.fontSize12,
-                                                    color: Theme.of(context)
-                                                        .cardColor),
-                                              ),
-                                            );
-                                          }).toList(),
-                                        ),
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  color: Theme.of(context).cardColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 1,
+                                      blurRadius: 5,
+                                      offset: const Offset(
+                                          0, 3), // changes position of shadow
+                                    ),
+                                  ]),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 0.0, vertical: 8),
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Interest & Hobbies',
+                                            style: kManrope25Black.copyWith(
+                                                fontSize: Dimensions.fontSize18,
+                                                color: Theme.of(context)
+                                                    .primaryColorDark
+                                                    .withOpacity(0.65)),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Wrap(
-                                          alignment: WrapAlignment.start,
-                                          spacing: 4.0,
-                                          children: model
-                                              .data!.matches!.creative
-                                              .toString()
-                                              .split(', ')
-                                              .map((item) {
-                                            return Container(
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: Dimensions
-                                                          .paddingSize5),
-                                              padding: const EdgeInsets.all(
-                                                  Dimensions.paddingSize10),
-                                              decoration: BoxDecoration(
-                                                  color: color4B164C
-                                                      .withOpacity(0.80),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          Dimensions.radius15)),
-                                              child: Text(
-                                                item,
-                                                style: satoshiBold.copyWith(
-                                                    fontSize:
-                                                        Dimensions.fontSize12,
-                                                    color: Theme.of(context)
-                                                        .cardColor),
-                                              ),
-                                            );
-                                          }).toList(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Wrap(
-                                          alignment: WrapAlignment.start,
-                                          spacing: 4.0,
-                                          children: model.data!.matches!.fitness
-                                              .toString()
-                                              .split(', ')
-                                              .map((item) {
-                                            return Container(
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: Dimensions
-                                                          .paddingSize5),
-                                              padding: const EdgeInsets.all(
-                                                  Dimensions.paddingSize10),
-                                              decoration: BoxDecoration(
-                                                  color: color4B164C
-                                                      .withOpacity(0.80),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          Dimensions.radius15)),
-                                              child: Text(
-                                                item,
-                                                style: satoshiBold.copyWith(
-                                                    fontSize:
-                                                        Dimensions.fontSize12,
-                                                    color: Theme.of(context)
-                                                        .cardColor),
-                                              ),
-                                            );
-                                          }).toList(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Wrap(
-                                          alignment: WrapAlignment.start,
-                                          spacing: 4.0,
-                                          children: model.data!.matches!.hobby
-                                              .toString()
-                                              .split(', ')
-                                              .map((item) {
-                                            return Container(
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: Dimensions
-                                                          .paddingSize5),
-                                              padding: const EdgeInsets.all(
-                                                  Dimensions.paddingSize10),
-                                              decoration: BoxDecoration(
-                                                  color: color4B164C
-                                                      .withOpacity(0.80),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          Dimensions.radius15)),
-                                              child: Text(
-                                                item,
-                                                style: satoshiBold.copyWith(
-                                                    fontSize:
-                                                        Dimensions.fontSize12,
-                                                    color: Theme.of(context)
-                                                        .cardColor),
-                                              ),
-                                            );
-                                          }).toList(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Wrap(
-                                          alignment: WrapAlignment.start,
-                                          spacing: 4.0,
-                                          children: model
-                                              .data!.matches!.otherInterest
-                                              .toString()
-                                              .split(', ')
-                                              .map((item) {
-                                            return Container(
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: Dimensions
-                                                          .paddingSize5),
-                                              padding: const EdgeInsets.all(
-                                                  Dimensions.paddingSize10),
-                                              decoration: BoxDecoration(
-                                                  color: color4B164C
-                                                      .withOpacity(0.80),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          Dimensions.radius15)),
-                                              child: Text(
-                                                item,
-                                                style: satoshiBold.copyWith(
-                                                    fontSize:
-                                                        Dimensions.fontSize12,
-                                                    color: Theme.of(context)
-                                                        .cardColor),
-                                              ),
-                                            );
-                                          }).toList(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                    ),
+                                    const SizedBox(height: 12,),
+                                    HobbiesWrap(allHobbies: userHobbies!,),
+                                    const SizedBox(height: 12,),
+                                  ],
+                                ),
                               ),
                             ),
+                            // CustomBorderContainer(
+                            //   child: Column(
+                            //     crossAxisAlignment: CrossAxisAlignment.start,
+                            //     children: [
+                            //       Text(
+                            //         'Interest & Hobbies',
+                            //         style: kManrope25Black.copyWith(
+                            //             fontSize: Dimensions.fontSize18,
+                            //             color: Theme.of(context)
+                            //                 .primaryColorDark
+                            //                 .withOpacity(0.65)),
+                            //       ),
+                            //       const SizedBox(
+                            //         height: 12,
+                            //       ),
+                            //       Row(
+                            //         children: [
+                            //           Expanded(
+                            //             child: Wrap(
+                            //               alignment: WrapAlignment.start,
+                            //               spacing: 4.0,
+                            //               children: model.data!.matches!.fun
+                            //                   .toString()
+                            //                   .split(', ')
+                            //                   .map((item) {
+                            //                 return Container(
+                            //                   margin:
+                            //                       const EdgeInsets.symmetric(
+                            //                           vertical: Dimensions
+                            //                               .paddingSize5),
+                            //                   padding: const EdgeInsets.all(
+                            //                       Dimensions.paddingSize10),
+                            //                   decoration: BoxDecoration(
+                            //                       color: color4B164C
+                            //                           .withOpacity(0.80),
+                            //                       borderRadius:
+                            //                           BorderRadius.circular(
+                            //                               Dimensions.radius15)),
+                            //                   child: Text(
+                            //                     item,
+                            //                     style: satoshiBold.copyWith(
+                            //                         fontSize:
+                            //                             Dimensions.fontSize12,
+                            //                         color: Theme.of(context)
+                            //                             .cardColor),
+                            //                   ),
+                            //                 );
+                            //               }).toList(),
+                            //             ),
+                            //           ),
+                            //         ],
+                            //       ),
+                            //       Row(
+                            //         children: [
+                            //           Expanded(
+                            //             child: Wrap(
+                            //               alignment: WrapAlignment.start,
+                            //               spacing: 4.0,
+                            //               children: model
+                            //                   .data!.matches!.creative
+                            //                   .toString()
+                            //                   .split(', ')
+                            //                   .map((item) {
+                            //                 return Container(
+                            //                   margin:
+                            //                       const EdgeInsets.symmetric(
+                            //                           vertical: Dimensions
+                            //                               .paddingSize5),
+                            //                   padding: const EdgeInsets.all(
+                            //                       Dimensions.paddingSize10),
+                            //                   decoration: BoxDecoration(
+                            //                       color: color4B164C
+                            //                           .withOpacity(0.80),
+                            //                       borderRadius:
+                            //                           BorderRadius.circular(
+                            //                               Dimensions.radius15)),
+                            //                   child: Text(
+                            //                     item,
+                            //                     style: satoshiBold.copyWith(
+                            //                         fontSize:
+                            //                             Dimensions.fontSize12,
+                            //                         color: Theme.of(context)
+                            //                             .cardColor),
+                            //                   ),
+                            //                 );
+                            //               }).toList(),
+                            //             ),
+                            //           ),
+                            //         ],
+                            //       ),
+                            //       Row(
+                            //         children: [
+                            //           Expanded(
+                            //             child: Wrap(
+                            //               alignment: WrapAlignment.start,
+                            //               spacing: 4.0,
+                            //               children: model.data!.matches!.fitness
+                            //                   .toString()
+                            //                   .split(', ')
+                            //                   .map((item) {
+                            //                 return Container(
+                            //                   margin:
+                            //                       const EdgeInsets.symmetric(
+                            //                           vertical: Dimensions
+                            //                               .paddingSize5),
+                            //                   padding: const EdgeInsets.all(
+                            //                       Dimensions.paddingSize10),
+                            //                   decoration: BoxDecoration(
+                            //                       color: color4B164C
+                            //                           .withOpacity(0.80),
+                            //                       borderRadius:
+                            //                           BorderRadius.circular(
+                            //                               Dimensions.radius15)),
+                            //                   child: Text(
+                            //                     item,
+                            //                     style: satoshiBold.copyWith(
+                            //                         fontSize:
+                            //                             Dimensions.fontSize12,
+                            //                         color: Theme.of(context)
+                            //                             .cardColor),
+                            //                   ),
+                            //                 );
+                            //               }).toList(),
+                            //             ),
+                            //           ),
+                            //         ],
+                            //       ),
+                            //       Row(
+                            //         children: [
+                            //           Expanded(
+                            //             child: Wrap(
+                            //               alignment: WrapAlignment.start,
+                            //               spacing: 4.0,
+                            //               children: model.data!.matches!.hobby
+                            //                   .toString()
+                            //                   .split(', ')
+                            //                   .map((item) {
+                            //                 return Container(
+                            //                   margin:
+                            //                       const EdgeInsets.symmetric(
+                            //                           vertical: Dimensions
+                            //                               .paddingSize5),
+                            //                   padding: const EdgeInsets.all(
+                            //                       Dimensions.paddingSize10),
+                            //                   decoration: BoxDecoration(
+                            //                       color: color4B164C
+                            //                           .withOpacity(0.80),
+                            //                       borderRadius:
+                            //                           BorderRadius.circular(
+                            //                               Dimensions.radius15)),
+                            //                   child: Text(
+                            //                     item,
+                            //                     style: satoshiBold.copyWith(
+                            //                         fontSize:
+                            //                             Dimensions.fontSize12,
+                            //                         color: Theme.of(context)
+                            //                             .cardColor),
+                            //                   ),
+                            //                 );
+                            //               }).toList(),
+                            //             ),
+                            //           ),
+                            //         ],
+                            //       ),
+                            //       Row(
+                            //         children: [
+                            //           Expanded(
+                            //             child: Wrap(
+                            //               alignment: WrapAlignment.start,
+                            //               spacing: 4.0,
+                            //               children: model
+                            //                   .data!.matches!.otherInterest
+                            //                   .toString()
+                            //                   .split(', ')
+                            //                   .map((item) {
+                            //                 return Container(
+                            //                   margin:
+                            //                       const EdgeInsets.symmetric(
+                            //                           vertical: Dimensions
+                            //                               .paddingSize5),
+                            //                   padding: const EdgeInsets.all(
+                            //                       Dimensions.paddingSize10),
+                            //                   decoration: BoxDecoration(
+                            //                       color: color4B164C
+                            //                           .withOpacity(0.80),
+                            //                       borderRadius:
+                            //                           BorderRadius.circular(
+                            //                               Dimensions.radius15)),
+                            //                   child: Text(
+                            //                     item,
+                            //                     style: satoshiBold.copyWith(
+                            //                         fontSize:
+                            //                             Dimensions.fontSize12,
+                            //                         color: Theme.of(context)
+                            //                             .cardColor),
+                            //                   ),
+                            //                 );
+                            //               }).toList(),
+                            //             ),
+                            //           ),
+                            //         ],
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
                             sizedBox16(),
                             CustomBorderContainer(
                               child: Column(
