@@ -487,8 +487,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         onTap: () {}),
                                     buildInfoRow(
                                         title: 'Marital Status',
-                                        text:
-                                            profile.basicInfo?.maritalStatus == "1"?"UnMarried":profile.basicInfo?.maritalStatus == "2"?"Widow":profile.basicInfo?.maritalStatus == "3"?"Divorce":"Widower",
+                                        text: profile
+                                                    .basicInfo?.maritalStatus ==
+                                                "1"
+                                            ? "UnMarried"
+                                            : profile.basicInfo
+                                                        ?.maritalStatus ==
+                                                    "2"
+                                                ? "Widow"
+                                                : profile.basicInfo
+                                                            ?.maritalStatus ==
+                                                        "3"
+                                                    ? "Divorce"
+                                                    : "Widower",
                                         onTap: () {}),
                                   ],
                                 ),
@@ -735,7 +746,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             sizedBox10(),
                             Container(
                               width: double.infinity,
-                              height: 250,
+                              height: 270,
                               decoration: BoxDecoration(
                                   color: Theme.of(context).cardColor,
                                   borderRadius: BorderRadius.circular(12),
@@ -788,8 +799,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             profile.partnerExpectation == null
                                                 ? ""
                                                 : profile.partnerExpectation!
-                                                    .religionName
-                                                    .toString(),
+                                                            .religionName
+                                                            .take(
+                                                                3) // Take the first 3 elements
+                                                            .map((religion) =>
+                                                                religion[0]
+                                                                    .toUpperCase() +
+                                                                religion
+                                                                    .substring(
+                                                                        1)
+                                                                    .toLowerCase())
+                                                            .join(',') +
+                                                        (profile
+                                                                    .partnerExpectation!
+                                                                    .religionName
+                                                                    .length >
+                                                                3
+                                                            ? ' ..'
+                                                            : '') ??
+                                                    '',
                                         onTap: () {}),
                                     buildInfoRow(
                                         title: 'Profession',
@@ -797,23 +825,70 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             profile.partnerExpectation == null
                                                 ? ""
                                                 : profile.partnerExpectation!
-                                                    .professionName
-                                                    .toString(),
+                                                            .professionName
+                                                            .take(
+                                                                3) // Take the first 3 elements
+                                                            .map((religion) =>
+                                                                religion[0]
+                                                                    .toUpperCase() +
+                                                                religion
+                                                                    .substring(
+                                                                        1)
+                                                                    .toLowerCase())
+                                                            .join(',') +
+                                                        (profile
+                                                                    .partnerExpectation!
+                                                                    .professionName
+                                                                    .length >
+                                                                3
+                                                            ? ' ..'
+                                                            : '') ??
+                                                    '',
                                         onTap: () {}),
                                     buildInfoRow(
                                       title: 'Mother Tongue',
                                       text: profile.partnerExpectation
-                                              ?.motherTongueName
-                                              .toString() ??
-                                          "",
+                                                  ?.motherTongueName
+                                                  .take(
+                                                      3) // Take the first 3 elements
+                                                  .map((religion) =>
+                                                      religion[0]
+                                                          .toUpperCase() +
+                                                      religion
+                                                          .substring(1)
+                                                          .toLowerCase())
+                                                  .join(',') +
+                                              (profile
+                                                          .partnerExpectation!
+                                                          .motherTongueName
+                                                          .length >
+                                                      3
+                                                  ? ' ..'
+                                                  : '') ??
+                                          '',
                                       onTap: () {},
                                     ),
                                     buildInfoRow(
                                       title: 'Community',
                                       text: profile
                                               .partnerExpectation?.communityName
-                                              .toString() ??
-                                          "",
+                                          .take(
+                                          3) // Take the first 3 elements
+                                          .map((religion) =>
+                                      religion[0]
+                                          .toUpperCase() +
+                                          religion
+                                              .substring(1)
+                                              .toLowerCase())
+                                          .join(',') +
+                                          (profile
+                                              .partnerExpectation!
+                                              .communityName
+                                              .length >
+                                              3
+                                              ? ' ..'
+                                              : '') ??
+                                          '',
                                       onTap: () {},
                                     ),
                                     buildInfoRow(

@@ -30,6 +30,7 @@ class SignUpScreenExpectationScreen extends StatefulWidget {
 class _SignUpScreenExpectationScreenState extends State<SignUpScreenExpectationScreen> {
 
   final minHeightController = TextEditingController();
+  final aboutController = TextEditingController();
   final maxHeightController = TextEditingController();
   final minAgeController = TextEditingController();
   final maxAgeController = TextEditingController();
@@ -118,7 +119,55 @@ class _SignUpScreenExpectationScreenState extends State<SignUpScreenExpectationS
                       ),
                     ),
                     sizedBox20(),
-
+                    Text(
+                      'General Requirement',
+                      style: kManrope25Black.copyWith(fontSize: 16),
+                    ),
+                    CustomTextField(
+                      maxLines: 3,
+                      showTitle: true,
+                      controller: aboutController,
+                      capitalization: TextCapitalization.words,
+                      hintText: '',
+                      onChanged: (value) {
+                        authControl.setAboutPartner(aboutController.text);
+                      },
+                      validation: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'General Requirement';
+                        }
+                        // Regular expression to allow only letters and spaces
+                        final RegExp nameRegExp = RegExp(r'^[a-zA-Z\s]+$');
+                        if (!nameRegExp.hasMatch(value)) {
+                          return 'Please enter a valid General Requirement without special characters';
+                        }
+                        return null;
+                      },
+                    ),
+                    sizedBox12(),
+                    Text(
+                      'State',
+                      style: kManrope25Black.copyWith(fontSize: 16),
+                    ),
+                    CustomDropdownButtonFormField<String>(
+                      isMultiSelect: true,
+                      value: authControl.selectedState,
+                      items: authControl.states,
+                      hintText: "Select State/UT",
+                      onChanged: ( value) {
+                        if (value != null) {
+                          authControl.setStatePartner(value,true);
+                          print(authControl.statePartner);
+                        }
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty || value == 'Select State/UT') {
+                          return 'Please Select State';
+                        }
+                        return null;
+                      },
+                    ),
+                    sizedBox12(),
                     Text(
                       'Religion',
                       style: kManrope25Black.copyWith(fontSize: 16),
@@ -130,7 +179,7 @@ class _SignUpScreenExpectationScreenState extends State<SignUpScreenExpectationS
                       items: authControl.partReligionList!.map((position) => position.name!).toList(),
                       hintText: "Select Religion",
                       onChanged: (value) {
-                          debugPrint("value====>"+value.toString());
+                          // debugPrint("value====>"+value.toString());
                         if (value != null) {
                           List<int?>? selected = [];
                           value.forEach((value){

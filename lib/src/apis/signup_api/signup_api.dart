@@ -63,6 +63,9 @@ Future<dynamic> signUpApi({
   required String bloodGroup,
   required String hairColor,
   required String photo,
+  required String aboutUs,
+  required String stateP,
+  required String generalRequirementPartner,
   required List<Map<String, dynamic>> interestList,
 }) async {
   var request = http.MultipartRequest('POST', Uri.parse('${baseUrl}register'));
@@ -80,6 +83,7 @@ Future<dynamic> signUpApi({
 
   request.fields.addAll({
     'username': userName,
+    "general_requirement_p": generalRequirementPartner,
     'email': email,
     'password': password,
     'mobile_code': '91',
@@ -140,6 +144,8 @@ Future<dynamic> signUpApi({
     'hair_color': hairColor,
     // 'complexion' : complexion,
     // "phone" :  phone,
+    "about_us":aboutUs,
+    "state_p": stateP,
     'agree': '1',
   });
   request.files.add(await http.MultipartFile.fromPath('image', photo));

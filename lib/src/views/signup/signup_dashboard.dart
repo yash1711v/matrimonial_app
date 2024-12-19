@@ -172,7 +172,7 @@ class _SignUpOnboardScreenState extends State<SignUpOnboardScreen> {
                             }
                           }
                         } else if (_currentPage == 1) {
-                          if ((authControl.firstName ?? "").isEmpty ||
+                          if ((authControl.firstName ?? "").isEmpty || (authControl.about ?? "").isEmpty ||
                               (authControl.lastName ?? "").isEmpty ||
                               (authControl.middleName ?? "").isEmpty ||
                               (authControl.day ?? "").isEmpty) {
@@ -493,6 +493,9 @@ class _SignUpOnboardScreenState extends State<SignUpOnboardScreen> {
                               bloodGroup: authControl.bloodGroup.toString(),
                               hairColor: authControl.hairColor.toString(),
                               interestList: interests,
+                              aboutUs: authControl.about.toString(),
+                              generalRequirementPartner: authControl.aboutP.toString(),
+                              stateP: authControl.statePartner.toString(),
                             ).then((value) async {
                               setState(() {
                                 loading = false;
@@ -516,6 +519,7 @@ class _SignUpOnboardScreenState extends State<SignUpOnboardScreen> {
                                       builder: (builder) =>
                                           const AddKycDetailsScreen()),
                                 );
+
                                 // Navigator.pushReplacement(
                                 //   context,
                                 //   MaterialPageRoute(builder: (builder) => const SignInScreen()),

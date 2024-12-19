@@ -1896,6 +1896,16 @@ class AuthController extends GetxController implements GetxService {
       update();
   }
 
+
+
+  List<String?>? _statePartner = [];
+
+  List<String?>? get statePartner => _statePartner;
+
+  void setStatePartner(List<String?>? value, bool notify) {
+    _statePartner = value;
+      update();
+  }
   void setReligionMainIndexs(List<int?>? index, bool notify) {
     _religionMainIndexs = index;
     if (notify) {
@@ -2266,8 +2276,16 @@ class AuthController extends GetxController implements GetxService {
 
   String? get firstName => _firstName;
 
+  String? _about;
+
+  String? get about => _about;
+
   void setFirstName(String firstName) {
     _firstName = firstName;
+    update();
+  }
+  void setAbout(String aboutUser) {
+    _about = aboutUser;
     update();
   }
 
@@ -3764,7 +3782,6 @@ class AuthController extends GetxController implements GetxService {
     try {
       var body = {"interests":interests};
       await authRepo.saveInterests(body).then((value) {
-        debugPrint(value.body["message"]);
         if (value.body["data"].isNotEmpty) {
           _isLoading = false;
           update();
@@ -3782,6 +3799,14 @@ class AuthController extends GetxController implements GetxService {
       update();
     }
 
+  }
+
+  String? _aboutP;
+
+  String? get aboutP => _aboutP;
+  void setAboutPartner(text) {
+    _aboutP = text;
+    update();
   }
 }
 

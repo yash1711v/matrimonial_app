@@ -145,9 +145,9 @@ class ProfileModel {
         educationInfo!.add(new EducationInfo.fromJson(v));
       });
     }
-    if (json['interest']["interests"] != null) {
+    if (json['interest'] != null) {
       interest = <Interest>[];
-      json['interest']["interests"].forEach((v) {
+      json['interest'].forEach((v) {
         interest!.add(new Interest.fromJson(v));
       });
     }

@@ -55,7 +55,7 @@ class _AddKycDetailsScreenState extends State<AddKycDetailsScreen> {
     if (value == null || value.trim().isEmpty) {
       return 'Document number cannot be empty';
     }
-   debugPrint('Document type: ${authControl.document}');
+   // debugPrint('Document type: ${authControl.document}');
     switch (authControl.document) {
       case 'PAN Card':
       // PAN Card validation: should be 10 characters and alphanumeric
@@ -101,7 +101,6 @@ class _AddKycDetailsScreenState extends State<AddKycDetailsScreen> {
     return null;
   }
   int getMaxLengthForDocumentType(String? documentType) {
-    debugPrint("Document type: $documentType");
     switch (documentType) {
       case 'Pan Card':
         return 10; // Fixed 10 characters for PAN Card

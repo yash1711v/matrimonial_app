@@ -32,6 +32,7 @@ class SignUpScreenTwo extends StatefulWidget {
 class _SignUpScreenTwoState extends State<SignUpScreenTwo> {
 
   final firstNameController = TextEditingController();
+  final aboutController = TextEditingController();
   final lastNameController = TextEditingController();
   final middleNameController = TextEditingController();
   final _dayController = TextEditingController();
@@ -105,10 +106,33 @@ class _SignUpScreenTwoState extends State<SignUpScreenTwo> {
                   ),
                   sizedBox20(),
                   Text(
-                    'Your Name',
+                    'About You',
                     style: kManrope25Black,
                   ),
+                  sizedBox20(),
+                  CustomTextField(
+                    maxLines: 3,
+                    showTitle: true,
+                    controller: aboutController,
+                    capitalization: TextCapitalization.words,
+                    hintText: 'Who are you?',
+                    onChanged: (value) {
+                      authControl.setAbout(aboutController.text);
+                    },
+                    validation: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please Enter about';
+                      }
+                      // Regular expression to allow only letters and spaces
+                      final RegExp nameRegExp = RegExp(r'^[a-zA-Z\s]+$');
+                      if (!nameRegExp.hasMatch(value)) {
+                        return 'Please enter a valid about without special characters';
+                      }
+                      return null;
+                    },
+                  ),
                   sizedBox12(),
+
                   CustomTextField(
                     showTitle: true,
                     controller: firstNameController,
