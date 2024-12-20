@@ -179,7 +179,7 @@ class _SignUpOnboardScreenState extends State<SignUpOnboardScreen> {
                             Fluttertoast.showToast(
                                 msg: "Please fill all the fields");
                           } else {
-                            if (const SignUpScreenTwo().validate()) {
+                            if (const SignUpScreenTwo().validate()){
                               _pageController.nextPage(
                                 duration: const Duration(milliseconds: 200),
                                 curve: Curves.easeInOut,
