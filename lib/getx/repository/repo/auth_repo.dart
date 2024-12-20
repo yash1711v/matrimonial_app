@@ -233,8 +233,9 @@ class AuthRepo {
    var headers = {
    'Content-Type': 'application/json; charset=UTF-8',
    'Accept' : 'application/json',
-     'Authorization': 'Bearer ${SharedPrefs().getLoginToken()}'
+     'Authorization': 'Bearer ${await SharedPrefs().getLoginToken()}'
     };
+   debugPrint("request====>: $data");
     var response =  await apiClient.postData(AppConstants.saveInterests, data,headers: headers);
   return response;
   }

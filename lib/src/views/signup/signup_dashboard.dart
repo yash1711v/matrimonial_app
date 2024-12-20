@@ -151,9 +151,9 @@ class _SignUpOnboardScreenState extends State<SignUpOnboardScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
             child: SingleChildScrollView(
               child:
-              // loading
-              //     ? loadingButton(context: context)
-              //     :
+              loading
+                  ? loadingButton(context: context)
+                  :
               button(
                       context: context,
                       onTap: () {

@@ -226,8 +226,10 @@ class _EditInterestScreenState extends State<EditInterestScreen> {
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             child: button(context: context, onTap: () {
-              final authController = Get.find<AuthController>();
-              authController.saveInterests();
+
+               Get.find<AuthController>().selectedInterestsList.forEach((element) {
+                debugPrint("SelectedInterest:===>${element.hobbies}=======>${element.interestName}");});
+              Get.find<AuthController>().saveInterests(SelectedInterests: Get.find<AuthController>().selectedInterestsList);
               // Get.back();
             }, title: "Save"),
           ),

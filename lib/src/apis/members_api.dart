@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'dart:developer';
 import 'package:bureau_couple/src/constants/shared_prefs.dart';
 import 'package:bureau_couple/src/utils/urls.dart';
 import 'package:http/http.dart' as http;
@@ -44,10 +45,12 @@ Future<dynamic> getNewMatchesApi({
     'gender': gender,
     "religion" : religion,
   });
+
+
   request.headers.addAll(headers);
   http.StreamedResponse response = await request.send();
   var resp = jsonDecode(await response.stream.bytesToString());
-  print(resp);
+  log("Matches============> HOme Screeen ${resp}");
   print(headers);
   if (response.statusCode == 200) {
     return resp;

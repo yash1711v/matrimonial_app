@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:bureau_couple/getx/data/response/community_list_model.dart';
@@ -78,20 +79,18 @@ class AuthController extends GetxController implements GetxService {
     }
   }
 
-
-
   final List<Category> categories = [];
 
   final List<String> selectedInterests = [];
 
-   List<Interest> selectedInterestsList = [];
+  List<Interest> selectedInterestsList = [];
 
   void initCategories(List<Map<String, dynamic>> apiData) {
     categories.clear();
     categories.addAll(apiData.map((data) => Category(
-      name: data['category_name'],
-      interests: List<String>.from(data['interests']),
-    )));
+          name: data['category_name'],
+          interests: List<String>.from(data['interests']),
+        )));
     update();
   }
 
@@ -101,26 +100,38 @@ class AuthController extends GetxController implements GetxService {
   }
 
   void selectInterest(String interest, [Category? category]) {
-
-
+    List<String> selectedInterestsValue = [];
     // Implement logic for selecting interests
-    if(selectedInterests.contains(interest)){
+    if (selectedInterests.contains(interest)) {
       selectedInterests.remove(interest);
-      selectedInterestsList.remove(Interest(interestName: category!.name, hobbies: category!.interests));
-    }else {
+
+      categories.forEach((element) {
+        element.interests.forEach((element) {
+          if (selectedInterests.contains(element)) {
+            selectedInterestsValue.add(element);
+          }
+        });
+      });
+      selectedInterestsList.removeWhere((element) => element.hobbies.contains(interest));
+      update();
+    } else {
       selectedInterests.add(interest);
-      selectedInterestsList.add(Interest(interestName: category!.name, hobbies: category!.interests));
+      selectedInterestsValue.add(interest);
+      selectedInterestsList.add(Interest(
+          interestName: category!.name, hobbies: selectedInterestsValue));
+      update();
     }
     update();
   }
+
   void selectInterestList(List<Interest> interest, [Category? category]) {
     selectedInterestsList.clear();
     selectedInterests.clear();
     selectedInterestsList = interest;
     selectedInterestsList.forEach((element) {
       element.hobbies.forEach((hobbies) {
-        if(selectedInterests.contains(hobbies)){
-        }else {
+        if (selectedInterests.contains(hobbies)) {
+        } else {
           selectedInterests.add(hobbies);
         }
       });
@@ -128,7 +139,6 @@ class AuthController extends GetxController implements GetxService {
     debugPrint('Selected Interest List===>: $selectedInterestsList');
     update();
   }
-
 
   Future<String?> getUserIdFromPrefs() async {
     try {
@@ -177,15 +187,17 @@ class AuthController extends GetxController implements GetxService {
     return "";
   }
 
-
   String _varificationId = "";
+
   String get varificationId => _varificationId;
 
   void setVarificationId(String id) {
     _varificationId = id;
     update();
   }
+
   bool _varificationDone = false;
+
   bool get varificationDone => _varificationDone;
 
   void setVarificationDone(bool varification) {
@@ -193,7 +205,11 @@ class AuthController extends GetxController implements GetxService {
     update();
   }
 
-  Future<bool> verifyOtp({required String number,required String otp,required String varificationId,required BuildContext context}) async {
+  Future<bool> verifyOtp(
+      {required String number,
+      required String otp,
+      required String varificationId,
+      required BuildContext context}) async {
     _isLoading = true;
     update();
     // await authRepo.verifyOTP(context:context,otp: otp, varificationId: varificationId, number: number).then((value) {
@@ -207,6 +223,7 @@ class AuthController extends GetxController implements GetxService {
     update();
     return false;
   }
+
   String? _from;
   String? _to;
 
@@ -1889,14 +1906,13 @@ class AuthController extends GetxController implements GetxService {
 
   void setReligionMainIndex(int? index, bool notify) {
     _religionMainIndex = index;
-      update();
+    update();
   }
+
   void setReligionMainIndexValue(int? index, bool notify) {
     _religionIndexValue = index;
-      update();
+    update();
   }
-
-
 
   List<String?>? _statePartner = [];
 
@@ -1904,8 +1920,9 @@ class AuthController extends GetxController implements GetxService {
 
   void setStatePartner(List<String?>? value, bool notify) {
     _statePartner = value;
-      update();
+    update();
   }
+
   void setReligionMainIndexs(List<int?>? index, bool notify) {
     _religionMainIndexs = index;
     if (notify) {
@@ -2045,6 +2062,7 @@ class AuthController extends GetxController implements GetxService {
   int? get motherTongueIndex => _motherTongueIndex;
 
   List<int?> _motherTongueIndexs = [];
+
   List<int?> get motherTongueIndexs => _motherTongueIndexs;
 
   List<int?> _motherTongueIds = [];
@@ -2064,6 +2082,7 @@ class AuthController extends GetxController implements GetxService {
       update();
     }
   }
+
   void setMotherTongueIndexs(List<int?> index, bool notify) {
     _motherTongueIndexs = index;
     if (notify) {
@@ -2158,7 +2177,7 @@ class AuthController extends GetxController implements GetxService {
 
   void setProfessionIndexValue(int? index, bool notify) {
     _professionIndexValue = index;
-      update();
+    update();
   }
 
   Future<void> getProfessionList() async {
@@ -2284,6 +2303,7 @@ class AuthController extends GetxController implements GetxService {
     _firstName = firstName;
     update();
   }
+
   void setAbout(String aboutUser) {
     _about = aboutUser;
     update();
@@ -2631,6 +2651,7 @@ class AuthController extends GetxController implements GetxService {
     _partnerProfessions = val;
     update();
   }
+
   void setPartnerProfession(int? val) {
     _partnerProfession = val;
     update();
@@ -2666,8 +2687,9 @@ class AuthController extends GetxController implements GetxService {
     _partnerCommunity = val;
     update();
   }
- void setPartnerCommunitys(List<int?> val) {
-   _partnerCommunitys = val;
+
+  void setPartnerCommunitys(List<int?> val) {
+    _partnerCommunitys = val;
     update();
   }
 
@@ -2682,6 +2704,7 @@ class AuthController extends GetxController implements GetxService {
     _partnerPosition = val;
     update();
   }
+
   void setPartnerPositions(List<int?> val) {
     _partnerPositions = val;
     update();
@@ -2970,7 +2993,7 @@ class AuthController extends GetxController implements GetxService {
         List<String> degree =
             responseData.map((json) => json['name'].toString()).toList();
 
-         setHighestDegreeList(degree);
+        setHighestDegreeList(degree);
 
         if (highesdegree.isNotEmpty) {
           return true;
@@ -3666,7 +3689,7 @@ class AuthController extends GetxController implements GetxService {
     'Violet',
   ].toSet().toList(); // Remove duplicates using Set
 
-  String? _eyeColor ;
+  String? _eyeColor;
 
   String? get eyeColor => _eyeColor;
 
@@ -3729,8 +3752,6 @@ class AuthController extends GetxController implements GetxService {
 
   // List<String> get getDiet => highestDegreeList;
 
-
-
   Future<dynamic> getInterests() async {
     _isLoading = true;
     update();
@@ -3743,7 +3764,6 @@ class AuthController extends GetxController implements GetxService {
         _isLoading = false;
         update();
         return _interestsList;
-
       } else {
         // Handle API error
         // ApiChecker.checkApi(response);
@@ -3771,16 +3791,17 @@ class AuthController extends GetxController implements GetxService {
     update();
   }
 
-  Future<void> saveInterests() async {
-    print('Selected Interests: $selectedInterestsList');
+  Future<void> saveInterests(
+      {required List<Interest> SelectedInterests}) async {
 
-     List<Map<String,dynamic>> interests = selectedInterestsList.map((e) => e.toJson()).toList();
+    List<Map<String, dynamic>> interests =
+        SelectedInterests.map((e) => e.toJson()).toList();
 
-
+    log(interests.toString(), name: 'Interests');
     _isLoading = true;
     update();
     try {
-      var body = {"interests":interests};
+      var body = {"interests": interests};
       await authRepo.saveInterests(body).then((value) {
         if (value.body["data"].isNotEmpty) {
           _isLoading = false;
@@ -3788,7 +3809,6 @@ class AuthController extends GetxController implements GetxService {
           Get.back();
         }
       });
-
     } catch (error) {
       // Handle errors, such as network failures
       print("Error while fetching list: $error");
@@ -3798,12 +3818,12 @@ class AuthController extends GetxController implements GetxService {
       _isLoading = false;
       update();
     }
-
   }
 
   String? _aboutP;
 
   String? get aboutP => _aboutP;
+
   void setAboutPartner(text) {
     _aboutP = text;
     update();

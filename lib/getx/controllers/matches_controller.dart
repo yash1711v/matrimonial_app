@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:bureau_couple/getx/data/response/single_match_model.dart';
 import 'package:bureau_couple/getx/repository/repo/matches_repo.dart';
 import 'package:bureau_couple/getx/utils/app_constants.dart';
@@ -395,7 +397,7 @@ class MatchesController extends GetxController implements GetxService {
       ) async {
     _matchesList = [];
     _matchesList.clear();
-    print('check Api======>');
+    // print('check Matches Api======>');
     try {
       _isLoading = true;
     update();
@@ -411,6 +413,7 @@ class MatchesController extends GetxController implements GetxService {
           community: community);
 
       if (result['status'] == true) {
+        log("This is Value From Matches ${result['data']['members'].toString()}");
         final newMatches = (result['data']['members'] as List)
             .map((v) => MatchesModel.fromJson(v))
             .toList();

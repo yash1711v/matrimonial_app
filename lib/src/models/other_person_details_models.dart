@@ -689,25 +689,25 @@ class PartnerExpectation {
   String? maxHeight;
   String? maxWeight;
   String? maritalStatus;
-  int? religion;
+  dynamic? religion;
   String? complexion;
   String? smokingStatus;
   String? drinkingStatus;
   String? minDegree;
-  String? profession;
+  dynamic? profession;
   String? financialCondition;
   String? createdAt;
   String? updatedAt;
-  int? motherTongue;
-  String? community;
-  int? position;
-  String? religionName;
-  String? communityName;
-  String? professionName;
-  String? motherTongueName;
+  dynamic? motherTongue;
+  dynamic? community;
+  dynamic? position;
+  dynamic? religionName;
+  dynamic? communityName;
+  dynamic? professionName;
+  dynamic? motherTongueName;
   String? smoking;
   String? drinking;
-  String? positionName;
+  dynamic? positionName;
 
   PartnerExpectation(
       {this.id,

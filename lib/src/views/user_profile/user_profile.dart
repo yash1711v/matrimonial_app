@@ -83,34 +83,39 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     int total = 0;
 
     // Safely check for nulls and increment total for each matching condition
-    if (model.data?.matches?.partnerExpectation?.communityName ==
-        model.data?.user?.partnerExpectation?.communityName) {
+    if (model.data?.matches?.partnerExpectation?.communityName.contains(
+            model.data?.user?.partnerExpectation?.communityName)) {
       total++;
     }
-    if (model.data?.matches?.partnerExpectation?.motherTongueName ==
-        model.data?.user?.partnerExpectation?.motherTongueName) {
+    if (model.data?.matches?.partnerExpectation?.motherTongueName.contains(
+        model.data?.user?.partnerExpectation?.motherTongueName)) {
       total++;
     }
     if (model.data?.matches?.address?.state ==
         model.data?.user?.address?.state) {
       total++;
     }
-    if (model.data?.matches?.partnerExpectation?.professionName ==
-        model.data?.user?.partnerExpectation?.professionName) {
+    if (model.data?.matches?.partnerExpectation?.professionName.contains(
+        model.data?.user?.partnerExpectation?.professionName)) {
       total++;
     }
-    if (model.data?.matches?.partnerExpectation?.positionName ==
-        model.data?.user?.partnerExpectation?.positionName) {
+    if (model.data?.matches?.partnerExpectation?.positionName.contains(
+        model.data?.user?.partnerExpectation?.positionName)) {
       total++;
     }
 
     return total;
   }
 
-  bool isHobbyMatching(String? userData, String? matchData) {
+  bool isHobbyMatching(String? userData, List<dynamic>? matchData) {
     debugPrint("userData $userData matchData $matchData");
 
-    return userData == matchData;
+    return (matchData ?? []).contains(userData);
+  }
+  bool isHobbyMatchingSingle(String? userData, String? matchData) {
+    debugPrint("userData $userData matchData $matchData");
+
+    return matchData == userData;
   }
 
   DateTime? birthDate;
@@ -1320,18 +1325,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                     ?.communityName ??
                                                 ""),
                                             iconRightWrong: isHobbyMatching(
+                                              model
+                                                  .data
+                                                  ?.user
+                                                  ?.partnerExpectation
+                                                  ?.communityName ??
+                                                  "",
                                                     model
                                                             .data
                                                             ?.matches
                                                             ?.partnerExpectation
                                                             ?.communityName ??
                                                         "",
-                                                    model
-                                                            .data
-                                                            ?.user
-                                                            ?.partnerExpectation
-                                                            ?.communityName ??
-                                                        "")
+                                                    )
                                                 ? Icons.done
                                                 : Icons.close,
                                           ),
@@ -1373,18 +1379,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                     ?.motherTongueName ??
                                                 ""),
                                             iconRightWrong: isHobbyMatching(
+                                              model
+                                                  .data
+                                                  ?.user
+                                                  ?.partnerExpectation
+                                                  ?.motherTongueName ??
+                                                  "",
                                                     model
                                                             .data
                                                             ?.matches
                                                             ?.partnerExpectation
                                                             ?.motherTongueName ??
-                                                        "",
-                                                    model
-                                                            .data
-                                                            ?.user
-                                                            ?.partnerExpectation
-                                                            ?.motherTongueName ??
-                                                        "")
+                                                        ""
+                                                   )
                                                 ? Icons.done
                                                 : Icons.close,
                                           ),
@@ -1413,11 +1420,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                     ?.address
                                                     ?.state ??
                                                 ""),
-                                            iconRightWrong: isHobbyMatching(
+                                            iconRightWrong: isHobbyMatchingSingle(
+                                              model.data?.user?.address
+                                                  ?.state,
                                                     model.data?.matches?.address
-                                                        ?.state,
-                                                    model.data?.user?.address
-                                                        ?.state)
+                                                        ?.state
+                                                   )
                                                 // ?.motherTongue!.name
                                                 ? Icons.done
                                                 : Icons.close,
@@ -1440,23 +1448,25 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         buildPrefProfileRow(
                                           image: icProfession,
                                           title: 'Profession',
-                                          text: StringUtils.capitalize(model
-                                                  .data
-                                                  ?.matches
-                                                  ?.partnerExpectation
-                                                  ?.professionName ??
-                                              ""),
+                                          text: "",
+                                          // StringUtils.capitalize(model
+                                          //         .data
+                                          //         ?.matches
+                                          //         ?.partnerExpectation
+                                          //         ?.professionName ??
+                                          //     ""),
                                           iconRightWrong: isHobbyMatching(
+                                            model
+                                                .data
+                                                ?.user
+                                                ?.partnerExpectation
+                                                ?.professionName,
                                                   model
                                                       .data
                                                       ?.matches
                                                       ?.partnerExpectation
-                                                      ?.professionName,
-                                                  model
-                                                      .data
-                                                      ?.user
-                                                      ?.partnerExpectation
-                                                      ?.professionName)
+                                                      ?.professionName
+                                                 )
                                               ? Icons.done
                                               : Icons.close,
                                         ),
