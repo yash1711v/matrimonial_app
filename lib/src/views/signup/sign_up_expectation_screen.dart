@@ -478,7 +478,7 @@ class _SignUpScreenExpectationScreenState extends State<SignUpScreenExpectationS
                       RangeSlider(
                         min: 20.0,
                         max: 60.0,
-                        divisions: 30,
+                        divisions: 75,
                         labels: RangeLabels(
                           authControl.startValue.value.round().toString(),
                           authControl.endValue.value.round().toString(),
@@ -530,7 +530,7 @@ class _SignUpScreenExpectationScreenState extends State<SignUpScreenExpectationS
                             child: Obx(() => RangeSlider(
                               min: 4.0, // Minimum value
                               max: 7.0, // Maximum value
-                              divisions: 20, // Number of divisions for finer granularity
+                              divisions: 76, // Number of divisions for finer granularity
                               labels: RangeLabels(
                                 authControl.startHeightValue.value.toStringAsFixed(1), // Format to 1 decimal place
                                 authControl.endHeightValue.value.toStringAsFixed(1), // Format to 1 decimal place

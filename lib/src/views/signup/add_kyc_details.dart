@@ -315,7 +315,7 @@ class _AddKycDetailsScreenState extends State<AddKycDetailsScreen> {
                           CustomStyledDropdownButton(
                             title: "Select Verification Document",
                             items: authControl.documentList,
-                            selectedValue: authControl.document ?? authControl.documentList.first,
+                            selectedValue: authControl.document,
                             onChanged: (value) {
                               authControl.setDocument(value ?? authControl.documentList.first);
                               print('cadre =========== >${authControl.document}');

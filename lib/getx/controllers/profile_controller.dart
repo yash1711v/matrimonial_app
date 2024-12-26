@@ -309,9 +309,9 @@ class ProfileController extends GetxController implements GetxService {
     int responseID = 0 ;
     Response response = await profileRepo.editEducationInfo(type, id, degree, fieldOfStudy, institute);
     var responseData = response.body;
+    debugPrint("Edit Education Info Response: $responseData");
     if(responseData["status"] == true){
       responseID = responseData["data"]["original"]["data"]["id"];
-
       return responseID;
     }
     // if(responseData['status'] == true) {

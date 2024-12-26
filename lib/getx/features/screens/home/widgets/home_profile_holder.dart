@@ -91,7 +91,7 @@ class HomeProfileHolder extends StatelessWidget {
                     width: 6,
                   ),
                   Text(
-                    "Height: ${Get.find<ProfileController>().convertHeightToFeetInches(((profileModel.physicalAttributes ?? pfm.PhysicalAttributes())!.height ?? "").toString())}",
+                    "Height: ${(profileModel.physicalAttributes ?? pfm.PhysicalAttributes())!.height ?? "".toString()}",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: styleSatoshiLight(

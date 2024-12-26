@@ -165,9 +165,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   bool loading = false;
 
+
+  String positionName(CareerInfo career){
+    String selected = "";
+     ( Get.find<AuthController>().professionList ?? [])
+          .forEach((element){
+            // debugPrint("element.id: ${element.id}");
+            // debugPrint("career.position: ${career.position}");
+        if(element.id == career.position){
+          selected = element.name ?? "";
+          // debugPrint("selected: $selected");
+        }
+      });
+      // debugPrint("selected: $selected");
+    return selected;
+  }
+
   @override
   Widget build(BuildContext context) {
-    debugPrint("userHobbies: $userHobbies");
+   // debugPrint("userHobbies: $userHobbies");
     return Scaffold(
       appBar: CustomAppBar2(
         title: "Profile",
@@ -329,6 +345,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                   child: GetBuilder<ProfileController>(
                       builder: (profileController) {
+                        log("${profile
+                            .basicInfo?.maritalStatus}", name: "Marital Status");
                     return SingleChildScrollView(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -490,7 +508,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         text: profile
                                                     .basicInfo?.maritalStatus ==
                                                 "1"
-                                            ? "UnMarried"
+                                            ? "Unmarried"
                                             : profile.basicInfo
                                                         ?.maritalStatus ==
                                                     "2"
@@ -508,7 +526,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             sizedBox10(),
                             Container(
                               width: double.infinity,
-                              height: 110,
+                              // height: 110,
                               decoration: BoxDecoration(
                                   color: Theme.of(context).cardColor,
                                   borderRadius: BorderRadius.circular(12),
@@ -555,27 +573,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ),
                                       ],
                                     ),
-                                    buildInfoRow(
-                                      title: 'Degree',
-                                      text:
+                                    for(int i = 0; i < profile.educationInfo!.length; i++)
+                                    Column(
+                                      children: [
+                                        buildInfoRow(
+                                          title: 'Degree',
+                                          text:
                                           profile.educationInfo?.isEmpty ?? true
                                               ? ""
-                                              : profile.educationInfo![0].degree
-                                                      .toString() ??
-                                                  "",
-                                      onTap: () {},
-                                    ),
-                                    buildInfoRow(
-                                      title: 'Study',
-                                      text:
+                                              : profile.educationInfo![i].degree
+                                              .toString() ??
+                                              "",
+                                          onTap: () {},
+                                        ),
+                                        buildInfoRow(
+                                          title: 'Study',
+                                          text:
                                           profile.educationInfo?.isEmpty ?? true
                                               ? ""
-                                              : profile.educationInfo?[0]
-                                                      .fieldOfStudy
-                                                      ?.toString() ??
-                                                  "",
-                                      onTap: () {},
-                                    ),
+                                              : profile.educationInfo?[i]
+                                              .fieldOfStudy
+                                              ?.toString() ??
+                                              "",
+                                          onTap: () {},
+                                        ),
+                                      ],
+                                    )
                                   ],
                                 ),
                               ),
@@ -583,7 +606,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             sizedBox10(),
                             Container(
                               width: double.infinity,
-                              height: 110,
+                              // height: 110,
                               decoration: BoxDecoration(
                                   color: Theme.of(context).cardColor,
                                   borderRadius: BorderRadius.circular(12),
@@ -630,26 +653,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ),
                                       ],
                                     ),
-                                    buildInfoRow(
-                                      title: 'Position',
-                                      text: profile.basicInfo?.professionName
-                                                  ?.isEmpty ??
+                                    for(int i = 0; i < profile.careerInfo!.length; i++)
+                                    Column(
+                                      children: [
+                                        buildInfoRow(
+                                          title: 'Position',
+                                          text: profile.careerInfo?[i].position
+                                              ?.toString().isEmpty ??
                                               true
-                                          ? ""
-                                          : profile.basicInfo?.professionName
-                                                  ?.toString() ??
+                                              ? ""
+                                              : positionName(profile.careerInfo![i])
+                                              .toString() ??
                                               "",
-                                      onTap: () {},
-                                    ),
-                                    buildInfoRow(
-                                      title: 'State Of Posting',
-                                      text: profile.careerInfo?.isEmpty ?? true
-                                          ? ""
-                                          : profile.careerInfo?[0].statePosting
-                                                  ?.toString() ??
+                                          onTap: () {},
+                                        ),
+                                        buildInfoRow(
+                                          title: 'State Of Posting',
+                                          text: profile.careerInfo?.isEmpty ?? true
+                                              ? ""
+                                              : profile.careerInfo?[0].statePosting
+                                              ?.toString() ??
                                               "",
-                                      onTap: () {},
-                                    ),
+                                          onTap: () {},
+                                        ),
+                                      ],
+                                    )
                                   ],
                                 ),
                               ),
@@ -809,7 +837,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                     .substring(
                                                                         1)
                                                                     .toLowerCase())
-                                                            .join(',') +
+                                                            .join(', ') +
                                                         (profile
                                                                     .partnerExpectation!
                                                                     .religionName
@@ -835,7 +863,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                     .substring(
                                                                         1)
                                                                     .toLowerCase())
-                                                            .join(',') +
+                                                            .join(', ') +
                                                         (profile
                                                                     .partnerExpectation!
                                                                     .professionName
@@ -857,7 +885,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                       religion
                                                           .substring(1)
                                                           .toLowerCase())
-                                                  .join(',') +
+                                                  .join(', ') +
                                               (profile
                                                           .partnerExpectation!
                                                           .motherTongueName
@@ -880,7 +908,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           religion
                                               .substring(1)
                                               .toLowerCase())
-                                          .join(',') +
+                                          .join(', ') +
                                           (profile
                                               .partnerExpectation!
                                               .communityName
@@ -895,10 +923,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       title: 'Age bracket',
                                       text: profile.partnerExpectation!.minAge
                                                   .toString() +
-                                              "-" +
+                                              " - " +
                                               profile.partnerExpectation!.maxAge
-                                                  .toString() ??
-                                          "",
+                                                  .toString() +
+                                      " yrs"
+                                      ,
                                       onTap: () {},
                                     ),
                                     buildInfoRow(
@@ -906,7 +935,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       text: profile
                                               .partnerExpectation!.minHeight
                                               .toString() +
-                                          "-" +
+                                          " - " +
                                           profile.partnerExpectation!.maxHeight
                                               .toString() +
                                           " ft",

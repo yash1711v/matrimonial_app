@@ -80,7 +80,7 @@ class ApiClient extends GetxService {
       http.Response response = await http.post(
         Uri.parse(appBaseUrl+uri),
         body: jsonEncode(body),
-        headers: _mainHeaders,
+        headers: headers ?? _mainHeaders,
       ).timeout(Duration(seconds: timeoutInSeconds));
       debugPrint("Response: ${response.body}");
       return handleResponse(response, uri);

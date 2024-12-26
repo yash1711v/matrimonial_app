@@ -112,22 +112,18 @@ class _SignUpScreenTwoState extends State<SignUpScreenTwo> {
                   sizedBox20(),
                   CustomTextField(
                     maxLines: 3,
-                    showTitle: true,
+                    showTitle: false,
                     controller: aboutController,
                     capitalization: TextCapitalization.words,
-                    hintText: 'Who are you?',
+                    hintText: 'About Myself?',
                     onChanged: (value) {
                       authControl.setAbout(aboutController.text);
                     },
                     validation: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please Enter about';
+                        return 'Please Enter About Myself field';
                       }
                       // Regular expression to allow only letters and spaces
-                      final RegExp nameRegExp = RegExp(r'^[a-zA-Z\s]+$');
-                      if (!nameRegExp.hasMatch(value)) {
-                        return 'Please enter a valid about without special characters';
-                      }
                       return null;
                     },
                   ),

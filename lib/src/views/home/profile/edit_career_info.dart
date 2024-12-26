@@ -229,7 +229,7 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
 
     var selected = [];
     for(int i = 0; i< career.length; i++) {
-    Get.find<AuthController>().professionList!
+    (Get.find<AuthController>().professionList ?? [])
         .forEach((element){
       if(element.id == career[i].position && i>0){
         selected.add(element.name);
@@ -584,7 +584,7 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                           sizedBox16(),
                           for(int i = 0; i < fieldControllers.length; i++)
                             Visibility(
-                              visible: i>0,
+                              // visible: i>0,
                               child: Padding(
                                 padding: const EdgeInsets.only(bottom: 20.0),
                                 child: Container(

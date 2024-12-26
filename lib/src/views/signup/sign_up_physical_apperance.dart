@@ -250,7 +250,7 @@ class _SignUpScreenPhysicalAppearanceScreenState extends State<SignUpScreenPhysi
                       child: Obx(() => Slider(
                         min: 4.0,
                         max: 7.0,
-                        divisions: 20, // Number of divisions for finer granularity
+                        divisions: 75, // Number of divisions for finer granularity
                         label: authControl.attributeHeightValue.value.toStringAsFixed(1), // Format to 1 decimal place
                         value: authControl.attributeHeightValue.value, // Single value
                         onChanged: (value) {

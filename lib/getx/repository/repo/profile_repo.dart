@@ -51,6 +51,7 @@ class ProfileRepo {
   }
 
   Future<Response> editEducationInfo(String? type,String? id,List<String>? degree,fieldOfStudy,institute) async {
+
     return await apiClient.postData(AppConstants.editProfileDataUrl, {
       "type" :'educationInfo',
       "id" :id,

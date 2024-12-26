@@ -119,10 +119,15 @@ class _SingUpScreenThreeState extends State<SingUpScreenThree> {
                     ),
                   ),
                   sizedBox20(),
-                  Text(
-                    'Final Step Lets Choose Profile Picture And Login Details',
-                    textAlign: TextAlign.center,
-                    style: kManrope14Medium626262.copyWith(color: Colors.black),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Final Step Lets Choose Profile Picture And Login Details',
+                        textAlign: TextAlign.center,
+                        style: kManrope14Medium626262.copyWith(color: Colors.black),
+                      ),
+                    ],
                   ),
                   sizedBox20(),
                   // SizedBox(

@@ -601,7 +601,7 @@ class _EditEducationScreenState extends State<EditEducationScreen> {
                           ),
                        for(int i = 0; i < fieldControllers.length; i++)
                           Visibility(
-                            visible: i>0,
+                            visible: true,
                             child: Padding(
                               padding: const EdgeInsets.only(bottom: 20.0),
                               child: Container(
