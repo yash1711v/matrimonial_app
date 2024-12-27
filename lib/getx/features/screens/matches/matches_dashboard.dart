@@ -176,27 +176,26 @@ class _MatchesDashboardState extends State<MatchesDashboard> {
                                     '${match.address?.state ?? ''} • ${match.professionName ?? ''} • ${match.communityName ?? ''}',
                                 likedColor: Colors.grey,
                                 unlikeColor: primaryColor,
-                                button: match.interestStatus == 2
-                                    ? connectButton(
-                                        fontSize: 14,
-                                        height: 30,
-                                        width: 134,
-                                        context: context,
-                                        onTap: () {},
-                                        showIcon: !isWished,
-                                        title: 'Request Sent',
-                                      )
-                                    : connectButton(
+                                button:
+                                // match.interestStatus == 2
+                                //     ? connectButton(
+                                //         fontSize: 14,
+                                //         height: 30,
+                                //         width: 134,
+                                //         context: context,
+                                //         onTap: () {},
+                                //         showIcon: !isWished,
+                                //         title: 'Request Sent',
+                                //       )
+                                //     :
+                                connectButton(
                                         fontSize: 14,
                                         height: 30,
                                         width: 134,
                                         context: context,
                                         onTap: () {
                                           favControl.sendRequestApi(
-                                            Get.find<ProfileController>()
-                                                .userDetails!
-                                                .id
-                                                .toString(),
+                                            userId,
                                             match.id.toString(),
                                           );
                                         },

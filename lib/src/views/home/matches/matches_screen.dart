@@ -311,7 +311,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                                           '${matchesControl.matchesList[i].address?.state ?? ''} • ${matchesControl.matchesList[i].professionName ?? ''} • ${matchesControl.matchesList[i].communityName ?? ''} ',
                                       likedColor: Colors.grey,
                                       unlikeColor: primaryColor,
-                                      button: matchesControl.matchesList[i].interestStatus == 2
+                                      button:
+                                      matchesControl.matchesList[i].interestStatus == 2
                                           ? connectButton(
                                               fontSize: 14,
                                               height: 30,
@@ -320,7 +321,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                                               onTap: () {},
                                               showIcon: isWished ? false : true,
                                               title: 'Request Sent')
-                                          : connectButton(
+                                          :
+                                      connectButton(
                                               fontSize: 14,
                                               height: 30,
                                               width: 134,

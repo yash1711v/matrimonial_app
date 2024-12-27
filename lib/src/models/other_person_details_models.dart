@@ -87,7 +87,7 @@ class User {
   String? positionName;
   BasicInfo? basicInfo;
   String? bloodGroups;
-  String? maritialStatus;
+  dynamic? maritialStatus;
   PhysicalAttributes? physicalAttributes;
   List<CareerInfo>? careerInfo;
   List<EducationInfo>? educationInfo;
