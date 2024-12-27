@@ -124,10 +124,20 @@ class _SignInScreenState extends State<SignInScreen> {
                 Padding(
                   padding: const EdgeInsets.only(
                       top: 80, left: 44, right: 44, bottom: 60),
-                  child: Image.asset(
-                    icLogo,
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        icLogo,
+                      ),
+                      Text("All the profiles are verified!",style: TextStyle(
+                        fontSize: 20,
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),),
+                    ],
                   ),
                 ),
+
                 AutofillGroup(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

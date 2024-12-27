@@ -173,16 +173,16 @@ class _SignUpScreenOneState extends State<SignUpScreenOne> {
                       label: Text(
                         religion.title!,
                         style: TextStyle(
-                          color: authControl.marriedStatusIndex == religion.id
+                          color: authControl.marriedStatusIndexValue == religion.id
                               ? Colors.white
                               : Colors.black.withOpacity(0.80),
                         ),
                       ),
-                      selected: authControl.marriedStatusIndex == religion.id,
+                      selected: authControl.marriedStatusIndexValue == religion.id,
                       onSelected: (selected) {
                         if (selected) {
-                          authControl.setmarriedStatusIndex(religion.id!,true);
-                          print(authControl.marriedStatusIndex);
+                          authControl.setmarriedStatusIndexValue(religion.id!,true);
+                          print(authControl.marriedStatusIndexValue);
                         }
                       },
                     );

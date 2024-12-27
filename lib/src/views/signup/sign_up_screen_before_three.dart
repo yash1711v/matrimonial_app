@@ -173,15 +173,15 @@ class _SignUpScreenProfessionalState extends State<SignUpScreenProfessional> {
                     onChanged: (value) {
                       if (value != null) {
 
-                        log(" list of religion====>${authControl.religionList}");
+                        // log(" list of religion====>${authControl.religionList}");
                         authControl.religionList!.forEach((element) {
-                         debugPrint("element====>${element.id}");
+
                         });
                         var selected = authControl.religionList!.firstWhere((position) => position.name == value);
-                        debugPrint("selected====>${selected.id}");
+                        // debugPrint("selected====>${selected.id}");
                          authControl.setReligionMainIndexValue(selected.id, true);
                         authControl.getCasteList(authControl.religionIndexValue);
-                        print("dataa====>${authControl.religionIndexValue}");
+                        // print("dataa====>${authControl.religionIndexValue}");
                       }
                     },
                     // itemLabelBuilder: (String item) => item,

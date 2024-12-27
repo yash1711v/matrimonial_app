@@ -156,7 +156,7 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
     birthDateController.text = basicInfo?.birthDate?.toString() ?? '';
     communityController.text = basicInfo?.communityName.toString() ?? '';
     motherTongueController.text = basicInfo?.motherTongueName.toString() ?? '';
-    marriedStatusController.text = basicInfo?.maritalStatus == "1"?"UnMarried":basicInfo?.maritalStatus == "2"?"Widow":basicInfo?.maritalStatus == "3"?"Divorce":"Widower";
+    marriedStatusController.text = basicInfo?.maritalStatus == "1"?"Unmarried":basicInfo?.maritalStatus == "2"?"Widow":basicInfo?.maritalStatus == "3"?"Divorce":"Widower";
     stateController.text = basicInfo?.presentAddress?.state?.toString() ?? '';
     zipController.text = basicInfo?.presentAddress?.zip?.toString() ?? '';
     countryController.text = basicInfo?.presentAddress?.country?.toString() ?? '';

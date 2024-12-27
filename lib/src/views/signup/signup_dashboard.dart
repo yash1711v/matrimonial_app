@@ -412,6 +412,7 @@ class _SignUpOnboardScreenState extends State<SignUpOnboardScreen> {
                             print('eyeColor: ${authControl.eyeColor}');
                             print('bloodGroup: ${authControl.bloodGroup}');
                             print('hairColor: ${authControl.hairColor}');
+                            print('Statue: ${authControl.marriedStatusIndexValue}');
 
 
                             signUpApi(
@@ -432,7 +433,7 @@ class _SignUpOnboardScreenState extends State<SignUpOnboardScreen> {
                               country: 'India',
                               countryCode: 'IN',
                               maritalStatus:
-                                  authControl.marriedStatusIndex.toString(),
+                                  authControl.marriedStatusIndexValue.toString(),
                               photo: pickedImagePath,
                               religion:
                                   authControl.religionIndexValue.toString(),

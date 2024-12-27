@@ -3231,6 +3231,11 @@ class AuthController extends GetxController implements GetxService {
   int? _marriedStatusIndex = 0;
 
   int? get marriedStatusIndex => _marriedStatusIndex;
+
+  int? _marriedStatusIndexValue = 0;
+
+  int? get marriedStatusIndexValue => _marriedStatusIndexValue;
+
   List<int?> _marriedStatusIds = [];
 
   List<int?> get marriedStatusIds => _marriedStatusIds;
@@ -3255,6 +3260,10 @@ class AuthController extends GetxController implements GetxService {
     if (notify) {
       update();
     }
+  }
+  void setmarriedStatusIndexValue(int? index, bool notify) {
+    _marriedStatusIndexValue = index;
+      update();
   }
 
   Future<void> getmarriedStatusList() async {

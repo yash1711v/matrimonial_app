@@ -93,33 +93,33 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                           child: Column(
                             children: [
                               Text(
-                                'Profession',
+                                'Position',
                                 style: kManrope25Black.copyWith(
                                     fontSize: 16),
                               ),
                               sizedBox12(),
                               CustomDropdownButtonFormField<String>(
-                                value: Get.find<AuthController>().professionList!
+                                value: Get.find<AuthController>().positionHeldList!
                                     .firstWhere((religion) =>
                                 religion.id ==
-                                    Get.find<AuthController>().professionIndex)
+                                    Get.find<AuthController>().positionHeldIndex)
                                     .name,
                                 // Assuming you have a selectedPosition variable
-                                items: Get.find<AuthController>().professionList!
+                                items: Get.find<AuthController>().positionHeldList!
                                     .map((position) => position.name!)
                                     .toList(),
                                 hintText: "Select Position",
                                 onChanged: (value) {
                                   if (value != null) {
-                                    var selected = Get.find<AuthController>().professionList!
+                                    var selected = Get.find<AuthController>().positionHeldList!
                                         .firstWhere((position) =>
                                     position.name == value);
-                                    Get.find<AuthController>().setProfessionIndex(
+                                    Get.find<AuthController>().setPositionIndex(
                                         selected.id, true);
                                     positionControllerDialog.text =
                                         selected.name.toString();
                                     print(
-                                        Get.find<AuthController>().professionIndex);
+                                        Get.find<AuthController>().positionHeldIndex);
                                   }
                                 },
                               ),
@@ -131,10 +131,60 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                   },
                   decoration: const InputDecoration(hintText: "Position"),
                 ),
+                // SizedBox(height: 10),
                 TextField(
                   controller: highestDegree,
-                  decoration: const InputDecoration(hintText: "State of Posting"),
+                  readOnly: true,
+                  decoration: const InputDecoration(hintText: "select state of posting"),
+                  onTap: () {
+                    Get.bottomSheet(
+                      SingleChildScrollView(
+                        child: Container(
+                          color: Theme.of(context).cardColor,
+                          padding: const EdgeInsets.all(
+                              Dimensions.paddingSizeDefault),
+                          child: Column(
+                            children: [
+                              Text(
+                                'State of Posting',
+                                style: kManrope25Black.copyWith(
+                                    fontSize: 16),
+                              ),
+                              sizedBox12(),
+                              CustomDropdownButtonFormField<String>(
+                                value: Get.find<AuthController>().posselectedState,
+                                items: Get.find<AuthController>().posstates,
+                                hintText: "Select Posting State",
+                                onChanged: (value) {
+                                  Get.find<AuthController>().possetState(value ??
+                                      Get.find<AuthController>().posstates.first);
+                                  print(
+                                      'cadre =========== >${Get.find<AuthController>().posselectedState}');
+                                  highestDegree.text = Get.find<AuthController>()
+                                      .posselectedState
+                                      .toString();
+                                },
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.isEmpty ||
+                                      value ==
+                                          'Please Posting State') {
+                                    return 'Please Posting State';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
+                // TextField(
+                //   controller: highestDegree,
+                //   decoration: const InputDecoration(hintText: "State of Posting"),
+                // ),
               ],
             ),
           ),
@@ -149,9 +199,9 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
               child: const Text("OK"),
               onPressed: () {
 
+                Navigator.of(context).pop();
 
-
-                List<String> position = [Get.find<AuthController>().professionIndex.toString()];
+                List<String> position = [Get.find<AuthController>().positionHeldIndex.toString()];
                 List<String> stateOfPosting = [highestDegree
                     .text];
 
@@ -174,7 +224,7 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                         });
                       });
 
-                      Navigator.of(context).pop();
+
                 });
 
               },
@@ -220,7 +270,9 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
 
   void fields() {
     positionController.text =
-        Get.find<ProfileController>().profile?.professionName ?? '';
+        Get.find<AuthController>().positionHeldList!
+            .firstWhere((element) => element.id == career[0].position)
+            .name!;
     stateController.text = career[0].statePosting.toString() ?? '';
     districtController.text = career[0].districtPosting.toString() ?? '';
     fromController.text = career[0].from ?? '';
@@ -229,7 +281,7 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
 
     var selected = [];
     for(int i = 0; i< career.length; i++) {
-    (Get.find<AuthController>().professionList ?? [])
+    (Get.find<AuthController>().positionHeldList ?? [])
         .forEach((element){
       if(element.id == career[i].position && i>0){
         selected.add(element.name);
@@ -455,7 +507,7 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                                child: Column(
                                  children: [
                                    EditDetailsTextField(
-                                     title: 'Profession',
+                                     title: 'Position',
                                      controller: positionController,
                                      readOnly: true,
                                      onTap: () {
@@ -468,29 +520,29 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                                              child: Column(
                                                children: [
                                                  Text(
-                                                   'Profession',
+                                                   'Position',
                                                    style: kManrope25Black.copyWith(
                                                        fontSize: 16),
                                                  ),
                                                  sizedBox12(),
                                                  CustomDropdownButtonFormField<String>(
-                                                   value: authControl.professionList!
+                                                   value: authControl.positionHeldList!
                                                        .firstWhere((religion) =>
                                                    religion.id ==
-                                                       authControl.professionIndex)
+                                                       authControl.positionHeldIndex)
                                                        .name,
                                                    // Assuming you have a selectedPosition variable
-                                                   items: authControl.professionList!
+                                                   items: authControl.positionHeldList!
                                                        .map((position) => position.name!)
                                                        .toList(),
                                                    hintText: "Select Position",
                                                    onChanged: (value) {
                                                      if (value != null) {
                                                        var selected = authControl
-                                                           .professionList!
+                                                           .positionHeldList!
                                                            .firstWhere((position) =>
                                                        position.name == value);
-                                                       authControl.setProfessionIndex(
+                                                       authControl.setPositionIndex(
                                                            selected.id, true);
                                                        positionController.text =
                                                            selected.name.toString();
@@ -606,7 +658,7 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                                     child: Column(
                                       children: [
                                         EditDetailsTextField(
-                                          title: "Profession",
+                                          title: "Position",
                                           controller: fieldControllers[i]["newFields ${i+1}"]!["Position"]! ?? TextEditingController(),
                                           readOnly: true,
                                           onTap: (){
@@ -619,25 +671,25 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                                                 child: Column(
                                                   children: [
                                                     Text(
-                                                      'Profession',
+                                                      'Position',
                                                       style: kManrope25Black.copyWith(
                                                           fontSize: 16),
                                                     ),
                                                     sizedBox12(),
                                                     CustomDropdownButtonFormField<String>(
-                                                      value: Get.find<AuthController>().professionList!
+                                                      value: Get.find<AuthController>().positionHeldList!
                                                           .firstWhere((religion) =>
                                                       religion.id ==
-                                                          Get.find<AuthController>().professionIndex)
+                                                          Get.find<AuthController>().positionHeldIndex)
                                                           .name,
                                                       // Assuming you have a selectedPosition variable
-                                                      items: Get.find<AuthController>().professionList!
+                                                      items: Get.find<AuthController>().positionHeldList!
                                                           .map((position) => position.name!)
                                                           .toList(),
                                                       hintText: "Select Position",
                                                       onChanged: (value) {
                                                         if (value != null) {
-                                                          var selected = Get.find<AuthController>().professionList!
+                                                          var selected = Get.find<AuthController>().positionHeldList!
                                                               .firstWhere((position) =>
                                                           position.name == value);
                                                           Get.find<AuthController>().setProfessionIndex(
@@ -647,7 +699,7 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                                                                selected.name.toString();
                                                          });
                                                           print(
-                                                              Get.find<AuthController>().professionIndex);
+                                                              Get.find<AuthController>().positionHeldIndex);
 
                                                           profileControl.editCareerInfoApi(
                                                               fieldControllers[i]["newFields ${i+1}"]!["id"]!.text,
@@ -693,13 +745,15 @@ class _EditCareerInfoScreenState extends State<EditCareerInfoScreen> {
                                                         onChanged: (value) {
                                                           authControl.possetState(value ??
                                                               authControl.posstates.first);
-                                                          print(
-                                                              'cadre =========== >${authControl.posselectedState}');
+
                                                           fieldControllers[i]["newFields ${i+1}"]!["State of Posting"]!.text = authControl
                                                               .posselectedState
                                                               .toString();
-
-                                                          var selected = Get.find<AuthController>().professionList!
+                                                          print(
+                                                              'Va;lue ${fieldControllers[i]["newFields ${i+1}"]!["State of Posting"]!.text}');
+                                                          print(
+                                                              'Va;lue ${fieldControllers[i]["newFields ${i+1}"]!["Position"]!.text}');
+                                                          var selected = Get.find<AuthController>().positionHeldList!
                                                               .firstWhere((position) =>
                                                           position.name == fieldControllers[i]["newFields ${i+1}"]!["Position"]!.text);
 

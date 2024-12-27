@@ -54,6 +54,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     Get.find<AuthController>().getReligionsList();
+    Get.find<AuthController>().getProfessionList();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Get.find<AuthController>().getPositionHeldList();
+    });
     profileDetail();
     getImage();
     super.initState();
@@ -168,7 +172,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   String positionName(CareerInfo career){
     String selected = "";
-     ( Get.find<AuthController>().professionList ?? [])
+    // debugPrint("professionList:  ${Get.find<AuthController>().positionHeldList}");
+      Get.find<AuthController>().positionHeldList!
           .forEach((element){
             // debugPrint("element.id: ${element.id}");
             // debugPrint("career.position: ${career.position}");
@@ -658,11 +663,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       children: [
                                         buildInfoRow(
                                           title: 'Position',
-                                          text: profile.careerInfo?[i].position
-                                              ?.toString().isEmpty ??
-                                              true
-                                              ? ""
-                                              : positionName(profile.careerInfo![i])
+                                          text:  positionName(profile.careerInfo![i])
                                               .toString() ??
                                               "",
                                           onTap: () {},

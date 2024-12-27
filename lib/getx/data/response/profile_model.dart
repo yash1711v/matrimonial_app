@@ -35,7 +35,7 @@ class ProfileModel {
   String? positionName;
   BasicInfo? basicInfo;
   String? bloodGroups;
-  String? maritialStatus;
+  dynamic? maritialStatus;
   PartnerExpectation? partnerExpectation;
   PhysicalAttributes? physicalAttributes;
   List<CareerInfo>? careerInfo;

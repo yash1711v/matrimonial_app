@@ -2,6 +2,7 @@
 
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:bureau_couple/getx/data/response/profile_model.dart';
 import 'package:bureau_couple/getx/repository/repo/profile_repo.dart';
@@ -337,7 +338,7 @@ class ProfileController extends GetxController implements GetxService {
     try {
       Response response = await profileRepo.editCareerInfo(id, position, stateOfPosting, districtOfPosting, from, end);
 
-      print(response);
+     log("Edit Career Info Response: ${response.body}", name: 'Career Info');
 
       if (response != null && response.body != null) {
         var responseData = response.body;
@@ -416,12 +417,31 @@ class ProfileController extends GetxController implements GetxService {
       return 'Not Added';
     }
 
-    double heightInDouble = double.tryParse(height) ?? 0.0;
-    int feet = heightInDouble.floor();
-    int inches = ((heightInDouble - feet) * 12).round();
+    // debugPrint('Height: $height');
 
+    // Parse the height to a double value.
+    double heightInDouble = double.tryParse(height) ?? 0.0;
+
+    // Get the feet part of the height.
+    int feet = heightInDouble.floor();
+    // debugPrint('Feet: $feet');
+
+    // Get the decimal part for inches, multiply by 12, then round it.
+    double decimalPart = heightInDouble - feet;
+    // debugPrint('Decimal Part: $decimalPart');
+    int inches = (decimalPart*10).round();
+
+    // If inches rounds to 12, we need to adjust the feet.
+    if (inches == 12) {
+      feet += 1;
+      inches = 0;
+    }
+
+    // Format the result as feet and inches.
     return '$feet ft $inches inch';
   }
+
+
 
 
 

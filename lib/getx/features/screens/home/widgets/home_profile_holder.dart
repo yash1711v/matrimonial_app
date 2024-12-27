@@ -90,8 +90,13 @@ class HomeProfileHolder extends StatelessWidget {
                   const SizedBox(
                     width: 6,
                   ),
+                  // profileController
+                  //     .convertHeightToFeetInches(
+                  //     profile.physicalAttributes!
+                  //         .height
+                  //         .toString())
                   Text(
-                    "Height: ${(profileModel.physicalAttributes ?? pfm.PhysicalAttributes())!.height ?? "".toString()}",
+                    "Height: ${Get.find<ProfileController>().convertHeightToFeetInches((profileModel.physicalAttributes ?? pfm.PhysicalAttributes())!.height ?? "".toString())}",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: styleSatoshiLight(
