@@ -25,6 +25,8 @@ import '../../../utils/widgets/common_widgets.dart';
 import '../../../utils/widgets/name_edit_dialog.dart';
 import '../../../utils/widgets/textfield_decoration.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import '../../signup/sign_up_physical_apperance.dart';
 class EditPhysicalAttributesScreen extends StatefulWidget {
   const EditPhysicalAttributesScreen({super.key});
 
@@ -240,20 +242,10 @@ class _EditPhysicalAttributesScreenState extends State<EditPhysicalAttributesScr
                             ),
                             SizedBox(
                               width: double.infinity,
-                              child: Obx(() => Slider(
-                                min: 45.0,
-                                max: 120.0,
-                                divisions: 75, // Number of divisions for finer granularity
-                                label: authControl.attributeWeightValue.value.toString(),
-                                value: authControl.attributeWeightValue.value.toDouble(),
-                                onChanged: (value) {
-                                  authControl.setAttributeWeightValue(value.toInt());
-                                  print(authControl.attributeWeightValue);
-                                  weightController.text = authControl.attributeWeightValue.toString();
-                                  weightControllerKgs.text =
-                                  '${authControl.attributeWeightValue.value} yrs';
-                                },
-                              )),
+                              child: HeightSlider(
+                                minHeight: 4.0,
+                                maxHeight: 7.0, authControl: authControl,
+                              ),
                             ),
                           ],),
                         ) ,));
@@ -366,9 +358,9 @@ class _EditPhysicalAttributesScreenState extends State<EditPhysicalAttributesScr
 
                       },),
                     sizedBox6(),
-                    EditDetailsTextField(title: 'Disability', controller: disablityController,readOnly: false,
-                      onTap: () {
-                      },),
+                    // EditDetailsTextField(title: 'Disability', controller: disablityController,readOnly: false,
+                    //   onTap: () {
+                    //   },),
                     // GestureDetector(
                     //   onTap: () {
                     //     Get.bottomSheet(

@@ -174,7 +174,6 @@ class _SignUpOnboardScreenState extends State<SignUpOnboardScreen> {
                         } else if (_currentPage == 1) {
                           if ((authControl.firstName ?? "").isEmpty || (authControl.about ?? "").isEmpty ||
                               (authControl.lastName ?? "").isEmpty ||
-                              (authControl.middleName ?? "").isEmpty ||
                               (authControl.day ?? "").isEmpty) {
                             Fluttertoast.showToast(
                                 msg: "Please fill all the fields");
@@ -497,6 +496,7 @@ class _SignUpOnboardScreenState extends State<SignUpOnboardScreen> {
                               aboutUs: authControl.about.toString(),
                               generalRequirementPartner: authControl.aboutP.toString(),
                               stateP: authControl.statePartner.toString(),
+                              foodPreferenceP: authControl.partnerDiet.toString(), diet: authControl.diet.toString(),
                             ).then((value) async {
                               setState(() {
                                 loading = false;
@@ -526,7 +526,7 @@ class _SignUpOnboardScreenState extends State<SignUpOnboardScreen> {
                                 //   MaterialPageRoute(builder: (builder) => const SignInScreen()),
                                 // );
 
-                                ToastUtil.showToast("Registered Successfully");
+                                // ToastUtil.showToast("Registered Successfully");
                               } else {
                                 setState(() {
                                   loading = false;

@@ -1,4 +1,5 @@
 
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bureau_couple/getx/data/response/single_match_model.dart';
@@ -387,13 +388,13 @@ class MatchesController extends GetxController implements GetxService {
   void getMatches(
       String page,
       String gender,
-      String religion,
+      dynamic religion,
       String profession,
       String state,
       String height,
       String country,
-      String motherTongue,
-      String community
+      dynamic motherTongue,
+      dynamic community
       ) async {
     _matchesList = [];
     _matchesList.clear();
@@ -404,13 +405,13 @@ class MatchesController extends GetxController implements GetxService {
       final result = await matchesRepo.getMatchesApi(
           page: page,
           gender: gender,
-          religion: religion,
+          religion: jsonEncode(religion),
           profession: profession,
           state: state,
           height: height,
           country: country,
-          montherTongue: motherTongue,
-          community: community);
+          montherTongue: jsonEncode(motherTongue),
+          community: jsonEncode(community));
 
       if (result['status'] == true) {
         log("This is Value From Matches ${result['data']['members'].toString()}");

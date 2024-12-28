@@ -122,10 +122,12 @@ class _SingUpScreenThreeState extends State<SingUpScreenThree> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        'Final Step Lets Choose Profile Picture And Login Details',
-                        textAlign: TextAlign.center,
-                        style: kManrope14Medium626262.copyWith(color: Colors.black),
+                      Expanded(
+                        child: Text(
+                          'Final Step Lets Choose Profile Picture And Login Details',
+                          textAlign: TextAlign.center,
+                          style: kManrope14Medium626262.copyWith(color: Colors.black),
+                        ),
                       ),
                     ],
                   ),

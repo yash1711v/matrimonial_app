@@ -10,6 +10,7 @@ Future<dynamic> signUpApi({
   required String email,
   required String password,
   required String mobileNo,
+  required String diet,
   required String passwordConfirmation,
   required String country,
   required String firstName,
@@ -66,7 +67,7 @@ Future<dynamic> signUpApi({
   required String aboutUs,
   required String stateP,
   required String generalRequirementPartner,
-  required List<Map<String, dynamic>> interestList,
+  required List<Map<String, dynamic>> interestList, required String foodPreferenceP,
 }) async {
   var request = http.MultipartRequest('POST', Uri.parse('${baseUrl}register'));
   debugPrint("request====>: $interestList");
@@ -83,6 +84,7 @@ Future<dynamic> signUpApi({
 
   request.fields.addAll({
     'username': userName,
+    "diet": diet,
     "general_requirement_p": generalRequirementPartner,
     'email': email,
     'password': password,
@@ -147,6 +149,7 @@ Future<dynamic> signUpApi({
     "about_us":aboutUs,
     "state_p": stateP,
     'agree': '1',
+    'food_preference_p': foodPreferenceP,
   });
   request.files.add(await http.MultipartFile.fromPath('image', photo));
   http.StreamedResponse response = await request.send();

@@ -122,7 +122,7 @@ class _SignUpScreenEducationState extends State<SignUpScreenEducation> {
                     sizedBox20(),
 
                     Text(
-                      'Highest Degress',
+                      'Highest Degrees',
                       style: kManrope25Black.copyWith(fontSize: 16),
                     ),
                     sizedBox12(),

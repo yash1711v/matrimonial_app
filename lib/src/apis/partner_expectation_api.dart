@@ -19,7 +19,7 @@ Future<dynamic> partnerExpectationUpdateApi({
   required String minDegree,
   required String financialCondition,
   required String language,
-  required List<int?> motherTongue,
+  required List<int?> motherTongue, required String foodPreference,
 
 
 }) async {
@@ -46,6 +46,7 @@ Future<dynamic> partnerExpectationUpdateApi({
    'drinking_status': drinkingStatus,
    "profession": jsonEncode(profession),
    "min_degree":minDegree,
+    "food_preference": foodPreference
    // "financial_condition":financialCondition,
     // "language[]": language
 

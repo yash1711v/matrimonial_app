@@ -511,7 +511,7 @@ class _SignUpScreenExpectationScreenState extends State<SignUpScreenExpectationS
                               Column(
                                 children: [
                                   // Text("Min Height", style: satoshiMedium.copyWith(fontSize: Dimensions.fontSizeDefault,)),
-                                  Text('${authControl.startHeightValue.value.round().toString()} ft',
+                                  Text('${_convertToFeetAndInches(authControl.startHeightValue.value).toString()} ft',
                                     style:satoshiBold.copyWith(fontSize: Dimensions.fontSizeDefault,
                                         color: Theme.of(context).primaryColor),),
                                 ],
@@ -519,7 +519,7 @@ class _SignUpScreenExpectationScreenState extends State<SignUpScreenExpectationS
                               Column(
                                 children: [
                                   // Text("Max Height", style: satoshiMedium.copyWith(fontSize: Dimensions.fontSizeDefault,)),
-                                  Text('${authControl.endHeightValue.value.round().toString()} ft',
+                                  Text('${_convertToFeetAndInches(authControl.endHeightValue.value).toString()} ft',
                                     style:satoshiBold.copyWith(fontSize: Dimensions.fontSizeDefault,
                                         color: Theme.of(context).primaryColor),),
                                 ],
@@ -527,23 +527,26 @@ class _SignUpScreenExpectationScreenState extends State<SignUpScreenExpectationS
                             ],),
                           Container(
                             width: double.infinity,
-                            child: Obx(() => RangeSlider(
-                              min: 4.0, // Minimum value
-                              max: 7.0, // Maximum value
-                              divisions: 76, // Number of divisions for finer granularity
-                              labels: RangeLabels(
-                                authControl.startHeightValue.value.toStringAsFixed(1), // Format to 1 decimal place
-                                authControl.endHeightValue.value.toStringAsFixed(1), // Format to 1 decimal place
-                              ),
-                              values: RangeValues(
-                                authControl.startHeightValue.value,
-                                authControl.endHeightValue.value,
-                              ),
-                              onChanged: (values) {
-                                authControl.setHeightValue(values); // Update the values when slider changes
-                                print('Updated range values: ${values.start.toStringAsFixed(1)} - ${values.end.toStringAsFixed(1)}');
-                              },
-                            )),
+                            child: HeightRangeSlider (authControl: authControl,),
+
+
+                            // Obx(() => RangeSlider(
+                            //   min: 4.0, // Minimum value
+                            //   max: 7.0, // Maximum value
+                            //   divisions: 76, // Number of divisions for finer granularity
+                            //   labels: RangeLabels(
+                            //     authControl.startHeightValue.value.toStringAsFixed(1), // Format to 1 decimal place
+                            //     authControl.endHeightValue.value.toStringAsFixed(1), // Format to 1 decimal place
+                            //   ),
+                            //   values: RangeValues(
+                            //     authControl.startHeightValue.value,
+                            //     authControl.endHeightValue.value,
+                            //   ),
+                            //   onChanged: (values) {
+                            //     authControl.setHeightValue(values); // Update the values when slider changes
+                            //     print('Updated range values: ${values.start.toStringAsFixed(1)} - ${values.end.toStringAsFixed(1)}');
+                            //   },
+                            // )),
                           ),
 
 
@@ -609,3 +612,84 @@ class _SignUpScreenExpectationScreenState extends State<SignUpScreenExpectationS
   }
 }
 
+class HeightRangeSlider extends StatefulWidget {
+  final double minHeight;
+  final double maxHeight;
+  final double initialStartHeight;
+  final double initialEndHeight;
+  final AuthController authControl;
+
+  const HeightRangeSlider({
+    Key? key,
+    this.minHeight = 4.0,
+    this.maxHeight = 7.0,
+    this.initialStartHeight = 5.0,
+    this.initialEndHeight = 6.0,
+    required this.authControl,
+  }) : super(key: key);
+
+  @override
+  _HeightRangeSliderState createState() => _HeightRangeSliderState();
+}
+
+class _HeightRangeSliderState extends State<HeightRangeSlider> {
+  late RangeValues _currentRangeValues;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentRangeValues = RangeValues(
+      widget.initialStartHeight,
+      widget.initialEndHeight,
+    );
+  }
+
+  String _formatHeight(double value) {
+    int feet = value.floor(); // Get the whole number as feet
+    int inches = ((value - feet) * 12).round(); // Convert decimal to inches
+
+    // Handle edge cases where inches reach 12
+    if (inches >= 12) {
+      feet++;
+      inches = 0;
+    }
+
+    return "$feet'${inches}";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RangeSlider(
+      min: widget.minHeight,
+      max: widget.maxHeight,
+      divisions: ((widget.maxHeight - widget.minHeight) * 12).toInt(),
+      values: _currentRangeValues,
+      onChanged: (RangeValues values) {
+        setState(() {
+          _currentRangeValues = values;
+        });
+        widget.authControl.setHeightValue(values);
+        print(
+            "Start: ${_formatHeight(values.start)}, End: ${_formatHeight(values.end)}");
+      },
+      labels: RangeLabels(
+        _formatHeight(_currentRangeValues.start),
+        _formatHeight(_currentRangeValues.end),
+      ),
+    );
+  }
+}
+
+// Helper function to format the height
+String _convertToFeetAndInches(double value) {
+  int feet = value.floor();
+  int inches = ((value - feet) * 12).round();
+
+  // Handle edge cases where inches reach 12
+  if (inches >= 12) {
+    feet++;
+    inches = 0;
+  }
+
+  return "$feet'${inches}";
+}

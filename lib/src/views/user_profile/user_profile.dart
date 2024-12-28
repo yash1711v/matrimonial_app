@@ -106,6 +106,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         model.data?.user?.partnerExpectation?.positionName)) {
       total++;
     }
+   if(model
+       .data
+       ?.user
+       ?.partnerExpectation
+       ?.positionName == model
+       .data
+       ?.user
+       ?.partnerExpectation
+       ?.positionName){
+     total++;
+   }
 
     return total;
   }
@@ -291,6 +302,32 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                             model
                                                 .data!
                                                 .matches!
+                                                .basicInfo?.religionName??
+                                                '',
+                                            style: styleSatoshiRegular(
+                                                size: 13,
+                                                color: Colors.white),
+                                          ),
+                                          Text(
+                                            overflow:
+                                            TextOverflow.ellipsis,
+                                            maxLines: 2,
+                                            model
+                                                .data!
+                                                .matches!
+                                                .basicInfo?.motherTongueName??
+                                                '',
+                                            style: styleSatoshiRegular(
+                                                size: 13,
+                                                color: Colors.white),
+                                          ),
+                                          Text(
+                                            overflow:
+                                            TextOverflow.ellipsis,
+                                            maxLines: 2,
+                                            model
+                                                .data!
+                                                .matches!
                                                 .basicInfo
                                                 ?.presentAddress
                                                 ?.state ??
@@ -314,83 +351,95 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   ],
                 ),
 
-                SizedBox(
-                  height: 25,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Row(
-                    children: [
-                      Text(
-                        "Photos",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
-                      )
-                    ],
+                Visibility(
+                  visible: model.data?.matches?.galleries?.isNotEmpty ?? false,
+                  child: SizedBox(
+                    height: 25,
                   ),
                 ),
-                SizedBox(
-                  height: 25,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 150,
-                  child: model.data?.matches?.galleries?.isNotEmpty ??
-                      false
-                      ? Visibility(
-                    visible: model
-                        .data?.matches?.galleries?.isNotEmpty ??
-                        false,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount:
-                      model.data?.matches?.galleries!.length,
-                      itemBuilder:
-                          (BuildContext context, int index) {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    PhotoViewScreen(
-                                      imageProvider: NetworkImage(
-                                        model
-                                            .data
-                                            ?.matches
-                                            ?.galleries![index]
-                                            .image !=
-                                            null
-                                            ? '$baseGalleryImage${model.data
-                                            ?.matches?.galleries![index].image}'
-                                            : '',
-                                      ),
-                                    ),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            width: 100,
-                            height: 100,
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 2),
-                            decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: NetworkImage(
-                                        "$baseGalleryImage${model.data?.matches
-                                            ?.galleries![index].image}"))),
-                          ),
-                        );
-                      },
+                Visibility(
+                  visible: model.data?.matches?.galleries?.isNotEmpty ?? false,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          "Photos",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        )
+                      ],
                     ),
-                  )
-                      : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("NO PHOTOS ADDED "),
-                    ],
+                  ),
+                ),
+                Visibility(
+                  visible: model.data?.matches?.galleries?.isNotEmpty ?? false,
+                  child: SizedBox(
+                    height: 25,
+                  ),
+                ),
+                Visibility(
+                  visible: model.data?.matches?.galleries?.isNotEmpty ?? false,
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 150,
+                    child: model.data?.matches?.galleries?.isNotEmpty ??
+                        false
+                        ? Visibility(
+                      visible: model
+                          .data?.matches?.galleries?.isNotEmpty ??
+                          false,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount:
+                        model.data?.matches?.galleries!.length,
+                        itemBuilder:
+                            (BuildContext context, int index) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      PhotoViewScreen(
+                                        imageProvider: NetworkImage(
+                                          model
+                                              .data
+                                              ?.matches
+                                              ?.galleries![index]
+                                              .image !=
+                                              null
+                                              ? '$baseGalleryImage${model.data
+                                              ?.matches?.galleries![index].image}'
+                                              : '',
+                                        ),
+                                      ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: 100,
+                              height: 100,
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 2),
+                              decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      image: NetworkImage(
+                                          "$baseGalleryImage${model.data?.matches
+                                              ?.galleries![index].image}"))),
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                        : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("NO PHOTOS ADDED "),
+                      ],
+                    ),
                   ),
                 ),
                 // Column(
@@ -1550,13 +1599,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         .data
                                         ?.matches
                                         ?.partnerExpectation
-                                        ?.professionName !=
+                                        ?.positionName !=
                                         null &&
                                         model
                                             .data
                                             ?.user
                                             ?.partnerExpectation
-                                            ?.professionName !=
+                                            ?.positionName !=
                                             null,
                                     child: buildPrefProfileRow(
                                       image: icGotraIcon,

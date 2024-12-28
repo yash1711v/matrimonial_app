@@ -158,6 +158,7 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
     // financialCondition.text= preferenceModel.financialCondition?.toString() ?? '';
     debugPrint(
         "EditPreferenceScreen: ${preferenceModel.religionName.toString()}");
+    dietController.text = preferenceModel.diet ?? "Both";
 
     final List<String> religionList =
         preferredReligionController.text.split(',');
@@ -255,6 +256,7 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                               financialCondition: financialCondition.text,
                               language: languageController.text,
                               maxHeight: maxHeightController.text,
+                              foodPreference: dietController.text,
                               motherTongue:
                                   authControl.motherTongueIndexs)
                           .then((value) {
@@ -1175,7 +1177,10 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                       onChanged: (value) {
                                         var selected = authControl.diet;
                                         authControl.setPartnerDiet(selected);
-                                        dietController.text = selected!;
+                                        setState(() {
+                                          dietController.text = selected ?? "";
+                                        });
+
                                       },
                                       validator: (value) {
                                         if (value == null ||

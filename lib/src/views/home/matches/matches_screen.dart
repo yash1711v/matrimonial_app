@@ -34,27 +34,27 @@ import 'package:flutter_svg/flutter_svg.dart';
 class MatchesScreen extends StatefulWidget {
   final bool appbar;
   final LoginResponse response;
-  final String? religion;
-  final String? motherTongue;
+  final dynamic religion;
+  final dynamic motherTongue;
   final String? state;
   final String? minHeight;
   final String? maxHeight;
   final String? maxWeight;
   final String? based;
-  final String? community;
+  final dynamic community;
 
   const MatchesScreen({
     Key? key,
     required this.response,
     required this.appbar,
-    this.religion = '',
-    this.motherTongue = '',
+    this.religion,
+    this.motherTongue,
     this.minHeight,
     this.maxHeight,
     this.maxWeight,
     this.based,
     this.state = '',
-    this.community = '',
+    this.community,
   }) : super(key: key);
 
   @override
@@ -95,13 +95,13 @@ class _MatchesScreenState extends State<MatchesScreen> {
                       .contains('Female')
                   ? "Male"
                   : "Others",
-          widget.religion.toString(),
+          widget.religion,
           '',
           widget.state.toString(),
           '',
           '',
-          widget.motherTongue.toString(),
-          widget.community.toString());
+          widget.motherTongue,
+          widget.community);
       // Get.find<MatchesController>().getMatchesList(
       //     "1",
       //     widget.response.data!.user!.gender!.contains('Male')

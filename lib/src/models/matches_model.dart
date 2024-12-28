@@ -42,7 +42,7 @@ class MatchesModel {
   String? family;
   List<CareerInfo>? careerInfo;
   List<EducationInfo>? educationInfo;
-  String? limitation;
+  dynamic? limitation;
 
   MatchesModel(
       {this.id,
@@ -465,7 +465,7 @@ class PartnerExpectation {
   String? smoking;
   String? drinking;
   String? positionName;
-  String? maritialStatus;
+  dynamic? maritialStatus;
 
   PartnerExpectation(
       {this.id,

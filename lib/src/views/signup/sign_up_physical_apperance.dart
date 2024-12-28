@@ -241,25 +241,19 @@ class _SignUpScreenPhysicalAppearanceScreenState extends State<SignUpScreenPhysi
                     Row(
                       children: [
                         Text('Height  ',style: satoshiLight.copyWith(fontSize: Dimensions.fontSize12),),
-                        Text('${authControl.attributeHeightValue.value.toStringAsFixed(1)} ft',
+                        Text('${_convertToFeetAndInches(authControl.attributeHeightValue.value)} ft',
                           style:satoshiBold.copyWith(fontSize: Dimensions.fontSize12,
                               color: Theme.of(context).primaryColor),),],
                     ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Obx(() => Slider(
-                        min: 4.0,
-                        max: 7.0,
-                        divisions: 75, // Number of divisions for finer granularity
-                        label: authControl.attributeHeightValue.value.toStringAsFixed(1), // Format to 1 decimal place
-                        value: authControl.attributeHeightValue.value, // Single value
-                        onChanged: (value) {
-                          authControl.setAttributeHeightValue(value); //
-                          print(authControl.attributeHeightValue);// Update the value when slider changes;
-                        },
-                      )),
-                    ),
-                    sizedBox20(),
+                SizedBox(
+                  width: double.infinity,
+                  child :HeightSlider(
+                    minHeight: 4.0,
+                    maxHeight: 7.0, authControl: authControl,
+                   ),
+
+                ),
+              sizedBox20(),
                     Text(
                       'Select Weight',
                       style: kManrope25Black.copyWith(fontSize: 16),
@@ -270,7 +264,7 @@ class _SignUpScreenPhysicalAppearanceScreenState extends State<SignUpScreenPhysi
                         Row(
                           children: [
                             Text('Weight  ',style: satoshiLight.copyWith(fontSize: Dimensions.fontSize12),),
-                            Text('${authControl.attributeWeightValue.value.toString()} Kg',
+                            Text('${authControl.attributeWeightValue.value.roundToDouble()} Kg',
                             style:satoshiBold.copyWith(fontSize: Dimensions.fontSize12,
                             color: Theme.of(context).primaryColor),),
                           ],
@@ -283,7 +277,7 @@ class _SignUpScreenPhysicalAppearanceScreenState extends State<SignUpScreenPhysi
                       child: Obx(() => Slider(
                         min: 35.0,
                         max: 150.0,
-                        divisions: 75, // Number of divisions for finer granularity
+                        divisions: 120, // Number of divisions for finer granularity
                         label: authControl.attributeWeightValue.value.toString(),
                         value: authControl.attributeWeightValue.value.toDouble(),
                         onChanged: (value) {
@@ -679,3 +673,75 @@ class _SignUpScreenPhysicalAppearanceScreenState extends State<SignUpScreenPhysi
   }
 }
 
+// Helper function to format the height
+String _convertToFeetAndInches(double value) {
+  int feet = value.floor();
+  int inches = ((value - feet) * 12).round();
+
+  // Handle edge cases where inches reach 12
+  if (inches >= 12) {
+    feet++;
+    inches = 0;
+  }
+
+  return "$feet'${inches}";
+}
+
+
+class HeightSlider extends StatefulWidget {
+  final double minHeight;
+  final double maxHeight;
+  final double initialHeight;
+  final AuthController authControl;
+
+  const HeightSlider({
+    Key? key,
+    this.minHeight = 4.0,
+    this.maxHeight = 7.0,
+    this.initialHeight = 4.0, required this.authControl,
+  }) : super(key: key);
+
+  @override
+  _HeightSliderState createState() => _HeightSliderState();
+}
+
+class _HeightSliderState extends State<HeightSlider> {
+  double _currentHeight = 5.5;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentHeight = widget.initialHeight;
+  }
+
+  String _formatHeight(double value) {
+    int feet = value.floor();
+    int inches = ((value - feet) * 12).round();
+
+    // Handle edge cases where inches reach 12
+    if (inches >= 12) {
+      feet++;
+      inches = 0;
+    }
+
+    return "$feet'${inches}";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Slider(
+      min: widget.minHeight,
+      max: widget.maxHeight,
+      divisions: ((widget.maxHeight - widget.minHeight) * 12).toInt(),
+      value: _currentHeight,
+      onChanged: (value) {
+        setState(() {
+          _currentHeight = value;
+        });
+        widget.authControl.setAttributeHeightValue(_currentHeight);
+        print(_formatHeight(widget.authControl.attributeHeightValue.value));
+      },
+      label: _formatHeight(_currentHeight),
+    );
+  }
+}

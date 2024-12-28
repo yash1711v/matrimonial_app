@@ -35,7 +35,7 @@ Future<dynamic> getMatchesApi({
 Future<dynamic> getNewMatchesApi({
   required String page,
   required String gender,
-  required String religion,
+  required dynamic religion,
 }) async  {
   var headers = {
     'Authorization': 'Bearer ${SharedPrefs().getLoginToken()}'

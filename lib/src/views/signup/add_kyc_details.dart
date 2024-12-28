@@ -143,8 +143,8 @@ class _AddKycDetailsScreenState extends State<AddKycDetailsScreen> {
             padding: const EdgeInsets.all(16.0),
             child: SingleChildScrollView(
               child:
-              // loading ?
-              // loadingButton(context: context) :
+              loading ?
+              loadingButton(context: context) :
               button(context: context,
                   onTap: () {
                 if(pickedImage.path.isNotEmpty ) {
@@ -189,7 +189,7 @@ class _AddKycDetailsScreenState extends State<AddKycDetailsScreen> {
 
                   }
                 } else{
-                  Fluttertoast.showToast(msg: "Please Enter Verification document");
+                  Fluttertoast.showToast(msg: "Please add document image");
                 }
 
 
@@ -328,6 +328,7 @@ class _AddKycDetailsScreenState extends State<AddKycDetailsScreen> {
                           ),
                           sizedBox12(),
                           CustomTextField(
+                            inputType: authControl.document == 'Aadhar Card' ? TextInputType.number : TextInputType.text,
                             maximumInput: getMaxLengthForDocumentType(authControl.document),
                             controller: _documentNoController,
                             capitalization: TextCapitalization.words,

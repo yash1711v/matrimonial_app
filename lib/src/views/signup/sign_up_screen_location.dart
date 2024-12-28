@@ -136,7 +136,7 @@ class _SignUpScreenLocationState extends State<SignUpScreenLocation> {
                     sizedBox20(),
                     Center(
                       child: Text(
-                        "Now Create Let's Your Profile",
+                        "Let's Create Your Profile",
                         textAlign: TextAlign.center,
                         style: kManrope14Medium626262.copyWith(color: Colors.black),
                       ),

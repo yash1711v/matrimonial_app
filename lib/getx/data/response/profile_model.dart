@@ -499,6 +499,7 @@ class PartnerExpectation {
   String? smoking;
   String? drinking;
   dynamic? positionName;
+  String? diet;
   Null? maritialStatus;
 
   PartnerExpectation(
@@ -530,6 +531,7 @@ class PartnerExpectation {
         this.smoking,
         this.drinking,
         this.positionName,
+        this.diet,
         this.maritialStatus});
 
   PartnerExpectation.fromJson(Map<String, dynamic> json) {
@@ -563,6 +565,7 @@ class PartnerExpectation {
     drinking = json['drinking'];
     positionName = json['position_name'];
     maritialStatus = json['maritial_status'];
+    diet = json['food_preference'];
   }
 
   Map<String, dynamic> toJson() {
@@ -597,6 +600,7 @@ class PartnerExpectation {
     data['drinking'] = this.drinking;
     data['position_name'] = this.positionName;
     data['maritial_status'] = this.maritialStatus;
+    data['food_preference'] = this.diet;
     return data;
   }
 }
