@@ -84,30 +84,31 @@ class MatchesRepo {
 
   Future<dynamic> getMatchesApi({
     required String page,
-    required String gender,
-    required String religion,
-    required String profession,
-    required String state,
-    required String height,
-    required String country,
-    required String montherTongue,
-    required String community,
+    required String? gender,
+    required dynamic religion,
+    required String? profession,
+    required String? state,
+    required String? height,
+    required String? country,
+    required dynamic? montherTongue,
+    required dynamic? community,
   }) async  {
     var headers = {
       'Authorization': 'Bearer ${SharedPrefs().getLoginToken()}'
     };
     var request = http.MultipartRequest('POST', Uri.parse('${baseUrl}matches'));
     request.fields.addAll({
-      'gender': gender,
-      "religion" : religion,
-      "profession" : profession,
-      "state" : state,
-      "height" : religion,
-      "country" : country,
-      "mother_tongue" : montherTongue,
-      "community" :community });
+      'gender': gender ?? "",
+      "religion" : religion is List ? jsonEncode(religion): religion ?? "",
+      "profession" : profession ?? "",
+      "state" : state ?? "",
+      "height" : height ?? "",
+      "country" : country ?? "",
+      "mother_tongue" : montherTongue is List ? jsonEncode(montherTongue): montherTongue ?? "",
+      "community" :community is List ? jsonEncode(community): community ?? "",});
     request.headers.addAll(headers);
-    // print('=================> ${request.fields}');
+    print('=================> ${request.fields}');
+    print('=================> ${request.headers}');
     http.StreamedResponse response = await request.send();
     var resp = jsonDecode(await response.stream.bytesToString());
     print(resp);

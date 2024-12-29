@@ -11,16 +11,18 @@ import 'package:bureau_couple/getx/utils/sizeboxes.dart';
 import 'package:bureau_couple/getx/utils/styles.dart';
 import 'package:bureau_couple/src/constants/fonts.dart';
 import 'package:bureau_couple/src/constants/textstyles.dart';
+import 'package:bureau_couple/src/models/LoginResponse.dart';
 import 'package:bureau_couple/src/utils/widgets/buttons.dart';
 import 'package:bureau_couple/src/utils/widgets/customAppbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import '../../../../src/views/home/matches/matches_screen.dart';
 import 'filter_screen_field_widget.dart';
 
 class FilterScreen extends StatelessWidget {
-   FilterScreen({super.key});
+  final LoginResponse response;
+   FilterScreen({super.key, required this.response,});
   final stateController = TextEditingController();
   final districtController = TextEditingController();
   @override
@@ -39,20 +41,38 @@ class FilterScreen extends StatelessWidget {
 
             padding: EdgeInsets.all(Dimensions.paddingSizeDefault),
             child: CustomButtonWidget(buttonText: 'Apply', onPressed: () {
-              Get.find<MatchesController>().getMatches('1',
-                  Get.find<ProfileController>().profile!.basicInfo!.gender!.contains('Male')
-                      ? "Female" :
-                  Get.find<ProfileController>().profile!.basicInfo!.gender!.contains('Female')
-                      ? "Male" :
-                  "Others",
-                  authControl.partnerReligion.toString(),
-                  authControl.partnerProfession.toString(),
-                  authControl.posselectedState.toString(),
-                  '',
-                  '',
-                  authControl.partnerMotherTongue.toString(),
-                  '');
-              Get.back();
+
+
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (builder) =>
+                          MatchesScreen(
+                            response: response,
+                            religion: Get.find<FilterController>().filterReligionList.isNotEmpty?Get.find<FilterController>().filterReligionList:"",
+                            motherTongue: Get.find<FilterController>().filterMotherTongueList.isNotEmpty?Get.find<FilterController>().filterMotherTongueList:"",
+                            minHeight: (Get.find<AuthController>().startHeightValue.value).toString(),
+                            maxHeight: (Get.find<AuthController>().endHeightValue.value).toString(),
+                            maxWeight: '',
+                            based: '',
+                            community: Get.find<FilterController>().filterCommunityList.isNotEmpty?Get.find<FilterController>().filterCommunityList:"",
+                            appbar: true,
+                          )));
+
+              // Get.find<MatchesController>().getMatches('1',
+              //     Get.find<ProfileController>().profile!.basicInfo!.gender!.contains('Male')
+              //         ? "Female" :
+              //     Get.find<ProfileController>().profile!.basicInfo!.gender!.contains('Female')
+              //         ? "Male" :
+              //     "Others",
+              //     authControl.partnerReligion.toString(),
+              //     authControl.partnerProfession.toString(),
+              //     authControl.posselectedState.toString(),
+              //     '',
+              //     '',
+              //     authControl.partnerMotherTongue.toString(),
+              //     '');
+              // Get.back();
             }),
           ),
         ),
@@ -163,7 +183,7 @@ class FilterScreen extends StatelessWidget {
                               ],),
                             RangeSlider(
                               min: 20.0,
-                              max: 50.0,
+                              max: 60.0,
                               divisions: 30,
                               labels: RangeLabels(
                                 authControl.startValue.value.round()
@@ -222,7 +242,7 @@ class FilterScreen extends StatelessWidget {
                               width: double.infinity,
                               child: Obx(() =>
                                   RangeSlider(
-                                    min: 5.0,
+                                    min: 4.0,
                                     // Minimum value
                                     max: 7.0,
                                     // Maximum value

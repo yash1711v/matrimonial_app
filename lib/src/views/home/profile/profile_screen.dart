@@ -36,6 +36,7 @@ import '../../../utils/widgets/buttons.dart';
 import '../../../utils/widgets/custom_dialog.dart';
 import '../../../utils/widgets/hobbies_widget.dart';
 import '../../../utils/widgets/pop_up_menu_button.dart';
+import '../../signup/sign_up_expectation_screen.dart';
 import 'change_password_sheet.dart';
 import 'edit_basic_info.dart';
 import 'edit_preferred_matches.dart';
@@ -53,13 +54,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void initState() {
-    Get.find<AuthController>().getReligionsList();
-    Get.find<AuthController>().getProfessionList();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Get.find<AuthController>().getPositionHeldList();
-    });
-    profileDetail();
-    getImage();
+
+    dataLoad();
     super.initState();
   }
 
@@ -67,6 +63,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final ImagePicker _imgPicker = ImagePicker();
   bool isLoading = false;
   ProfileModel profile = ProfileModel();
+
+
+  Future<void> dataLoad() async{
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Get.find<AuthController>().getPositionHeldList();
+      await Get.find<AuthController>().getReligionsList();
+      await Get.find<AuthController>().getProfessionList();
+    });
+    await profileDetail();
+    getImage();
+  }
 
   profileDetail() {
     setState(() {
@@ -173,7 +180,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String positionName(CareerInfo career){
     String selected = "";
     // debugPrint("professionList:  ${Get.find<AuthController>().positionHeldList}");
-      Get.find<AuthController>().positionHeldList!
+      (Get.find<AuthController>().positionHeldList ?? [])
           .forEach((element){
             // debugPrint("element.id: ${element.id}");
             // debugPrint("career.position: ${career.position}");
@@ -775,7 +782,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             sizedBox10(),
                             Container(
                               width: double.infinity,
-                              height: 270,
+                              // height: 270,
                               decoration: BoxDecoration(
                                   color: Theme.of(context).cardColor,
                                   borderRadius: BorderRadius.circular(12),
@@ -922,24 +929,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                     buildInfoRow(
                                       title: 'Age bracket',
-                                      text: profile.partnerExpectation!.minAge
-                                                  .toString() +
-                                              " - " +
-                                              profile.partnerExpectation!.maxAge
-                                                  .toString() +
-                                      " yrs"
+                                      text: "${profile.partnerExpectation!.minAge} - ${profile.partnerExpectation!.maxAge} yrs"
                                       ,
                                       onTap: () {},
                                     ),
                                     buildInfoRow(
                                       title: 'Highest bracket',
-                                      text: profile
-                                              .partnerExpectation!.minHeight
-                                              .toString() +
-                                          " - " +
-                                          profile.partnerExpectation!.maxHeight
-                                              .toString() +
-                                          " ft",
+                                      text: "${convertToFeetAndInches(double.parse(profile
+                                              .partnerExpectation!.minHeight ?? "4.0"))} - ${convertToFeetAndInches(double.parse(profile.partnerExpectation!.maxHeight ?? "7.0"))} ft",
+                                      onTap: () {},
+                                    ),
+                                    buildInfoRow(
+                                      title: 'Food Preference',
+                                      text: profile.partnerExpectation
+                                          ?.diet ?? "",
                                       onTap: () {},
                                     ),
                                   ],
@@ -965,6 +968,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 0.0, vertical: 8),
                                 child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -996,8 +1000,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     ),
                                     // const SizedBox(height: 12,),
-                                    HobbiesWrap(
-                                      allHobbies: userHobbies!,
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                      child: HobbiesWrap(
+                                        allHobbies: userHobbies!,
+                                      ),
                                     )
                                   ],
                                 ),

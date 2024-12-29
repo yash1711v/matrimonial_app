@@ -44,13 +44,13 @@ class _MatchesDashboardState extends State<MatchesDashboard> {
     _pageIndex = widget.initialIndex;
     _pageController = PageController(initialPage: _pageIndex);
     // Fetch initial matches based on gender and other parameters
-    _fetchMatches();
     profileDetail();
   }
 
   String userId = '';
-
+  ProfileModel profiles = ProfileModel();
   profileDetail() {
+    Get.find<MatchesController>().setIsLoading(true);
     var resp = getProfileApi();
     resp.then((value) {
       if (value['status'] == true) {
@@ -62,7 +62,9 @@ class _MatchesDashboardState extends State<MatchesDashboard> {
               print("profile id ${profile.id}");
               setState(() {
                 userId = profile.id.toString();
+                profiles = profile;
               });
+              _fetchMatches();
             }
           });
         }
@@ -95,7 +97,7 @@ class _MatchesDashboardState extends State<MatchesDashboard> {
     Get.find<MatchesController>().getMatches(
       '1',
       genderFilter,
-      '',
+      profiles.partnerExpectation?.religion,
       '',
       '',
       '',
@@ -106,7 +108,8 @@ class _MatchesDashboardState extends State<MatchesDashboard> {
   }
 
   Widget _buildMatchesList(
-      BuildContext context, MatchesController matchesControl) {
+      BuildContext context, MatchesController matchesControl)
+  {
     final list = matchesControl.matchesList;
     final isListEmpty = list.isEmpty;
     return isListEmpty && !matchesControl.isLoading
@@ -333,8 +336,6 @@ class _MatchesDashboardState extends State<MatchesDashboard> {
                               });
                             },
                             child: Container(
-
-
                               padding: const EdgeInsets.only(bottom: 8.0),
                               decoration: BoxDecoration(
                                 color: Theme.of(context).cardColor,
@@ -370,7 +371,7 @@ class _MatchesDashboardState extends State<MatchesDashboard> {
                             setState(() {
                               _pageIndex = index;
                             });
-                            _loadMatchesForFilter(index);
+                            _loadMatchesForFilter(index,profiles);
                           },
                           itemCount: filterControl.matchFilterTopList.length,
                           itemBuilder: (context, index) {
@@ -389,7 +390,7 @@ class _MatchesDashboardState extends State<MatchesDashboard> {
     );
   }
 
-  void _loadMatchesForFilter(int index) {
+  void _loadMatchesForFilter(int index,ProfileModel profiles) {
     final gender = Get.find<ProfileController>().profile?.basicInfo?.gender;
     final genderFilter = gender?.contains('Male') ?? false
         ? 'Female'
@@ -398,7 +399,7 @@ class _MatchesDashboardState extends State<MatchesDashboard> {
       Get.find<MatchesController>().getMatches(
         '1',
         genderFilter,
-        '2',
+        profiles.partnerExpectation?.religion,
         '',
         '',
         '',
@@ -410,24 +411,24 @@ class _MatchesDashboardState extends State<MatchesDashboard> {
       Get.find<MatchesController>().getMatches(
         '1',
         genderFilter,
-        'Muslim',
+        "",
         '',
         '',
         '',
         '',
         '',
-        '',
+        profiles.partnerExpectation?.community,
       );
     } else if (index == 2) {
       Get.find<MatchesController>().getMatches(
         '1',
         genderFilter,
+        profiles.basicInfo?.religion,
         '',
         '',
         '',
         '',
-        '',
-        '',
+        "",
         '',
       );
     } else if (index == 3) {
@@ -439,7 +440,7 @@ class _MatchesDashboardState extends State<MatchesDashboard> {
         '',
         '',
         '',
-        '',
+        profiles.partnerExpectation?.motherTongue,
         '',
       );
     }

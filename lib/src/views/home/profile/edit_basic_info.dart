@@ -665,7 +665,7 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
                     );
                   },readOnly:  true,
 
-                  title: 'profession', controller: professionController,),
+                  title: 'Profession', controller: professionController,),
                 sizedBox6(),
                 EditDetailsTextField(isNonEditable: true,
                   title: 'Gender', controller: genderController,readOnly: true,),
@@ -740,40 +740,6 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
                     ),
                   );
                 },),
-                sizedBox6(),
-                EditDetailsTextField(title: 'Drinking Habit', controller: drinkingController,readOnly: true,
-                  onTap: () {
-                    Get.bottomSheet(
-                      SingleChildScrollView(
-                        child: Container(color: Theme.of(context).cardColor,
-                          padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
-                          child: Column(
-                            children: [
-                              Text(
-                                'Drinking Habit',
-                                style: kManrope25Black.copyWith(fontSize: 16),
-                              ),
-                              sizedBox12(),
-                              CustomDropdownButtonFormField<String>(
-                                value: authControl.drikingList!.firstWhere((religion) => religion.id == authControl.drikingIndex).name,// Assuming you have a selectedPosition variable
-                                items: authControl.drikingList!.map((position) => position.name!).toList(),
-                                hintText: "Drinking Habit",
-                                onChanged: (value) {
-                                  if (value != null) {
-                                    var selected = authControl.drikingList!.firstWhere((position) => position.name == value);
-                                    authControl.setDrikingIndex(selected.id!,true);
-                                    drinkingController.text = selected.name.toString();
-                                    _drinkingIdController.text = selected.id.toString();
-
-                                  }
-                                },
-
-                              ),
-                            ],
-                          ),),
-                      ),
-                    );
-                  },),
                 sizedBox6(),
                 EditDetailsTextField(title: 'Drinking Habit', controller: drinkingController,readOnly: true,
                   onTap: () {
@@ -986,8 +952,34 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
                   onTap: () {
                   },),
                 sizedBox6(),
-                EditDetailsTextField(title: 'Married Status', controller: marriedStatusController,readOnly: false,
+                EditDetailsTextField(title: 'Married Status', controller: marriedStatusController,readOnly: true,
                   onTap: () {
+                    Get.bottomSheet(
+                      SingleChildScrollView(
+                        child: Container(color: Theme.of(context).cardColor,
+                          padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
+                          child: Column(
+                            children: [
+                              Text(
+                                'Married status',
+                                style: kManrope25Black.copyWith(fontSize: 16),
+                              ),
+                              sizedBox12(),
+                              CustomDropdownButtonFormField<String>(
+                                value: marriedStatusController.text,
+                                items: const ["Unmarried","Widow","Divorce","Widower"],
+                                hintText: "Select Married status",
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    marriedStatusController.text = value;
+                                  }
+                                },
+                              ),
+                            ],
+                          ),),
+                      ),
+                    );
+
                   },),
 
                 // sizedBox6(),
@@ -1933,7 +1925,7 @@ class _EditBasicInfoScreenState extends State<EditBasicInfoScreen> {
                           community: _casteIdController.text,
                           smokingStatus: _smokingIdController.text,
                           drinkingStatus:  _drinkingIdController.text,
-                          maritalStatus: marriedStatusController.text,
+                          maritalStatus: marriedStatusController.text == "Unmarried"?"1":marriedStatusController.text == "Widow"?"2":marriedStatusController.text == "Divorce"?"3":"4",
                           birthDate: birthDateController.text,
                           state: stateController.text,
                           zip: zipController.text,

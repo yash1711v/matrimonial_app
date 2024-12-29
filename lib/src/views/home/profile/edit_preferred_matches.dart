@@ -9,31 +9,23 @@ import 'package:bureau_couple/getx/utils/dimensions.dart';
 import 'package:bureau_couple/getx/utils/styles.dart';
 import 'package:bureau_couple/src/constants/fonts.dart';
 import 'package:bureau_couple/src/constants/sizedboxe.dart';
-import 'package:bureau_couple/src/models/profie_model.dart';
 import 'package:bureau_couple/src/utils/widgets/buttons.dart';
 import 'package:bureau_couple/src/views/signup/sign_up_screen_before_three.dart';
-import 'package:get/get.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
+
 import '../../../apis/partner_expectation_api.dart';
 import '../../../apis/profile_apis/get_profile_api.dart';
-import '../../../apis/profile_apis/physical_attributes_api.dart';
 import '../../../constants/assets.dart';
 import '../../../constants/colors.dart';
-import '../../../constants/string.dart';
 import '../../../constants/textstyles.dart';
-import '../../../models/attributes_model.dart';
-import '../../../models/preference_model.dart';
 import '../../../utils/widgets/common_widgets.dart';
 import '../../../utils/widgets/customAppbar.dart';
 import '../../../utils/widgets/name_edit_dialog.dart';
 import '../../../utils/widgets/textfield_decoration.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-
-import 'edit_basic_info.dart';
+import '../../signup/sign_up_expectation_screen.dart';
 
 class EditPreferenceScreen extends StatefulWidget {
   const EditPreferenceScreen({super.key});
@@ -81,6 +73,12 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
       Get.find<AuthController>().getSmokingList();
       Get.find<AuthController>().getDrinkingList();
       Get.find<AuthController>().getmarriedStatusList();
+      _currentRangeValues = RangeValues(  Get.find<AuthController>()
+          .startHeightValue
+          .value,
+        Get.find<AuthController>()
+            .endHeightValue
+            .value,);
     });
   }
 
@@ -115,8 +113,27 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
   }
 
   List<String>? selectedReligion = [];
+  List<String>? Community = [];
   List<String>? professions = [];
   List<String>? motherTongue = [];
+  RangeValues _currentRangeValues = RangeValues(
+    4.0,
+    7.0,
+  );
+
+
+  String _formatHeight(double value) {
+    int feet = value.floor(); // Get the whole number as feet
+    int inches = ((value - feet) * 12).round(); // Convert decimal to inches
+
+    // Handle edge cases where inches reach 12
+    if (inches >= 12) {
+      feet++;
+      inches = 0;
+    }
+
+    return "$feet'${inches}";
+  }
 
   void fields() {
     generalInfo.text = preferenceModel.generalRequirement.toString() ?? '';
@@ -130,30 +147,34 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
     heightController.text = preferenceModel.minHeight?.toString() ?? '';
     maxHeightController.text = preferenceModel.maxHeight?.toString() ?? '';
 
-    heightControllerYrs.text = Get.find<ProfileController>()
-        .convertHeightToFeetInches(preferenceModel.minHeight!.toString());
-    maxHeightControllerYrs.text = Get.find<ProfileController>()
-        .convertHeightToFeetInches(preferenceModel.maxHeight!.toString());
+    heightControllerYrs.text =
+        convertToFeetAndInches(double.parse(preferenceModel.minHeight ?? "4.0"));
+    maxHeightControllerYrs.text = convertToFeetAndInches(double.parse(preferenceModel.maxHeight ?? "7.0"));
     // weightController.text= preferenceModel.maxWeight.toString() ?? '';
     preferredReligionController.text = preferenceModel.religionName
             .map((religion) =>
                 religion[0].toUpperCase() + religion.substring(1).toLowerCase())
-            .join(',') ??
+            .join(', ') ??
         '';
-    communityController.text = preferenceModel.communityName.toString() ?? '';
+    communityController.text = preferenceModel.communityName
+            .map((religion) =>
+                religion[0].toUpperCase() + religion.substring(1).toLowerCase())
+            .join(', ') ??
+        '';
     //  smokingController.text= preferenceModel.smoking?.name?.toString() ?? '';
     // drinkingController.text= preferenceModel.drinking?.name?.toString() ?? '';
     preferredProfession.text = preferenceModel.professionName
             .map((profession) =>
-    profession[0].toUpperCase() + profession.substring(1).toUpperCase())
-            .join(',') ??
+                profession[0].toUpperCase() +
+                profession.substring(1).toUpperCase())
+            .join(', ') ??
         '';
     minimumDegreeController.text = preferenceModel.minDegree?.toString() ?? '';
-    motherTongueController.text =
-        preferenceModel.motherTongueName?.map((religion) =>
-        religion[0].toUpperCase() + religion.substring(1).toLowerCase())
-            .join(',') ??
-            '';
+    motherTongueController.text = preferenceModel.motherTongueName
+            ?.map((religion) =>
+                religion[0].toUpperCase() + religion.substring(1).toLowerCase())
+            .join(', ') ??
+        '';
     // dietController.text = preferenceModel.diet?.toString() ?? '';
     // financialCondition.text= preferenceModel.financialCondition?.toString() ?? '';
     debugPrint(
@@ -174,8 +195,7 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
       }
     });
 
-    final List<String> professionList =
-        preferredProfession.text.split(',');
+    final List<String> professionList = preferredProfession.text.split(',');
     final List<int> professionIdList = [];
     // languageController.text= preferenceModel.language.toString() ?? '';
     log('Profession List: $professionList');
@@ -190,7 +210,7 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
     });
 
     final List<String> motherTongueList =
-    motherTongueController.text.split(',');
+        motherTongueController.text.split(',');
     final List<int> motherTongueIdList = [];
     // languageController.text= preferenceModel.language.toString() ?? '';
     log('motherTongueController List: $professionList');
@@ -200,7 +220,21 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
           motherTongue!.add(element.name!);
           motherTongueIdList.add(element.id!);
         });
-        Get.find<AuthController>().setMotherTongueIndexs(motherTongueIdList,true);
+        Get.find<AuthController>()
+            .setMotherTongueIndexs(motherTongueIdList, true);
+      }
+    });
+
+    final List<String> communityList = communityController.text.split(',');
+    final List<int> communityIdList = [];
+    // languageController.text= preferenceModel.language.toString() ?? '';
+    Get.find<AuthController>().partCommunityList!.forEach((element) {
+      if (element.name != null && communityList.contains(element.name)) {
+        setState(() {
+          Community!.add(element.name!);
+          communityIdList.add(element.id!);
+        });
+        Get.find<AuthController>().setPartnerCommunitys(communityIdList);
       }
     });
 
@@ -244,21 +278,18 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                               minHeight: heightController.text,
                               maxWeight: '',
                               religion: authControl.religionMainIndexs,
-                              community:
-                                  authControl.partnerCommunitys,
+                              community: authControl.partnerCommunitys,
                               smokingStatus:
                                   authControl.smokingIndex.toString(),
                               drinkingStatus:
                                   authControl.drikingIndex.toString(),
-                              profession:
-                                  authControl.partnerProfessions,
+                              profession: authControl.partnerProfessions,
                               minDegree: minimumDegreeController.text,
                               financialCondition: financialCondition.text,
                               language: languageController.text,
                               maxHeight: maxHeightController.text,
                               foodPreference: dietController.text,
-                              motherTongue:
-                                  authControl.motherTongueIndexs)
+                              motherTongue: authControl.motherTongueIndexs)
                           .then((value) {
                         setState(() {});
                         if (value['status'] == true) {
@@ -652,7 +683,7 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                                         children: [
                                                           // Text("Min Height", style: satoshiMedium.copyWith(fontSize: Dimensions.fontSizeDefault,)),
                                                           Text(
-                                                            '${authControl.startHeightValue.value.round().toString()} ft',
+                                                            '${convertToFeetAndInches(authControl.startHeightValue.value)} ft',
                                                             style: satoshiBold.copyWith(
                                                                 fontSize: Dimensions
                                                                     .fontSizeDefault,
@@ -666,7 +697,7 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                                         children: [
                                                           // Text("Max Height", style: satoshiMedium.copyWith(fontSize: Dimensions.fontSizeDefault,)),
                                                           Text(
-                                                            '${authControl.endHeightValue.value.round().toString()} ft',
+                                                            '${convertToFeetAndInches(authControl.endHeightValue.value)} ft',
                                                             style: satoshiBold.copyWith(
                                                                 fontSize: Dimensions
                                                                     .fontSizeDefault,
@@ -679,75 +710,121 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                                     ],
                                                   ),
                                                   Container(
-                                                    width: double.infinity,
-                                                    child: Obx(() =>
-                                                        RangeSlider(
-                                                          min: 5.0,
-                                                          // Minimum value
-                                                          max: 7.0,
-                                                          // Maximum value
-                                                          divisions: 20,
-                                                          // Number of divisions for finer granularity
-                                                          labels: RangeLabels(
-                                                            authControl
-                                                                .startHeightValue
-                                                                .value
-                                                                .toStringAsFixed(
-                                                                    1),
-                                                            // Format to 1 decimal place
-                                                            authControl
-                                                                .endHeightValue
-                                                                .value
-                                                                .toStringAsFixed(
-                                                                    1), // Format to 1 decimal place
-                                                          ),
-                                                          values: RangeValues(
-                                                            authControl
-                                                                .startHeightValue
-                                                                .value,
-                                                            authControl
-                                                                .endHeightValue
-                                                                .value,
-                                                          ),
-                                                          onChanged: (values) {
-                                                            authControl
-                                                                .setHeightValue(
-                                                                    values);
+                                                      width: double.infinity,
+                                                      child: HeightRangeSlider(
+                                                        authControl:
+                                                            authControl,
+                                                        onChanged:
+                                                            (RangeValues
+                                                            values)
+                                                        {
+                                                          setState(() {
+                                                            _currentRangeValues =
+                                                                values;
+                                                          });
+                                                          authControl
+                                                              .setHeightValue(
+                                                                  values);
+                                                          setState(() {
                                                             heightController
-                                                                    .text =
+                                                                .text =
                                                                 authControl
                                                                     .startHeightValue
-                                                                    .value
-                                                                    .toStringAsFixed(
-                                                                        1);
+                                                                    .value.toString();
                                                             maxHeightController
-                                                                    .text =
+                                                                .text =
                                                                 authControl
                                                                     .endHeightValue
                                                                     .value
-                                                                    .toStringAsFixed(
-                                                                        1);
+                                                                    .toString();
                                                             heightControllerYrs
-                                                                .text = Get.find<
-                                                                    ProfileController>()
-                                                                .convertHeightToFeetInches(
-                                                                    authControl
-                                                                        .startHeightValue
-                                                                        .value
-                                                                        .toStringAsFixed(
-                                                                            1));
+                                                                .text = convertToFeetAndInches(
+                                                                authControl
+                                                                    .startHeightValue
+                                                                    .value);
                                                             maxHeightControllerYrs
-                                                                .text = Get.find<
-                                                                    ProfileController>()
-                                                                .convertHeightToFeetInches(
-                                                                    authControl
-                                                                        .endHeightValue
-                                                                        .value
-                                                                        .toStringAsFixed(
-                                                                            1));
-                                                          },
-                                                        )),
-                                                  ),
+                                                                .text = convertToFeetAndInches(
+                                                                authControl
+                                                                    .endHeightValue
+                                                                    .value);
+                                                          });
+                                                        },
+                                                        values:
+                                                            _currentRangeValues,
+                                                        labels:  RangeLabels(
+                                                          _formatHeight(_currentRangeValues.start),
+                                                          _formatHeight(_currentRangeValues.end),
+                                                        ),
+                                                      )
+
+                                                      // Obx(() =>
+                                                      //     RangeSlider(
+                                                      //       min: 4.0,
+                                                      //       // Minimum value
+                                                      //       max: 7.0,
+                                                      //       // Maximum value
+                                                      //       divisions: 20,
+                                                      //       // Number of divisions for finer granularity
+                                                      //       labels: RangeLabels(
+                                                      //         authControl
+                                                      //             .startHeightValue
+                                                      //             .value
+                                                      //             .toStringAsFixed(
+                                                      //                 1),
+                                                      //         // Format to 1 decimal place
+                                                      //         authControl
+                                                      //             .endHeightValue
+                                                      //             .value
+                                                      //             .toStringAsFixed(
+                                                      //                 1), // Format to 1 decimal place
+                                                      //       ),
+                                                      //       values: RangeValues(
+                                                      //         authControl
+                                                      //             .startHeightValue
+                                                      //             .value,
+                                                      //         authControl
+                                                      //             .endHeightValue
+                                                      //             .value,
+                                                      //       ),
+                                                      //       onChanged: (values) {
+                                                      //         authControl
+                                                      //             .setHeightValue(
+                                                      //                 values);
+                                                      //         heightController
+                                                      //                 .text =
+                                                      //             authControl
+                                                      //                 .startHeightValue
+                                                      //                 .value
+                                                      //                 .toStringAsFixed(
+                                                      //                     1);
+                                                      //         maxHeightController
+                                                      //                 .text =
+                                                      //             authControl
+                                                      //                 .endHeightValue
+                                                      //                 .value
+                                                      //                 .toStringAsFixed(
+                                                      //                     1);
+                                                      //         heightControllerYrs
+                                                      //             .text = Get.find<
+                                                      //                 ProfileController>()
+                                                      //             .convertHeightToFeetInches(
+                                                      //                 authControl
+                                                      //                     .startHeightValue
+                                                      //                     .value
+                                                      //                     .toStringAsFixed(
+                                                      //                         1));
+                                                      //         maxHeightControllerYrs
+                                                      //             .text = Get.find<
+                                                      //                 ProfileController>()
+                                                      //             .convertHeightToFeetInches(
+                                                      //                 authControl
+                                                      //                     .endHeightValue
+                                                      //                     .value
+                                                      //                     .toStringAsFixed(
+                                                      //                         1));
+                                                      //       },
+                                                      //     )),
+                                                      ),
                                                 ],
                                               ),
                                             ),
@@ -785,27 +862,27 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                           ),
                                           sizedBox12(),
                                           Obx(
-                                            () => SizedBox(
+                                                () => SizedBox(
                                               width: double.infinity,
                                               child: Column(
                                                 crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                                 children: [
                                                   Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                     children: [
                                                       Column(
                                                         children: [
                                                           // Text("Min Height", style: satoshiMedium.copyWith(fontSize: Dimensions.fontSizeDefault,)),
                                                           Text(
-                                                            '${authControl.startHeightValue.value.round().toString()} ft',
+                                                            '${convertToFeetAndInches(authControl.startHeightValue.value)} ft',
                                                             style: satoshiBold.copyWith(
                                                                 fontSize: Dimensions
                                                                     .fontSizeDefault,
                                                                 color: Theme.of(
-                                                                        context)
+                                                                    context)
                                                                     .primaryColor),
                                                           ),
                                                         ],
@@ -814,12 +891,12 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                                         children: [
                                                           // Text("Max Height", style: satoshiMedium.copyWith(fontSize: Dimensions.fontSizeDefault,)),
                                                           Text(
-                                                            '${authControl.endHeightValue.value.round().toString()} ft',
+                                                            '${convertToFeetAndInches(authControl.endHeightValue.value)} ft',
                                                             style: satoshiBold.copyWith(
                                                                 fontSize: Dimensions
                                                                     .fontSizeDefault,
                                                                 color: Theme.of(
-                                                                        context)
+                                                                    context)
                                                                     .primaryColor),
                                                           ),
                                                         ],
@@ -827,79 +904,242 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                                     ],
                                                   ),
                                                   Container(
-                                                    width: double.infinity,
-                                                    child: Obx(() =>
-                                                        RangeSlider(
-                                                          min: 5.0,
-                                                          // Minimum value
-                                                          max: 7.0,
-                                                          // Maximum value
-                                                          divisions: 20,
-                                                          // Number of divisions for finer granularity
-                                                          labels: RangeLabels(
-                                                            authControl
-                                                                .startHeightValue
-                                                                .value
-                                                                .toStringAsFixed(
-                                                                    1),
-                                                            // Format to 1 decimal place
-                                                            authControl
-                                                                .endHeightValue
-                                                                .value
-                                                                .toStringAsFixed(
-                                                                    1), // Format to 1 decimal place
-                                                          ),
-                                                          values: RangeValues(
-                                                            authControl
-                                                                .startHeightValue
-                                                                .value,
-                                                            authControl
-                                                                .endHeightValue
-                                                                .value,
-                                                          ),
-                                                          onChanged: (values) {
-                                                            authControl
-                                                                .setHeightValue(
-                                                                    values);
+                                                      width: double.infinity,
+                                                      child: HeightRangeSlider(
+                                                        authControl:
+                                                        authControl,
+                                                        onChanged:
+                                                            (RangeValues
+                                                        values)
+                                                        {
+                                                          setState(() {
+                                                            _currentRangeValues =
+                                                                values;
+                                                          });
+                                                          authControl
+                                                              .setHeightValue(
+                                                              values);
+                                                          setState(() {
                                                             heightController
-                                                                    .text =
+                                                                .text =
                                                                 authControl
                                                                     .startHeightValue
-                                                                    .value
-                                                                    .toStringAsFixed(
-                                                                        1);
+                                                                    .value.toString();
                                                             maxHeightController
-                                                                    .text =
+                                                                .text =
                                                                 authControl
                                                                     .endHeightValue
                                                                     .value
-                                                                    .toStringAsFixed(
-                                                                        1);
+                                                                    .toString();
                                                             heightControllerYrs
-                                                                .text = Get.find<
-                                                                    ProfileController>()
-                                                                .convertHeightToFeetInches(
-                                                                    authControl
-                                                                        .startHeightValue
-                                                                        .value
-                                                                        .toStringAsFixed(
-                                                                            1));
+                                                                .text = convertToFeetAndInches(
+                                                                authControl
+                                                                    .startHeightValue
+                                                                    .value);
                                                             maxHeightControllerYrs
-                                                                .text = Get.find<
-                                                                    ProfileController>()
-                                                                .convertHeightToFeetInches(
-                                                                    authControl
-                                                                        .endHeightValue
-                                                                        .value
-                                                                        .toStringAsFixed(
-                                                                            1));
-                                                          },
-                                                        )),
+                                                                .text = convertToFeetAndInches(
+                                                                authControl
+                                                                    .endHeightValue
+                                                                    .value);
+                                                          });
+                                                        },
+                                                        values:
+                                                        _currentRangeValues,
+                                                        labels:  RangeLabels(
+                                                          _formatHeight(_currentRangeValues.start),
+                                                          _formatHeight(_currentRangeValues.end),
+                                                        ),
+                                                      )
+
+                                                    // Obx(() =>
+                                                    //     RangeSlider(
+                                                    //       min: 4.0,
+                                                    //       // Minimum value
+                                                    //       max: 7.0,
+                                                    //       // Maximum value
+                                                    //       divisions: 20,
+                                                    //       // Number of divisions for finer granularity
+                                                    //       labels: RangeLabels(
+                                                    //         authControl
+                                                    //             .startHeightValue
+                                                    //             .value
+                                                    //             .toStringAsFixed(
+                                                    //                 1),
+                                                    //         // Format to 1 decimal place
+                                                    //         authControl
+                                                    //             .endHeightValue
+                                                    //             .value
+                                                    //             .toStringAsFixed(
+                                                    //                 1), // Format to 1 decimal place
+                                                    //       ),
+                                                    //       values: RangeValues(
+                                                    //         authControl
+                                                    //             .startHeightValue
+                                                    //             .value,
+                                                    //         authControl
+                                                    //             .endHeightValue
+                                                    //             .value,
+                                                    //       ),
+                                                    //       onChanged: (values) {
+                                                    //         authControl
+                                                    //             .setHeightValue(
+                                                    //                 values);
+                                                    //         heightController
+                                                    //                 .text =
+                                                    //             authControl
+                                                    //                 .startHeightValue
+                                                    //                 .value
+                                                    //                 .toStringAsFixed(
+                                                    //                     1);
+                                                    //         maxHeightController
+                                                    //                 .text =
+                                                    //             authControl
+                                                    //                 .endHeightValue
+                                                    //                 .value
+                                                    //                 .toStringAsFixed(
+                                                    //                     1);
+                                                    //         heightControllerYrs
+                                                    //             .text = Get.find<
+                                                    //                 ProfileController>()
+                                                    //             .convertHeightToFeetInches(
+                                                    //                 authControl
+                                                    //                     .startHeightValue
+                                                    //                     .value
+                                                    //                     .toStringAsFixed(
+                                                    //                         1));
+                                                    //         maxHeightControllerYrs
+                                                    //             .text = Get.find<
+                                                    //                 ProfileController>()
+                                                    //             .convertHeightToFeetInches(
+                                                    //                 authControl
+                                                    //                     .endHeightValue
+                                                    //                     .value
+                                                    //                     .toStringAsFixed(
+                                                    //                         1));
+                                                    //       },
+                                                    //     )),
                                                   ),
                                                 ],
                                               ),
                                             ),
                                           )
+
+                                          // Obx(
+                                          //   () => SizedBox(
+                                          //     width: double.infinity,
+                                          //     child: Column(
+                                          //       crossAxisAlignment:
+                                          //           CrossAxisAlignment.start,
+                                          //       children: [
+                                          //         Row(
+                                          //           mainAxisAlignment:
+                                          //               MainAxisAlignment
+                                          //                   .spaceBetween,
+                                          //           children: [
+                                          //             Column(
+                                          //               children: [
+                                          //                 // Text("Min Height", style: satoshiMedium.copyWith(fontSize: Dimensions.fontSizeDefault,)),
+                                          //                 Text(
+                                          //                   '${authControl.startHeightValue.value.round().toString()} ft',
+                                          //                   style: satoshiBold.copyWith(
+                                          //                       fontSize: Dimensions
+                                          //                           .fontSizeDefault,
+                                          //                       color: Theme.of(
+                                          //                               context)
+                                          //                           .primaryColor),
+                                          //                 ),
+                                          //               ],
+                                          //             ),
+                                          //             Column(
+                                          //               children: [
+                                          //                 // Text("Max Height", style: satoshiMedium.copyWith(fontSize: Dimensions.fontSizeDefault,)),
+                                          //                 Text(
+                                          //                   '${authControl.endHeightValue.value.round().toString()} ft',
+                                          //                   style: satoshiBold.copyWith(
+                                          //                       fontSize: Dimensions
+                                          //                           .fontSizeDefault,
+                                          //                       color: Theme.of(
+                                          //                               context)
+                                          //                           .primaryColor),
+                                          //                 ),
+                                          //               ],
+                                          //             ),
+                                          //           ],
+                                          //         ),
+                                          //         Container(
+                                          //           width: double.infinity,
+                                          //           child: Obx(() =>
+                                          //               RangeSlider(
+                                          //                 min: 4.0,
+                                          //                 // Minimum value
+                                          //                 max: 7.0,
+                                          //                 // Maximum value
+                                          //                 divisions: 20,
+                                          //                 // Number of divisions for finer granularity
+                                          //                 labels: RangeLabels(
+                                          //                   authControl
+                                          //                       .startHeightValue
+                                          //                       .value
+                                          //                       .toStringAsFixed(
+                                          //                           1),
+                                          //                   // Format to 1 decimal place
+                                          //                   authControl
+                                          //                       .endHeightValue
+                                          //                       .value
+                                          //                       .toStringAsFixed(
+                                          //                           1), // Format to 1 decimal place
+                                          //                 ),
+                                          //                 values: RangeValues(
+                                          //                   authControl
+                                          //                       .startHeightValue
+                                          //                       .value,
+                                          //                   authControl
+                                          //                       .endHeightValue
+                                          //                       .value,
+                                          //                 ),
+                                          //                 onChanged: (values) {
+                                          //                   authControl
+                                          //                       .setHeightValue(
+                                          //                           values);
+                                          //                   heightController
+                                          //                           .text =
+                                          //                       authControl
+                                          //                           .startHeightValue
+                                          //                           .value
+                                          //                           .toStringAsFixed(
+                                          //                               1);
+                                          //                   maxHeightController
+                                          //                           .text =
+                                          //                       authControl
+                                          //                           .endHeightValue
+                                          //                           .value
+                                          //                           .toStringAsFixed(
+                                          //                               1);
+                                          //                   heightControllerYrs
+                                          //                       .text = Get.find<
+                                          //                           ProfileController>()
+                                          //                       .convertHeightToFeetInches(
+                                          //                           authControl
+                                          //                               .startHeightValue
+                                          //                               .value
+                                          //                               .toStringAsFixed(
+                                          //                                   1));
+                                          //                   maxHeightControllerYrs
+                                          //                       .text = Get.find<
+                                          //                           ProfileController>()
+                                          //                       .convertHeightToFeetInches(
+                                          //                           authControl
+                                          //                               .endHeightValue
+                                          //                               .value
+                                          //                               .toStringAsFixed(
+                                          //                                   1));
+                                          //                 },
+                                          //               )),
+                                          //         ),
+                                          //       ],
+                                          //     ),
+                                          //   ),
+                                          // )
                                         ],
                                       ),
                                     ),
@@ -965,7 +1205,7 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                                 List<String> currentValues =
                                                     preferredReligionController
                                                         .text
-                                                        .split(',');
+                                                        .split(', ');
 
                                                 // Check if the value is already in the list
                                                 if (!currentValues.contains(
@@ -977,6 +1217,86 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                                       ? element1.name
                                                           .toString() // Directly assign if text is empty
                                                       : "${preferredReligionController.text},${element1.name.toString()}";
+                                                }
+                                              });
+                                            }
+                                          });
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ));
+                          },
+                        ),
+                        sizedBox6(),
+                        EditDetailsTextField(
+                          title: 'Community',
+                          controller: communityController,
+                          readOnly: true,
+                          onTap: () {
+                            Get.bottomSheet(SingleChildScrollView(
+                              child: Container(
+                                color: Theme.of(context).cardColor,
+                                padding: const EdgeInsets.all(
+                                    Dimensions.paddingSizeDefault),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Preferred Community',
+                                      style: kManrope25Black.copyWith(
+                                          fontSize: 16),
+                                    ),
+                                    sizedBox12(),
+                                    CustomDropdownButtonFormField<String>(
+                                      isMultiSelect: true,
+                                      selectedValues: Community,
+                                      // Assuming you have a selectedPosition variable
+                                      items: authControl.partCommunityList!
+                                          .map((position) => position.name!)
+                                          .toList(),
+                                      hintText: "Select Community",
+                                      onChanged: (value) {
+                                        List<int?>? selected = [];
+
+                                        value.forEach((value) {
+                                          var selectedValue = authControl
+                                              .partCommunityList!
+                                              .firstWhere((position) =>
+                                                  value == position.name);
+                                          selected.add(selectedValue.id);
+                                          setState(() {
+                                            Community!.add(selectedValue.name!);
+                                          });
+                                        });
+
+                                        authControl.setPartnerCommunitys(
+                                          selected,
+                                        );
+                                        communityController.text = "";
+                                        print(authControl.partnerCommunitys);
+                                        authControl.partnerCommunitys!
+                                            .forEach((element) {
+                                          authControl.partCommunityList!
+                                              .forEach((element1) {
+                                            if (element == element1.id) {
+                                              setState(() {
+                                                List<String> currentValues =
+                                                    communityController.text
+                                                        .split(', ');
+
+                                                // Check if the value is already in the list
+                                                if (!currentValues.contains(
+                                                    element1.name.toString())) {
+                                                  // Concatenate the value if it's not already present
+                                                  communityController
+                                                      .text = communityController
+                                                          .text.isEmpty
+                                                      ? element1.name
+                                                          .toString() // Directly assign if text is empty
+                                                      : "${communityController.text},${element1.name.toString()}";
                                                 }
                                               });
                                             }
@@ -1018,14 +1338,14 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                           .map((position) => position.name!)
                                           .toList(),
                                       hintText: "Select Profession",
-                                      onChanged:  (value) {
+                                      onChanged: (value) {
                                         List<int?>? selected = [];
 
                                         value.forEach((value) {
                                           var selectedValue = authControl
                                               .partProfessionList!
                                               .firstWhere((position) =>
-                                          value == position.name);
+                                                  value == position.name);
                                           selected.add(selectedValue.id);
                                           setState(() {
                                             professions!
@@ -1034,7 +1354,8 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                         });
 
                                         authControl.setPartnerProfessions(
-                                            selected,);
+                                          selected,
+                                        );
                                         preferredProfession.text = "";
                                         authControl.partnerProfessions!
                                             .forEach((element) {
@@ -1043,9 +1364,8 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                             if (element == element1.id) {
                                               setState(() {
                                                 List<String> currentValues =
-                                                preferredProfession
-                                                    .text
-                                                    .split(',');
+                                                    preferredProfession.text
+                                                        .split(',');
 
                                                 // Check if the value is already in the list
                                                 if (!currentValues.contains(
@@ -1053,9 +1373,9 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                                   // Concatenate the value if it's not already present
                                                   preferredProfession
                                                       .text = preferredProfession
-                                                      .text.isEmpty
+                                                          .text.isEmpty
                                                       ? element1.name
-                                                      .toString() // Directly assign if text is empty
+                                                          .toString() // Directly assign if text is empty
                                                       : "${preferredProfession.text},${element1.name.toString()}";
                                                 }
                                               });
@@ -1105,7 +1425,7 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                           var selectedValue = authControl
                                               .partMotherTongueList!
                                               .firstWhere((position) =>
-                                          value == position.name);
+                                                  value == position.name);
                                           selected.add(selectedValue.id);
                                           setState(() {
                                             motherTongue!
@@ -1114,7 +1434,7 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                         });
 
                                         authControl.setMotherTongueIndexs(
-                                          selected,true);
+                                            selected, true);
                                         motherTongueController.text = "";
                                         authControl.motherTongueIndexs!
                                             .forEach((element) {
@@ -1123,9 +1443,8 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                             if (element == element1.id) {
                                               setState(() {
                                                 List<String> currentValues =
-                                                motherTongueController
-                                                    .text
-                                                    .split(',');
+                                                    motherTongueController.text
+                                                        .split(',');
 
                                                 // Check if the value is already in the list
                                                 if (!currentValues.contains(
@@ -1133,9 +1452,9 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                                   // Concatenate the value if it's not already present
                                                   motherTongueController
                                                       .text = motherTongueController
-                                                      .text.isEmpty
+                                                          .text.isEmpty
                                                       ? element1.name
-                                                      .toString() // Directly assign if text is empty
+                                                          .toString() // Directly assign if text is empty
                                                       : "${motherTongueController.text},${element1.name.toString()}";
                                                 }
                                               });
@@ -1175,12 +1494,11 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                                       items: authControl.dietList,
                                       hintText: "Select Diet Type",
                                       onChanged: (value) {
-                                        var selected = authControl.diet;
+                                        var selected = value;
                                         authControl.setPartnerDiet(selected);
                                         setState(() {
-                                          dietController.text = selected ?? "";
+                                          dietController.text = value ?? "";
                                         });
-
                                       },
                                       validator: (value) {
                                         if (value == null ||

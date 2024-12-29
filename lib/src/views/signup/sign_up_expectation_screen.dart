@@ -511,7 +511,7 @@ class _SignUpScreenExpectationScreenState extends State<SignUpScreenExpectationS
                               Column(
                                 children: [
                                   // Text("Min Height", style: satoshiMedium.copyWith(fontSize: Dimensions.fontSizeDefault,)),
-                                  Text('${_convertToFeetAndInches(authControl.startHeightValue.value).toString()} ft',
+                                  Text('${convertToFeetAndInches(authControl.startHeightValue.value).toString()} ft',
                                     style:satoshiBold.copyWith(fontSize: Dimensions.fontSizeDefault,
                                         color: Theme.of(context).primaryColor),),
                                 ],
@@ -519,7 +519,7 @@ class _SignUpScreenExpectationScreenState extends State<SignUpScreenExpectationS
                               Column(
                                 children: [
                                   // Text("Max Height", style: satoshiMedium.copyWith(fontSize: Dimensions.fontSizeDefault,)),
-                                  Text('${_convertToFeetAndInches(authControl.endHeightValue.value).toString()} ft',
+                                  Text('${convertToFeetAndInches(authControl.endHeightValue.value).toString()} ft',
                                     style:satoshiBold.copyWith(fontSize: Dimensions.fontSizeDefault,
                                         color: Theme.of(context).primaryColor),),
                                 ],
@@ -617,15 +617,18 @@ class HeightRangeSlider extends StatefulWidget {
   final double maxHeight;
   final double initialStartHeight;
   final double initialEndHeight;
+  final RangeValues? values;
+  final Function(RangeValues)? onChanged;
+  final RangeLabels? labels;
   final AuthController authControl;
 
   const HeightRangeSlider({
     Key? key,
     this.minHeight = 4.0,
     this.maxHeight = 7.0,
-    this.initialStartHeight = 5.0,
-    this.initialEndHeight = 6.0,
-    required this.authControl,
+    this.initialStartHeight = 4.0,
+    this.initialEndHeight = 7.0,
+    required this.authControl, this.onChanged,  this.values, this.labels,
   }) : super(key: key);
 
   @override
@@ -663,8 +666,8 @@ class _HeightRangeSliderState extends State<HeightRangeSlider> {
       min: widget.minHeight,
       max: widget.maxHeight,
       divisions: ((widget.maxHeight - widget.minHeight) * 12).toInt(),
-      values: _currentRangeValues,
-      onChanged: (RangeValues values) {
+      values: widget.values??_currentRangeValues,
+      onChanged: widget.onChanged??(RangeValues values) {
         setState(() {
           _currentRangeValues = values;
         });
@@ -672,7 +675,7 @@ class _HeightRangeSliderState extends State<HeightRangeSlider> {
         print(
             "Start: ${_formatHeight(values.start)}, End: ${_formatHeight(values.end)}");
       },
-      labels: RangeLabels(
+      labels: widget.labels??RangeLabels(
         _formatHeight(_currentRangeValues.start),
         _formatHeight(_currentRangeValues.end),
       ),
@@ -681,9 +684,9 @@ class _HeightRangeSliderState extends State<HeightRangeSlider> {
 }
 
 // Helper function to format the height
-String _convertToFeetAndInches(double value) {
-  int feet = value.floor();
-  int inches = ((value - feet) * 12).round();
+String convertToFeetAndInches(double value) {
+  int feet = value.floor(); // Get the whole number as feet
+  int inches = ((value - feet) * 12).round(); // Convert decimal to inches
 
   // Handle edge cases where inches reach 12
   if (inches >= 12) {

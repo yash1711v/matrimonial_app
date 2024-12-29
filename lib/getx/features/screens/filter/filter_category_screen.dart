@@ -83,7 +83,7 @@ class FilterCategoryScreen extends StatelessWidget {
                           ),
                           value: isSelected,
                           onChanged: (bool? selected) {
-                            filterController.setFilterReligion(religion.name!);
+                            filterController.setFilterReligion(religion.name!,religion.id!);
                             print(
                                 filterController.filterReligion); // Debug print
                           },
@@ -99,7 +99,7 @@ class FilterCategoryScreen extends StatelessWidget {
                   ),
                 ],
               );
-            } else if (filterType.contains('Caste')) {
+            } else if (filterType.contains('Community')) {
               return Column(
                 children: [
                   Expanded(
@@ -122,7 +122,7 @@ class FilterCategoryScreen extends StatelessWidget {
                           value: isSelected,
                           onChanged: (bool? selected) {
                             filterController
-                                .setFilterCommunity(community.name!);
+                                .setFilterCommunity(community.name!,community.id!);
                             print(filterController
                                 .filterCommunity); // Debug print
                           },
@@ -166,7 +166,7 @@ class FilterCategoryScreen extends StatelessWidget {
                           value: isSelected,
                           onChanged: (bool? selected) {
                             filterController
-                                .setFilterMotherTongue(motherTongue.name!);
+                                .setFilterMotherTongue(motherTongue.name!,motherTongue.id!);
                             print(filterController
                                 .filterMotherTongue); // Debug print
                           },

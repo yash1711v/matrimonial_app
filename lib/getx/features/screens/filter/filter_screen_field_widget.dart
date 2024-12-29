@@ -21,7 +21,8 @@ class FilterScreenField extends StatelessWidget {
                 Text(title,
                   style: kManrope16MediumBlack.copyWith(
                       fontSize: Dimensions.fontSize14,
-                      color: Theme.of(context).disabledColor.withOpacity(0.99)),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
                 ),
                 Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

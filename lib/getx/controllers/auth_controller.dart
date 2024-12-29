@@ -2760,10 +2760,10 @@ class AuthController extends GetxController implements GetxService {
   var endHeightValue = 7.0.obs;
 
   void setHeightValue(RangeValues newValues) {
-    startHeightValue.value = double.parse((newValues.start).toStringAsFixed(1));
-    endHeightValue.value = double.parse((newValues.end).toStringAsFixed(1));
-    String partnerMinHeight = startHeightValue.value.toStringAsFixed(1);
-    String partnerMaxHeight = endHeightValue.value.toStringAsFixed(1);
+    startHeightValue.value = double.parse((newValues.start).toString());
+    endHeightValue.value = double.parse((newValues.end).toString());
+    String partnerMinHeight = startHeightValue.value.toString();
+    String partnerMaxHeight = endHeightValue.value.toString();
     print('Check partner height: $partnerMinHeight');
     print('Check partner max height: $partnerMaxHeight');
 

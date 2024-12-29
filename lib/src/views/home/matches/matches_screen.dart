@@ -312,16 +312,18 @@ class _MatchesScreenState extends State<MatchesScreen> {
                                       likedColor: Colors.grey,
                                       unlikeColor: primaryColor,
                                       button:
-                                      matchesControl.matchesList[i].interestStatus == 2
-                                          ? connectButton(
-                                              fontSize: 14,
-                                              height: 30,
-                                              width: 134,
-                                              context: context,
-                                              onTap: () {},
-                                              showIcon: isWished ? false : true,
-                                              title: 'Request Sent')
-                                          :
+                                      // matchesControl.matchesList[i].interestStatus == 2
+                                      //     ? connectButton(
+                                      //         fontSize: 14,
+                                      //         height: 30,
+                                      //         width: 134,
+                                      //         context: context,
+                                      //         onTap: () {
+                                      //
+                                      //         },
+                                      //         showIcon: isWished ? false : true,
+                                      //         title: 'Request Sent')
+                                      //     :
                                       connectButton(
                                               fontSize: 14,
                                               height: 30,

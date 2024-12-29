@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:bureau_couple/src/constants/shared_prefs.dart';
 import 'package:bureau_couple/src/utils/urls.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 Future<dynamic> getMatchesApi({
@@ -43,9 +44,9 @@ Future<dynamic> getNewMatchesApi({
   var request = http.MultipartRequest('POST', Uri.parse('${baseUrl}matches'));
   request.fields.addAll({
     'gender': gender,
-    "religion" : religion,
+    "religion" : religion.toString(),
   });
-
+  debugPrint('=================> ${request.fields}');
 
   request.headers.addAll(headers);
   http.StreamedResponse response = await request.send();

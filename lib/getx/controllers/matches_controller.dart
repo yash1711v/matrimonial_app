@@ -7,6 +7,7 @@ import 'package:bureau_couple/getx/repository/repo/matches_repo.dart';
 import 'package:bureau_couple/getx/utils/app_constants.dart';
 import 'package:bureau_couple/src/models/other_person_details_models.dart';
 import 'package:bureau_couple/src/models/saved_matches_model.dart';
+import 'package:flutter/cupertino.dart';
 // import 'package:carousel_slider/carousel_controller.dart';
 import 'package:get/get.dart';
 
@@ -24,6 +25,11 @@ class MatchesController extends GetxController implements GetxService {
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
+  void setIsLoading(bool val) {
+    _isLoading = val;
+    update();
+  }
 
   int _offset = 1;
   int get offset => _offset;
@@ -402,16 +408,17 @@ class MatchesController extends GetxController implements GetxService {
     try {
       _isLoading = true;
     update();
+    debugPrint("height ${height}");
       final result = await matchesRepo.getMatchesApi(
           page: page,
           gender: gender,
-          religion: jsonEncode(religion),
+          religion: religion.toString(),
           profession: profession,
           state: state,
           height: height,
           country: country,
-          montherTongue: jsonEncode(motherTongue),
-          community: jsonEncode(community));
+          montherTongue: motherTongue.toString(),
+          community: (community ?? "").toString());
 
       if (result['status'] == true) {
         log("This is Value From Matches ${result['data']['members'].toString()}");

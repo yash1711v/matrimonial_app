@@ -112,7 +112,10 @@ class HomeProfileHolder extends StatelessWidget {
                     size: Dimensions.fontSize10, color: Colors.white),
               ),
               Text(
-                "State: ${(basicInfo.permanentAddress ?? PermanentAddress(city: "",state: "",country: "")).state}",
+                "State: ${(
+                    profileModel.basicInfo?.presentAddress?.state)
+                    // basicInfo.permanentAddress ?? PermanentAddress(city: "",state: "",country: "")).state
+                }",
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: styleSatoshiLight(

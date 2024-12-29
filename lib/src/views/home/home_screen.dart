@@ -58,8 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    getMatches();
-    getPreferredMatch();
     careerInfo();
     profileDetail();
     // profileDetail();
@@ -147,6 +145,8 @@ class _HomeScreenState extends State<HomeScreen> {
             basicInfo = basicModel.BasicInfo.fromJson(physicalAttributesData);
             // fields();
           });
+          getMatches();
+          getPreferredMatch();
         }
         setState(() {
           var info = value['data']['user'];
@@ -214,7 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
           : widget.response.data!.user!.gender!.contains('Female')
               ? "Male"
               : "Others",
-      religion: widget.response.data!.user!.religion!.toString(),
+      religion: basicInfo.religion,
     ).then((value) {
       if (mounted) {
         setState(() {
@@ -386,17 +386,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Expanded(
                                     child: GestureDetector(
                                       onTap: () {
+                                        var value = profileControl
+                                            .profile
+                                            ?.partnerExpectation
+                                            ?.religion ?? [];
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (builder) =>
                                                     MatchesScreen(
                                                       response: widget.response,
-                                                      religion: profileControl
-                                                              .profile
-                                                              ?.partnerExpectation
-                                                              ?.religionName ??
-                                                          '',
+                                                      religion: value ?? "",
                                                       motherTongue: '',
                                                       minHeight: '',
                                                       maxHeight: '',
@@ -493,7 +493,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       community: profileControl
                                                               .profile
                                                               ?.partnerExpectation
-                                                              ?.communityName ??
+                                                              ?.community ??
                                                           '',
                                                       // profileControl.userDetails?.community?.id?.toString() ?? '',
                                                       appbar: true,
@@ -529,7 +529,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       motherTongue: profileControl
                                                               .profile
                                                               ?.partnerExpectation
-                                                              ?.motherTongueName ??
+                                                              ?.motherTongue ??
                                                           '',
                                                       minHeight: '',
                                                       maxHeight: '',
@@ -823,13 +823,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 MaterialPageRoute(
                                     builder: (builder) => MatchesScreen(
                                           response: widget.response,
-                                          religion: profileControl
-                                                      .profile?.religionName ==
-                                                  null
-                                              ? ''
-                                              : profileControl
-                                                  .profile?.religionName
-                                                  .toString(),
+                                          religion: basicInfo.religion ?? '',
                                           motherTongue: '',
                                           minHeight: '',
                                           maxHeight: '',
@@ -1149,7 +1143,7 @@ class _HomeScreenState extends State<HomeScreen> {
       actions: [
         IconButton(
             onPressed: () {
-              Get.to(FilterScreen());
+              Get.to(FilterScreen(response: widget.response,));
             },
             icon: const Icon(
               Icons.tune_rounded,

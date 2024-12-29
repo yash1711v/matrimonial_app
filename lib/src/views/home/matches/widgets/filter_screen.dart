@@ -124,7 +124,7 @@ class FilterBottomSheet extends StatelessWidget {
                               ),
                               selected: isSelected,
                               onSelected: (selected) {
-                                filterController.setFilterReligion(religion.name!);
+                                filterController.setFilterReligion(religion.name!,religion.id!);
                                 print(filterController.filterReligion);
                               },
                             );
@@ -176,7 +176,7 @@ class FilterBottomSheet extends StatelessWidget {
                               ),
                               selected: isSelected,
                               onSelected: (selected) {
-                                filterController.setFilterCommunity(val.name!);
+                                filterController.setFilterCommunity(val.name!,val.id!);
                                 print(filterController.filterCommunity);
                               },
                             );
@@ -241,7 +241,7 @@ class FilterBottomSheet extends StatelessWidget {
                               ),
                               selected: isSelected,
                               onSelected: (selected) {
-                                filterController.setFilterMotherTongue(religion.name!);
+                                filterController.setFilterMotherTongue(religion.name!,religion.id!);
                                 print(filterController.filterMotherTongue);
                               },
                             );
