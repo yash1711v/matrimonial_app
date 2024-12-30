@@ -74,7 +74,7 @@ class MatchesRepo {
     fields.addAll(<String, String>{
       'user_id' : userId.toString(),
       'interesting_id': profileId.toString(),
-      'status': '2'
+      'status': '0'
     });
     return apiClient.postData(
       AppConstants.sendRequest,fields,
