@@ -18,13 +18,43 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../src/views/home/matches/matches_screen.dart';
+import '../../../../src/views/signup/sign_up_expectation_screen.dart';
 import 'filter_screen_field_widget.dart';
 
-class FilterScreen extends StatelessWidget {
+class FilterScreen extends StatefulWidget {
   final LoginResponse response;
    FilterScreen({super.key, required this.response,});
+
+  @override
+  State<FilterScreen> createState() => _FilterScreenState();
+}
+
+class _FilterScreenState extends State<FilterScreen> {
   final stateController = TextEditingController();
+
   final districtController = TextEditingController();
+  bool isAge  = false;
+  bool isHeight = false;
+
+
+  RangeValues _currentRangeValues = RangeValues(
+    4.0,
+    7.0,
+  );
+
+
+  String _formatHeight(double value) {
+    int feet = value.floor(); // Get the whole number as feet
+    int inches = ((value - feet) * 12).round(); // Convert decimal to inches
+
+    // Handle edge cases where inches reach 12
+    if (inches >= 12) {
+      feet++;
+      inches = 0;
+    }
+
+    return "$feet'${inches}";
+  }
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -48,12 +78,15 @@ class FilterScreen extends StatelessWidget {
                   MaterialPageRoute(
                       builder: (builder) =>
                           MatchesScreen(
-                            response: response,
+                            state: Get.find<AuthController>().filterPostingState.isNotEmpty?Get.find<AuthController>().filterPostingState:"",
+                            profession: Get.find<FilterController>().filterProfessionList.isNotEmpty?Get.find<FilterController>().filterProfessionList:"",
+                            response: widget.response,
                             religion: Get.find<FilterController>().filterReligionList.isNotEmpty?Get.find<FilterController>().filterReligionList:"",
                             motherTongue: Get.find<FilterController>().filterMotherTongueList.isNotEmpty?Get.find<FilterController>().filterMotherTongueList:"",
-                            minHeight: (Get.find<AuthController>().startHeightValue.value).toString(),
-                            maxHeight: (Get.find<AuthController>().endHeightValue.value).toString(),
-                            maxWeight: '',
+                            minHeight: isHeight?(_formatHeight(Get.find<AuthController>().startHeightValue.value)).toString().replaceAll("'", "."): "",
+                            maxHeight: isHeight?(_formatHeight(Get.find<AuthController>().endHeightValue.value)).toString().replaceAll("'", "."):"",
+                            maxAge: isAge?(Get.find<AuthController>().startValue.value).toStringAsFixed(0):"",
+                            minAge: isAge?(Get.find<AuthController>().endValue.value).toStringAsFixed(0):"",
                             based: '',
                             community: Get.find<FilterController>().filterCommunityList.isNotEmpty?Get.find<FilterController>().filterCommunityList:"",
                             appbar: true,
@@ -135,7 +168,11 @@ class FilterScreen extends StatelessWidget {
                                     '',
                                     '',
                                     '',
-                                    '');
+                                    '',
+                                   "",
+                                  "",
+                                  "",
+                                );
                                 // Get.find<MatchesController>().getMatchesList(
                                 //   "1",
                                 //   profileControl.userDetails!.basicInfo!.gender!.contains("M") ? "F" : "M",
@@ -149,12 +186,27 @@ class FilterScreen extends StatelessWidget {
                   sizedBox16(),
                   Column(
                     children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text("Age Bracket ",
-                          textAlign: TextAlign.left,
-                          style: styleSatoshiBold(
-                              size: 16, color: Colors.black),),
+                      Row(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Age Bracket ",
+                              textAlign: TextAlign.left,
+                              style: styleSatoshiBold(
+                                  size: 16, color: Colors.black),),
+                          ),
+                          Spacer(),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Checkbox(value: isAge, onChanged:
+                            (value) {
+                              setState(() {
+                                isAge = value!;
+                              });
+                            },
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 12,),
                       SizedBox(
@@ -203,11 +255,27 @@ class FilterScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 20,),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text("Height Bracket ",
-                          textAlign: TextAlign.left,
-                          style: styleSatoshiBold(size: 16, color: Colors.black),),
+                      Row(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Height Bracket ",
+                              textAlign: TextAlign.left,
+                              style: styleSatoshiBold(size: 16, color: Colors.black),),
+                          ),
+                          Spacer(),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Checkbox(
+                              value: isHeight, onChanged:
+                                (value) {
+                              setState(() {
+                                isHeight = value!;
+                              });
+                            },
+                            ),
+                          ),
+                        ],
                       ),
                       sizedBox12(),
                       SizedBox(
@@ -218,7 +286,7 @@ class FilterScreen extends StatelessWidget {
                               children: [
                                 Column(
                                   children: [
-                                    Text('${authControl.startHeightValue.value.round().toString()} Ft',
+                                    Text('${_formatHeight(authControl.startHeightValue.value).toString()} Ft',
                                       style: satoshiBold.copyWith(fontSize: Dimensions.fontSizeDefault,
                                           color: Theme.of(context).primaryColor),),
                                   ],
@@ -227,8 +295,7 @@ class FilterScreen extends StatelessWidget {
                                   children: [
                                     // Text("Max Height", style: satoshiMedium.copyWith(fontSize: Dimensions.fontSizeDefault,)),
                                     Text(
-                                      '${authControl.endHeightValue.value
-                                          .round().toString()} Ft',
+                                      '${_formatHeight(authControl.endHeightValue.value).toString()} Ft',
                                       style: satoshiBold.copyWith(
                                           fontSize: Dimensions
                                               .fontSizeDefault,
@@ -240,36 +307,66 @@ class FilterScreen extends StatelessWidget {
                               ],),
                             SizedBox(
                               width: double.infinity,
-                              child: Obx(() =>
-                                  RangeSlider(
-                                    min: 4.0,
-                                    // Minimum value
-                                    max: 7.0,
-                                    // Maximum value
-                                    divisions: 20,
-                                    // Number of divisions for finer granularity
-                                    labels: RangeLabels(
-                                      authControl.startHeightValue.value
-                                          .toStringAsFixed(1),
-                                      // Format to 1 decimal place
-                                      authControl.endHeightValue.value
-                                          .toStringAsFixed(
-                                          1), // Format to 1 decimal place
-                                    ),
-                                    values: RangeValues(
-                                      authControl.startHeightValue.value,
-                                      authControl.endHeightValue.value,
-                                    ),
-                                    onChanged: (values) {
-                                      authControl.setHeightValue(
-                                          values); // Update the values when slider changes
-                                      print(
-                                          'Updated range values: ${values
-                                              .start.toStringAsFixed(
-                                              1)} - ${values.end
-                                              .toStringAsFixed(1)}');
-                                    },
-                                  )),
+                              child:  HeightRangeSlider(
+                                authControl:
+                                authControl,
+                                onChanged:
+                                    (RangeValues
+                                values)
+                               {
+
+                                 setState(() {
+                                   _currentRangeValues =
+                                       values;
+                                 });
+                                 authControl.setHeightValue(
+                                     _currentRangeValues); // Update the values when slider changes
+                                 print(
+                                     'Updated range values: ${values
+                                         .start.toStringAsFixed(
+                                         0)} - ${values.end
+                                         .toStringAsFixed(0)}');
+                               },
+                                values:
+                                _currentRangeValues,
+                                labels:  RangeLabels(
+                                  _formatHeight(_currentRangeValues.start),
+                                  _formatHeight(_currentRangeValues.end),
+                                ),
+                              ),
+
+
+
+                              // Obx(() =>
+                              //     RangeSlider(
+                              //       min: 4.0,
+                              //       // Minimum value
+                              //       max: 7.0,
+                              //       // Maximum value
+                              //       divisions: 20,
+                              //       // Number of divisions for finer granularity
+                              //       labels: RangeLabels(
+                              //         authControl.startHeightValue.value
+                              //             .toStringAsFixed(1),
+                              //         // Format to 1 decimal place
+                              //         authControl.endHeightValue.value
+                              //             .toStringAsFixed(
+                              //             1), // Format to 1 decimal place
+                              //       ),
+                              //       values: RangeValues(
+                              //         authControl.startHeightValue.value,
+                              //         authControl.endHeightValue.value,
+                              //       ),
+                              //       onChanged: (values) {
+                              //         authControl.setHeightValue(
+                              //             values); // Update the values when slider changes
+                              //         print(
+                              //             'Updated range values: ${values
+                              //                 .start.toStringAsFixed(
+                              //                 1)} - ${values.end
+                              //                 .toStringAsFixed(1)}');
+                              //       },
+                              //     )),
                             ),
                           ],
                         ),

@@ -38,6 +38,9 @@ class _ConnectDashboardState extends State<ConnectDashboard> {
         '',
         '',
         '',
+        "",
+        "",
+        "",
         '');
   }
 

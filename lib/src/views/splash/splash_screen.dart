@@ -75,7 +75,6 @@ class _SplashScreenState extends State<SplashScreen> {
           ).then((value) {
             response = value;
             if (
-
             response!.status == 'success'
             /*value['status'] == 'success'*/) {
               print("dsd");

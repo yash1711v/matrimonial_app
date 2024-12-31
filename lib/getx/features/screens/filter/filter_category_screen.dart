@@ -206,7 +206,7 @@ class FilterCategoryScreen extends StatelessWidget {
                           value: isSelected,
                           onChanged: (bool? selected) {
                             filterController
-                                .setFilterProfession(profession.name!);
+                                .setFilterProfession(profession.name!,profession.id!);
                             print(filterController
                                 .filterProfession); // Debug print
                           },

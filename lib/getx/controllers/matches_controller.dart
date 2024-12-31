@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:developer';
 
@@ -8,22 +7,20 @@ import 'package:bureau_couple/getx/utils/app_constants.dart';
 import 'package:bureau_couple/src/models/other_person_details_models.dart';
 import 'package:bureau_couple/src/models/saved_matches_model.dart';
 import 'package:flutter/cupertino.dart';
+
 // import 'package:carousel_slider/carousel_controller.dart';
 import 'package:get/get.dart';
 
 import '../../src/apis/members_api.dart';
 import '../../src/models/matches_model.dart';
 
-
-
-
 class MatchesController extends GetxController implements GetxService {
   final MatchesRepo matchesRepo;
 
   MatchesController({required this.matchesRepo});
 
-
   bool _isLoading = false;
+
   bool get isLoading => _isLoading;
 
   void setIsLoading(bool val) {
@@ -32,11 +29,12 @@ class MatchesController extends GetxController implements GetxService {
   }
 
   int _offset = 1;
+
   int get offset => _offset;
   List<String> _pageList = [];
   int? _pageSize;
-  int? get pageSize => _pageSize;
 
+  int? get pageSize => _pageSize;
 
   // List<SingleMatchModel>? _matchesList;
   // List<SingleMatchModel>? get matchesList => _matchesList;
@@ -81,7 +79,6 @@ class MatchesController extends GetxController implements GetxService {
   //   }
   // }
 
-
   // Future>> getMatchesList(
   //     String page,
   //         String gender,
@@ -108,14 +105,13 @@ class MatchesController extends GetxController implements GetxService {
   // }
 
   void setOffset(int offset) {
-    _offset= offset;
+    _offset = offset;
   }
 
-  void showBottomLoader () {
+  void showBottomLoader() {
     _isLoading = true;
     update();
   }
-
 
   // Future<void> getMatchesList(
   //     String page,
@@ -253,13 +249,13 @@ class MatchesController extends GetxController implements GetxService {
   //   }
   // }
 
-
-
   List<SavedMatchesModel>? _savedMatchesList;
+
   List<SavedMatchesModel>? get savedMatchesList => _savedMatchesList;
 
-  Future<void> getSavedMatchesList( String page,
-     ) async {
+  Future<void> getSavedMatchesList(
+    String page,
+  ) async {
     _isLoading = true;
     try {
       if (page == '1') {
@@ -274,11 +270,16 @@ class MatchesController extends GetxController implements GetxService {
       if (!_pageList.contains(page)) {
         _pageList.add(page);
 
-        Response response = await matchesRepo.getSavedMatchesList(page,);
+        Response response = await matchesRepo.getSavedMatchesList(
+          page,
+        );
 
         if (response.statusCode == 200) {
-          List<dynamic> responseData = response.body['data']['shortlists']['data'];
-          List<SavedMatchesModel> newDataList = responseData.map((json) => SavedMatchesModel.fromJson(json)).toList();
+          List<dynamic> responseData =
+              response.body['data']['shortlists']['data'];
+          List<SavedMatchesModel> newDataList = responseData
+              .map((json) => SavedMatchesModel.fromJson(json))
+              .toList();
 
           if (page == '1') {
             _savedMatchesList = newDataList;
@@ -306,8 +307,8 @@ class MatchesController extends GetxController implements GetxService {
     }
   }
 
-
   OtherProfileModel? _otherUserDetails;
+
   OtherProfileModel? get otherUserDetails => _otherUserDetails;
 
   // Future<OtherProfileModel?> getOtherUserDetailsApi(otherUserId) async {
@@ -330,34 +331,40 @@ class MatchesController extends GetxController implements GetxService {
   // }
 
   List<int?> _isBookmarkList = [];
+
   List<int?> get isBookmarkList => _isBookmarkList;
 
-
-  Future<void> bookMarkSaveApi(String? profileId,) async {
+  Future<void> bookMarkSaveApi(
+    String? profileId,
+  ) async {
     _isLoading = true;
     update();
 
-    Response response = await matchesRepo.bookMarkSave(profileId,"");
-    if(response.statusCode == 200) {
+    Response response = await matchesRepo.bookMarkSave(profileId, "");
+    if (response.statusCode == 200) {
       _isBookmarkList.add(int.parse(profileId!));
       // Get.offAllNamed(RouteHelper.getSignInRoute());
       // showCustomSnackBar('Password Changed Successful', isError: false);
-    }else {
+    } else {
       // ApiChecker.checkApi(response);
     }
     _isLoading = false;
     update();
   }
 
-  Future<void> unSaveBookmarkApi(String? profileId,) async {
+  Future<void> unSaveBookmarkApi(
+    String? profileId,
+  ) async {
     _isLoading = true;
     update();
 
-    Response response = await matchesRepo.bookMarkUnSave(profileId,);
-    if(response.statusCode == 200) {
+    Response response = await matchesRepo.bookMarkUnSave(
+      profileId,
+    );
+    if (response.statusCode == 200) {
       // Get.offAllNamed(RouteHelper.getSignInRoute());
       // showCustomSnackBar('Password Changed Successful', isError: false);
-    }else {
+    } else {
       // ApiChecker.checkApi(response);
     }
     _isLoading = false;
@@ -389,29 +396,29 @@ class MatchesController extends GetxController implements GetxService {
   // }
 
   List<MatchesModel> _matchesList = [];
+
   List<MatchesModel> get matchesList => _matchesList;
 
   void getMatches(
       String page,
       String gender,
       dynamic religion,
-      String profession,
-      String state,
+      dynamic profession,
+      dynamic state,
       String maxHeight,
       String minHeight,
       String maxAge,
       String minAge,
       String country,
       dynamic motherTongue,
-      dynamic community
-      ) async {
+      dynamic community) async {
     _matchesList = [];
     _matchesList.clear();
     // print('check Matches Api======>');
     try {
       _isLoading = true;
-    update();
-    debugPrint("height ${maxHeight}");
+      update();
+      debugPrint("height ${maxHeight}");
       final result = await matchesRepo.getMatchesApi(
           page: page,
           gender: gender,
@@ -421,8 +428,10 @@ class MatchesController extends GetxController implements GetxService {
           maxHeight: maxHeight,
           country: country,
           montherTongue: motherTongue.toString(),
-          community: (community ?? "").toString(), minHeight: minHeight, maxAge: maxAge, minAge: minAge);
-
+          community: (community ?? "").toString(),
+          minHeight: minHeight,
+          maxAge: maxAge,
+          minAge: minAge);
       if (result['status'] == true) {
         log("This is Value From Matches ${result['data']['members'].toString()}");
         final newMatches = (result['data']['members'] as List)
@@ -446,23 +455,27 @@ class MatchesController extends GetxController implements GetxService {
   ];
 
   int _categoryIndex = 0;
+
   int get categoryIndex => _categoryIndex;
+
   void setCategoryIndex(int index) {
     _categoryIndex = index;
     update();
   }
+
   int _bannerIndex = 0;
+
   int get bannerIndex => _bannerIndex;
+
   void setBannerIndex(int index) {
     _bannerIndex = index;
     update();
   }
+
   // final CarouselController _carouselController = CarouselController();
   final List<String> bannerImages = [
     "assets/images/bannerdemo.jpg",
     "assets/images/bannerdemo.jpg",
     "assets/images/bannerdemo.jpg",
   ];
-
 }
-

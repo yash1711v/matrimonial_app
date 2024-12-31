@@ -275,7 +275,7 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                               country: countryController.text,
                               minAge: minAgeController.text,
                               maxAge: maxAgeController.text,
-                              minHeight: heightController.text,
+                              minHeight: _formatHeight(double.parse(heightController.text)).toString().replaceAll("'", "."),
                               maxWeight: '',
                               religion: authControl.religionMainIndexs,
                               community: authControl.partnerCommunitys,
@@ -287,7 +287,7 @@ class _EditPreferenceScreenState extends State<EditPreferenceScreen> {
                               minDegree: minimumDegreeController.text,
                               financialCondition: financialCondition.text,
                               language: languageController.text,
-                              maxHeight: maxHeightController.text,
+                              maxHeight: _formatHeight(double.parse(maxHeightController.text)).toString().replaceAll("'", "."),
                               foodPreference: dietController.text,
                               motherTongue: authControl.motherTongueIndexs)
                           .then((value) {

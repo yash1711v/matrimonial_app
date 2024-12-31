@@ -98,8 +98,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   ? "Male"
                   : "Others",
           widget.religion,
-          (widget.state ?? "").toString(),
           (widget.profession ?? "").toString(),
+          (widget.state ?? "").toString(),
           (widget.maxHeight ?? "" ).toString() ,
           (widget.minHeight ?? "" ).toString() ?? "",
           (widget.maxAge ?? "" ).toString() ?? "",

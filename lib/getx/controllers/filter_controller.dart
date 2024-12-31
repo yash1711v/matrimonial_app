@@ -67,12 +67,16 @@ class FilterController extends GetxController implements GetxService {
 
   final List<String> _filterProfession = [];
   List<String> get filterProfession => _filterProfession;
+  final List<int> _filterProfessionList = [];
+  List<int> get filterProfessionList => _filterProfessionList;
 
-  void setFilterProfession(String val) {
+  void setFilterProfession(String val,int id) {
     if (_filterProfession.contains(val)) {
       _filterProfession.remove(val);
+      _filterProfessionList.remove(id);
     } else {
       _filterProfession.add(val);
+      _filterProfessionList.add(id);
     }
     update();
   }

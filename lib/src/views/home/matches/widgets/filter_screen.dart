@@ -85,6 +85,9 @@ class FilterBottomSheet extends StatelessWidget {
                                   '',
                                   '',
                                   '',
+                                  "",
+                                  "",
+                                  "",
                                   '');
                               // Get.find<MatchesController>().getMatchesList(
                               //   "1",
@@ -291,7 +294,7 @@ class FilterBottomSheet extends StatelessWidget {
                               ),
                               selected: isSelected,
                               onSelected: (selected) {
-                                filterController.setFilterProfession(religion.name!);
+                                filterController.setFilterProfession(religion.name!,religion.id!);
                                 print(filterController.filterProfession);
                               },
                             );
@@ -461,7 +464,11 @@ class FilterBottomSheet extends StatelessWidget {
                                   '',
                                   '',
                                   authControl.partnerMotherTongue.toString(),
-                                  '');
+                                  '',
+                                 "",
+                                  "",
+                                  '',
+                              );
                               Get.back();
                             },
                             title: "Apply")

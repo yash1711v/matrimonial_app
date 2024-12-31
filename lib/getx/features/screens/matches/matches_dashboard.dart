@@ -104,6 +104,9 @@ class _MatchesDashboardState extends State<MatchesDashboard> {
       '',
       '',
       '',
+      "",
+      "",
+      "",
     );
   }
 
@@ -239,6 +242,9 @@ class _MatchesDashboardState extends State<MatchesDashboard> {
                                             '',
                                             '',
                                             '',
+                                            '',
+                                            '',
+                                            '',
                                           );
                                         },
                                         child: Icon(CupertinoIcons.heart_fill,
@@ -270,6 +276,9 @@ class _MatchesDashboardState extends State<MatchesDashboard> {
                                               .getMatches(
                                             '1',
                                             genderFilter,
+                                            '',
+                                            '',
+                                            '',
                                             '',
                                             '',
                                             '',
@@ -406,12 +415,18 @@ class _MatchesDashboardState extends State<MatchesDashboard> {
         '',
         '',
         '',
+        '',
+        '',
+        '',
       );
     } else if (index == 1) {
       Get.find<MatchesController>().getMatches(
         '1',
         genderFilter,
         "",
+        '',
+        '',
+        '',
         '',
         '',
         '',
@@ -430,6 +445,10 @@ class _MatchesDashboardState extends State<MatchesDashboard> {
         '',
         "",
         '',
+        '',
+        '',
+        '',
+
       );
     } else if (index == 3) {
       Get.find<MatchesController>().getMatches(
@@ -440,6 +459,9 @@ class _MatchesDashboardState extends State<MatchesDashboard> {
         '',
         '',
         '',
+        '',
+        '',
+        "",
         profiles.partnerExpectation?.motherTongue,
         '',
       );
