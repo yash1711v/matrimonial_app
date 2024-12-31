@@ -36,10 +36,12 @@ class MatchesScreen extends StatefulWidget {
   final LoginResponse response;
   final dynamic religion;
   final dynamic motherTongue;
-  final String? state;
+  final dynamic? state;
+  final dynamic? profession;
   final String? minHeight;
   final String? maxHeight;
-  final String? maxWeight;
+  final String? maxAge;
+  final String? minAge;
   final String? based;
   final dynamic community;
 
@@ -51,10 +53,10 @@ class MatchesScreen extends StatefulWidget {
     this.motherTongue,
     this.minHeight,
     this.maxHeight,
-    this.maxWeight,
+    this.maxAge,
     this.based,
     this.state = '',
-    this.community,
+    this.community, this.minAge, this.profession,
   }) : super(key: key);
 
   @override
@@ -96,9 +98,12 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   ? "Male"
                   : "Others",
           widget.religion,
-          '',
-          widget.state.toString(),
-          '',
+          (widget.state ?? "").toString(),
+          (widget.profession ?? "").toString(),
+          (widget.maxHeight ?? "" ).toString() ,
+          (widget.minHeight ?? "" ).toString() ?? "",
+          (widget.maxAge ?? "" ).toString() ?? "",
+          (widget.minAge ?? "" ).toString() ?? "",
           '',
           widget.motherTongue,
           widget.community);

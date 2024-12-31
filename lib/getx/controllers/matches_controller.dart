@@ -397,7 +397,10 @@ class MatchesController extends GetxController implements GetxService {
       dynamic religion,
       String profession,
       String state,
-      String height,
+      String maxHeight,
+      String minHeight,
+      String maxAge,
+      String minAge,
       String country,
       dynamic motherTongue,
       dynamic community
@@ -408,17 +411,17 @@ class MatchesController extends GetxController implements GetxService {
     try {
       _isLoading = true;
     update();
-    debugPrint("height ${height}");
+    debugPrint("height ${maxHeight}");
       final result = await matchesRepo.getMatchesApi(
           page: page,
           gender: gender,
           religion: religion.toString(),
           profession: profession,
           state: state,
-          height: height,
+          maxHeight: maxHeight,
           country: country,
           montherTongue: motherTongue.toString(),
-          community: (community ?? "").toString());
+          community: (community ?? "").toString(), minHeight: minHeight, maxAge: maxAge, minAge: minAge);
 
       if (result['status'] == true) {
         log("This is Value From Matches ${result['data']['members'].toString()}");
