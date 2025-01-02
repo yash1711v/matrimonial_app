@@ -1643,7 +1643,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           height: 45,
                           width: double.infinity,
                           context: context,
-                          onTap: () {
+                          onTap: connected ? () {} : () {
                             setState(() {
                               connected = !connected;
                             });

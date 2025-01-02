@@ -447,6 +447,9 @@ class MatchesController extends GetxController implements GetxService {
     }
   }
 
+
+
+
   final List<String> images = [
     "assets/images/latestnews1.png",
     "assets/images/latestnews1.png",

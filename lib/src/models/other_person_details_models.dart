@@ -3,14 +3,16 @@ import 'package:bureau_couple/src/models/interest_model.dart';
 class OtherProfileModel {
   bool? status;
   Data? data;
+  int? connectionStatus;
   String? message;
 
-  OtherProfileModel({this.status, this.data, this.message});
+  OtherProfileModel({this.status, this.data, this.message, this.connectionStatus});
 
   OtherProfileModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
     message = json['message'];
+    connectionStatus = json['connection_status'];
   }
 
   Map<String, dynamic> toJson() {
@@ -20,6 +22,7 @@ class OtherProfileModel {
       data['data'] = this.data!.toJson();
     }
     data['message'] = this.message;
+    data["connection_status"] = this.connectionStatus;
     return data;
   }
 }

@@ -2690,6 +2690,7 @@ class AuthController extends GetxController implements GetxService {
 
   void setPartnerCommunitys(List<int?> val) {
     _partnerCommunitys = val;
+    debugPrint('Check partner community: $partnerCommunity');
     update();
   }
 

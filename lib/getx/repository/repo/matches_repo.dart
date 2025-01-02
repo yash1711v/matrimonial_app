@@ -79,6 +79,7 @@ class MatchesRepo {
       'interesting_id': profileId.toString(),
       'status': '0'
     });
+    debugPrint('fields ${fields}');
     return apiClient.postData(
       AppConstants.sendRequest,fields,
     );

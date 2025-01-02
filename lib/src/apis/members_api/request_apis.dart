@@ -20,7 +20,7 @@ Future<dynamic> sendRequestApi({
   request.fields.addAll({
     // 'id': id,
     'interesting_id': memberId,
-    'status': '2'
+    'status': '0'
   });
   request.headers.addAll(headers);
   print(request.fields);

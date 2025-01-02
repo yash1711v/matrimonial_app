@@ -69,7 +69,7 @@ class _ConnectDashboardState extends State<ConnectDashboard> {
                     controller: _scrollController, // ScrollController for smooth scrolling
                     padding: const EdgeInsets.only(
                       top: Dimensions.paddingSize10,
-                      right: Dimensions.paddingSizeDefault, // Padding on the right to avoid cutting
+                      right:0, // Padding on the right to avoid cutting
                     ),
                     itemCount: filterControl.connectedFilterTopList.length,
                     scrollDirection: Axis.horizontal,
