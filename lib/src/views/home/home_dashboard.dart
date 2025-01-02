@@ -18,9 +18,10 @@ import 'connect/connections.dart';
 
 bool isClick = false;
 class HomeDashboardScreen extends StatefulWidget {
+  final int pageIndex;
   final LoginResponse response;
 
-  const HomeDashboardScreen({super.key, required this.response, });
+  const HomeDashboardScreen({super.key, required this.response, required this.pageIndex, });
 
   @override
   State<HomeDashboardScreen> createState() => _HomeDashboardScreenState();
@@ -70,7 +71,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
           );
         });
   }
-
+  int index = 0;
   @override
   void initState() {
     // Get.find<ProfileController>().getUserDetailsApi();
@@ -79,9 +80,10 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
       print('=============check');
 
     });
+    index = widget.pageIndex;
     super.initState();
   }
-   int index = 0;
+
   @override
   Widget build(BuildContext context) {
     return  WillPopScope(
@@ -90,7 +92,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
         body: [
           HomeScreen(response: widget.response),
           const MatchesDashboard(initialIndex: 0,),
-          ConnectDashboard(initialIndex: 0,),
+          ConnectDashboard(initialIndex: index == 2?1:0,),
           const ProfileScreen(),
         ][index],
         bottomNavigationBar: bottomBar(),

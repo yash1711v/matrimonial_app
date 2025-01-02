@@ -12,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../src/apis/members_api.dart';
+import '../../src/models/UserConnection.dart';
 import '../../src/models/matches_model.dart';
 
 class MatchesController extends GetxController implements GetxService {
@@ -411,7 +412,8 @@ class MatchesController extends GetxController implements GetxService {
       String minAge,
       String country,
       dynamic motherTongue,
-      dynamic community) async {
+      dynamic community)
+  async {
     _matchesList = [];
     _matchesList.clear();
     // print('check Matches Api======>');
@@ -438,6 +440,37 @@ class MatchesController extends GetxController implements GetxService {
             .map((v) => MatchesModel.fromJson(v))
             .toList();
         _matchesList.addAll(newMatches);
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      _isLoading = false;
+      update();
+    }
+  }
+
+  UserConnectionResponse _userConnectionResponseData = UserConnectionResponse();
+
+  UserConnectionResponse get userConnectionResponseData => _userConnectionResponseData;
+
+ void getConnections({required String value})
+  async {
+    _userConnectionResponseData = UserConnectionResponse();
+    // print('check Matches Api======>');
+    try {
+      _isLoading = true;
+      update();
+      // debugPrint("height ${maxHeight}");
+      final result = await matchesRepo.getInterestsApi(value);
+      log("This is Value From Matches ${result}");
+      if (result['status'] == true) {
+        UserConnectionResponse userConnectionResponse = UserConnectionResponse.fromJson(result);
+        _userConnectionResponseData = userConnectionResponse;
+        // log("This is Value From Matches ${result['data']}");
+        // final newMatches = (result['data']['members'] as List)
+        //     .map((v) => MatchesModel.fromJson(v))
+        //     .toList();
+        // _matchesList.addAll(newMatches);
       }
     } catch (e) {
       print(e);

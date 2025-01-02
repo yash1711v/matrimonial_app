@@ -278,7 +278,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                           MaterialPageRoute(
                                               builder: (builder) =>
                                                   HomeDashboardScreen(
-                                                    response: response!,
+                                                    response: response!, pageIndex: 0,
                                                   )));
                                       ToastUtil.showToast("Login Successful");
                                     } else {

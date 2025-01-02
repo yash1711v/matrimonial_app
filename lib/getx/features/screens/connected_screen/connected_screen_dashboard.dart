@@ -8,6 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../utils/app_constants.dart';
+
 
 class ConnectDashboard extends StatefulWidget {
   final int initialIndex;
@@ -27,30 +29,96 @@ class _ConnectDashboardState extends State<ConnectDashboard> {
     super.initState();
     _pageIndex = widget.initialIndex;
     _pageController = PageController(initialPage: _pageIndex);
-    Get.find<MatchesController>().getMatches(
-        '1',
-        Get.find<ProfileController>().profile!.basicInfo!.gender!.contains('Male')
-            ? "Female"
-            : Get.find<ProfileController>().profile!.basicInfo!.gender!.contains('Female')
-            ? "Male"
-            : "Others",
-        '', '', '',
-        '',
-        '',
-        '',
-        "",
-        "",
-        "",
-        '');
+    Get.find<MatchesController>().getConnections(value: 'Sent');
   }
 
-  Widget buildMatchesList(BuildContext context, MatchesController matchesControl) {
-    return const Padding(
-      padding: EdgeInsets.only(left: 16.0, right: 16, top: 16, bottom: 0),
-      child: Center(
+  Widget buildMatchesList(BuildContext context, MatchesController matchesControl,) {
+    return  Padding(
+      padding: const EdgeInsets.only(left: 16.0, right: 16, top: 16, bottom: 0),
+      child: (matchesControl.userConnectionResponseData.data ?? []).isEmpty?const Center(
         child: CustomEmptyMatchScreen(
           title: 'No Request Yet',
           isBackButton: true,),
+      ):ListView.builder(
+        itemCount: matchesControl.userConnectionResponseData.data!.length,
+        itemBuilder: (context, index) {
+          final user = matchesControl.userConnectionResponseData.data![index];
+          return _pageIndex == 1?Column(
+            children: [
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundImage: NetworkImage('$baseProfilePhotoUrl${user.user!.image!.toString()}'),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    children: [
+                      Text(
+                        '${user.user!.firstname} ${user.user!.lastname}',
+                        style: satoshiBold.copyWith(fontSize: Dimensions.fontSize18),
+                      ),
+                    ],
+                  ),
+                  // Text(
+                  //   user.user!.,
+                  //   style: satoshiRegular.copyWith(fontSize: Dimensions.fontSize18),
+                  // ),
+
+                  
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // matchesControl.acceptConnection(user.id.toString());
+                      },
+                      child: const Text('Accept'),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // matchesControl.rejectConnection(user.id.toString());
+                      },
+                      child: const Text('Reject'),
+                    ),
+                  ),
+                ],
+              ),
+              Divider(color: Theme.of(context).disabledColor),
+            ],
+          ):Column(
+            children: [
+              Row(
+                children: [
+                  // CircleAvatar(
+                  //   radius: 30,
+                  //   backgroundImage: NetworkImage(user.profile!.basicInfo!..toString()),
+                  // ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${user.profile!.firstname} ${user.profile!.lastname}',
+                        style: satoshiBold.copyWith(fontSize: Dimensions.fontSize18),
+                      ),
+                      Text(
+                        user.profile!.basicInfo!.aboutUs.toString(),
+                        style: satoshiRegular.copyWith(fontSize: Dimensions.fontSize18),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Divider(color: Theme.of(context).disabledColor),
+            ],
+          );
+        },
       ),
     );
   }
@@ -119,6 +187,15 @@ class _ConnectDashboardState extends State<ConnectDashboard> {
                   child: PageView.builder(
                     controller: _pageController,
                     onPageChanged: (index) {
+                      if(index == 0){
+                        Get.find<MatchesController>().getConnections(value: 'Sent');
+                      } else if(index == 1){
+                        Get.find<MatchesController>().getConnections(value: 'Request');
+                      } else if(index == 2){
+                        Get.find<MatchesController>().getConnections(value: 'Accepted');
+                      } else if(index == 3){
+                        Get.find<MatchesController>().getConnections(value: 'Rejected');
+                      }
                       setState(() {
                         _pageIndex = index;
                       });

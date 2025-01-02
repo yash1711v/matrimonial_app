@@ -37,6 +37,7 @@ import 'connect/connect_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'home_dashboard.dart';
 import 'profile/edit_basic_info.dart';
 import 'package:bureau_couple/src/models/matches_model.dart' as basicModel;
 
@@ -1160,7 +1161,10 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (builder) => const ConnectScreen()));
+                      builder: (builder) =>
+                          HomeDashboardScreen(
+                            response: widget.response!, pageIndex: 2,
+                          )));
             },
             icon: const Icon(
               Icons.notifications,

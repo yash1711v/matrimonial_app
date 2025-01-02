@@ -84,7 +84,7 @@ class _SplashScreenState extends State<SplashScreen> {
               // SharedPrefs().setLoginEmail(emailController.text);
               // SharedPrefs().setLoginPassword(passwordController.text);
               Navigator.push(context, MaterialPageRoute(builder: (builder) =>
-                  HomeDashboardScreen(response: response!,)));
+                  HomeDashboardScreen(response: response!, pageIndex: 0,)));
               // ToastUtil.showToast("Login Successful");
 
             } else {
