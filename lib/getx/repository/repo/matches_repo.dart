@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
+import 'dart:math';
 import 'package:bureau_couple/getx/utils/app_constants.dart';
 import 'package:bureau_couple/src/constants/shared_prefs.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -97,34 +100,61 @@ class MatchesRepo {
     required dynamic? community,
   }) async  {
     var headers = {
-      'Authorization': 'Bearer ${SharedPrefs().getLoginToken()}'
+      'Authorization': 'Bearer ${ SharedPrefs().getLoginToken()}'
     };
-    var request = http.MultipartRequest('POST', Uri.parse('${baseUrl}matches'));
-    request.fields.addAll({
+
+    // debugPrint('sate ${jsonEncode(state)}');
+    var body = {
       'gender': gender ?? "",
       "religion" : religion is List ? jsonEncode(religion): religion ?? "",
       "profession" : profession is List ? jsonEncode(profession): profession  ?? "",
-      "state" : state is List ? jsonEncode(state): state  ?? "",
+      "state" :
+      // jsonEncode(["Gujarat"]),
+      state is List ? jsonEncode(state) : state  ?? "",
       "max_height" : maxHeight ?? "",
       "min_height" : minHeight ?? "",
       "max_age" : maxAge ?? "",
       "min_age" : minAge ?? "",
       "country" : country ?? "",
       "mother_tongue" : montherTongue is List ? jsonEncode(montherTongue): montherTongue ?? "",
-      "community" :community is List ? jsonEncode(community): community ?? "",});
-    request.headers.addAll(headers);
-    print('=================> ${request.fields}');
-    print('=================> ${request.headers}');
-    http.StreamedResponse response = await request.send();
-    var resp = jsonDecode(await response.stream.bytesToString());
+      "community" :community is List ? jsonEncode(community): community ?? "",};
+
+
+    debugPrint('body ${body}');
+    var request =  await http.post(
+      Uri.parse('${AppConstants.baseUrl}matches'),
+      headers: headers,
+      body: body
+    );
+    // var request = http.MultipartRequest('POST', Uri.parse('${baseUrl}matches'));
+    // request.fields.addAll({
+    //   'gender': gender ?? "",
+    //   "religion" : religion is List ? jsonEncode(religion): religion ?? "",
+    //   "profession" : profession is List ? jsonEncode(profession): profession  ?? "",
+    //   "state" : ["Gujarat"].toString(),
+    //   //state is List ? state : state  ?? "",
+    //   "max_height" : maxHeight ?? "",
+    //   "min_height" : minHeight ?? "",
+    //   "max_age" : maxAge ?? "",
+    //   "min_age" : minAge ?? "",
+    //   "country" : country ?? "",
+    //   "mother_tongue" : montherTongue is List ? jsonEncode(montherTongue): montherTongue ?? "",
+    //   "community" :community is List ? jsonEncode(community): community ?? "",});
+    // request.headers.addAll(headers);
+    // print('=================> ${request.fields}');
+    // print('=================> ${request.headers}');
+    // http.StreamedResponse response = await request.send();
+    var resp = jsonDecode(request.body);
     print(resp);
     print(headers);
-    if (response.statusCode == 200) {
+   // log('values==>${request.body}',name: 'MatchesRepo');
+    if (request.statusCode == 200) {
+      debugPrint('=================> ${resp}');
       return resp;
     } else {
       print(resp);
-      print(response.reasonPhrase);
-      print(response.statusCode);
+      print(resp.reasonPhrase);
+      print(resp.statusCode);
       return resp;
     }
   }

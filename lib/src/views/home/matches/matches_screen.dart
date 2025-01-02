@@ -36,8 +36,8 @@ class MatchesScreen extends StatefulWidget {
   final LoginResponse response;
   final dynamic religion;
   final dynamic motherTongue;
-  final dynamic? state;
-  final dynamic? profession;
+  final dynamic state;
+  final dynamic profession;
   final String? minHeight;
   final String? maxHeight;
   final String? maxAge;
@@ -99,7 +99,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   : "Others",
           widget.religion,
           (widget.profession ?? "").toString(),
-          (widget.state ?? "").toString(),
+          widget.state ,
           (widget.maxHeight ?? "" ).toString() ,
           (widget.minHeight ?? "" ).toString() ?? "",
           (widget.maxAge ?? "" ).toString() ?? "",

@@ -1855,7 +1855,7 @@ class AuthController extends GetxController implements GetxService {
     if (_filterPostingState.contains(state)) {
       _filterPostingState.remove(state);
     } else {
-      _filterPostingState.add(state);
+      _filterPostingState.add("$state");
     }
     update();
   }
